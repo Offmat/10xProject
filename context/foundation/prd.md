@@ -73,7 +73,7 @@ End-to-end flow proves shared session tracking works:
 
 ### Friends
 
-- FR-002: User can add another registered user to their friend circle. Priority: must-have
+- FR-002: User can send a friend request to another registered user; friendship becomes active after mutual acceptance. Priority: must-have
   > Socrates: No counter-argument; it stands as written.
 
 ### Session logging
@@ -89,7 +89,7 @@ End-to-end flow proves shared session tracking works:
 - FR-009: User can select a game from a predefined catalog when logging a session. Priority: must-have
   > Socrates: No counter-argument; it stands as written.
 
-_Predefined game catalog for MVP: fixed list shipped with the product; no admin or user game creation in v1._
+_Predefined game catalog for MVP: minimal hardcoded list (~20 popular board games) shipped with the product; no admin, user, or runtime catalog editing in v1._
 
 ### Statistics
 
@@ -115,7 +115,9 @@ The rule consumes: who logged the session, which registered players were include
 
 ## Access Control
 
-**Authentication:** login-based accounts (email/password, OAuth, or passwordless — mechanism TBD downstream).
+**Authentication:** email + password for MVP. OAuth and passwordless sign-in are out of scope for v1.
+
+**Friends:** mutual confirmation — a user sends a friend request; the other user accepts or declines; the friend circle link is active only after acceptance.
 
 **Roles (MVP):** flat user model only. Every registered user has the same capabilities; no admin role in MVP.
 
@@ -133,6 +135,8 @@ The rule consumes: who logged the session, which registered players were include
 
 ## Open Questions
 
-1. **Which login mechanism for MVP?** — Shape-notes list email/password, OAuth, or passwordless; exact choice TBD. Owner: user. Block: no (MVP can ship with one path).
-2. **How is the predefined game catalog seeded and updated?** — No admin or user game creation in v1; source of initial game list and update process undefined. Owner: user. Block: no for first session log if a minimal seed set exists.
-3. **Friend-circle add policy** — One-sided add vs mutual confirmation not specified; FR-002 stands as written. Owner: user. Block: no.
+_All resolved 2026-05-21._
+
+1. **Login mechanism** — **Resolved:** email + password for MVP.
+2. **Game catalog seeding** — **Resolved:** minimal hardcoded list (~20 popular board games) in the app; catalog changes require a new release (no admin UI, no user-added games).
+3. **Friend-circle add policy** — **Resolved:** mutual confirmation (request → accept/decline).
