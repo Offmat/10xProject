@@ -20,7 +20,7 @@ checkpoint:
     - topic: pain category
       decision: coordination overhead
     - topic: insight
-      decision: mixed registered + guest players at one session
+      decision: mixed registered + unregistered players at one session
     - topic: primary persona scope
       decision: hobbyist in overlapping friend circles
     - topic: authentication
@@ -40,11 +40,11 @@ _Seed source: idea_notes.md_
 
 When recording board game session results, every player keeps their own notes. There is no easy way to share outcomes of games played together across different, overlapping friend groups.
 
-The coordination cost shows up after a session: reconciling who played, scores, and which group the night belonged to is manual and fragmented. A workable product must treat **registered players and guests at the same table** as normal — not everyone will install the app.
+The coordination cost shows up after a session: reconciling who played, scores, and which group the night belonged to is manual and fragmented. A workable product must treat **registered players and unregistered players at the same table** as normal — not everyone will install the app.
 
 **Pain category:** coordination overhead.
 
-**Insight:** mixed registered + guest players at one session.
+**Insight:** mixed registered + unregistered players at one session.
 
 ## User & Persona
 
@@ -70,7 +70,7 @@ End-to-end flow proves shared session tracking works:
 2. User adds another person to their friend circle.
 3. User logs a played session: game, players, each player's score.
 4. Registered co-player receives a notification and can confirm participation in the session.
-5. Guest co-player: scorer enters their result without linking to an account.
+5. Unregistered player at the table: scorer enters name and score only (no account; that person does not use the app).
 6. User views their own session statistics with filters.
 
 ### Secondary
@@ -79,7 +79,8 @@ End-to-end flow proves shared session tracking works:
 
 ### Guardrails
 
-- Guest players can always be logged without an account.
+- Unregistered players (name + score only) can always be included in a session log; they never log in or use the app.
+- The user who creates a session log always sees that session in their own history and stats immediately after save.
 - No admin role or admin-only game catalog in MVP.
 - Users only see statistics for sessions they participated in.
 
@@ -99,7 +100,7 @@ End-to-end flow proves shared session tracking works:
 
 - FR-003: User can log a played session with game, players, and per-player scores. Priority: must-have
   > Socrates: No counter-argument; it stands as written.
-- FR-004: User can enter scores for players who do not have an account (guest players). Priority: must-have
+- FR-004: User can enter name and score for unregistered players (people without an account who do not use the app). Priority: must-have
   > Socrates: No counter-argument; it stands as written.
 - FR-005: Registered co-player receives an in-app notification when included in a logged session. Priority: must-have
   > Socrates: Counter: push notifications add platform cost for MVP. Resolution: in-app inbox only for v1; no push.
@@ -122,28 +123,29 @@ _Game catalog (MVP): predefined list baked into the app; no admin or user game c
 
 ## User Stories
 
-### US-01: User logs a session with registered and guest players
+### US-01: User logs a session with registered and unregistered players
 
-- **Given** a logged-in user, at least one friend in their circle, and a game from the predefined catalog
-- **When** they log a new session, include a registered friend and a guest player with scores, and submit
-- **Then** the session is saved, the registered friend receives a notification, guest scores are stored without an account link, and after the friend confirms, the session appears in both users' participations for stats
+- **Given** a logged-in user, at least one accepted friend in their circle, and a game from the predefined catalog
+- **When** they log a new session, include a registered friend and an unregistered player (name + score only), and submit
+- **Then** the session is saved immediately in the logger's history and stats; the registered friend receives an in-app notification; unregistered player data is stored as name and score only; the registered friend's stats include the session only after they confirm
 
 #### Acceptance Criteria
 
-- Guest player scores persist without requiring signup
+- Unregistered players are stored as name + score only; they do not log in, receive notifications, or have stats in the app
+- Logger sees the session in their history and stats immediately after submit, even if a tagged registered friend rejects or never responds
 - Registered friend can confirm or reject participation from the in-app notification
-- Session does not count toward shared stats for the registered friend until they confirm; rejected sessions are excluded
+- Session does not count toward the registered friend's stats until they confirm; if they reject, the session is excluded from their stats (logger's record is unchanged)
 
 ## Business Logic
 
-A logged session becomes part of a registered player's shared history only after they confirm participation; rejection excludes the session from their record; guest players are scored without accounts.
+A logged session becomes part of a registered player's shared history only after they confirm participation; rejection excludes the session from their record; unregistered players are recorded as name and score only and never use the app. The user who created the log always sees the session in their history and stats immediately on save.
 
-The rule consumes: who logged the session, which registered players were included, confirm/reject responses, and per-player scores (including guests). The output is a single coordinated session record each participant can trust for their own statistics. Users encounter it when logging a game night and when a co-player accepts or rejects inclusion from the in-app inbox.
+The rule consumes: who logged the session, which registered players were included, confirm/reject responses, and per-player scores (including unregistered players). The output is a coordinated session record: immediate for the logger; for each tagged registered player, only on confirm. Users encounter it when logging a game night and when a co-player accepts or rejects inclusion from the in-app inbox.
 
 ## Non-Functional Requirements
 
 - **Privacy:** Users only see statistics for sessions they participated in (confirmed or logged).
-- **Guest integrity:** Guest players can always be recorded without creating an account.
+- **Unregistered players:** Unregistered players can always be recorded as name + score only; they never create an account or access the app.
 - **Responsiveness:** Any user-initiated action (log session, confirm/reject, open stats) shows continuous visible feedback within 2 seconds while work continues.
 
 ## Non-Goals
