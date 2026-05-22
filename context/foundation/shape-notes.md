@@ -1,5 +1,5 @@
 ---
-project: bgDraft
+project: all-aBoard
 context_type: greenfield
 product_type: web-app
 target_scale:
@@ -32,7 +32,7 @@ checkpoint:
   frs_drafted: 9
 ---
 
-# Shape notes — bgDraft
+# Shape notes — all-aBoard
 
 _Seed source: idea_notes.md_
 

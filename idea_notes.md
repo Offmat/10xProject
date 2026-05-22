@@ -1,4 +1,4 @@
-## bgDraft - MVP
+## all-aBoard - MVP
 
 ### Główny problem
 Zapisując wyniki gry planszowej każdy musi prowadzić własne zapisy. Nie ma łatwej możliwości wspóldzielenia wyników wspólnych gier w róznych grupach znajomych
