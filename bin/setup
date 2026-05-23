@@ -13,7 +13,23 @@ FileUtils.chdir APP_ROOT do
   # Add necessary setup steps to this file.
 
   puts "== Installing dependencies =="
+  system! "bundle config set --local path vendor/bundle"
   system("bundle check") || system!("bundle install")
+
+  puts "\n== Checking gems for known vulnerabilities =="
+  unless system("bin/bundler-audit check")
+    warn "bundler-audit reported issues (setup continues). Review output above."
+  end
+
+  puts "\n== Checking PostgreSQL =="
+  if system("command -v pg_isready > /dev/null 2>&1")
+    unless system("pg_isready -q")
+      warn "PostgreSQL does not appear to be running. Start it, then re-run bin/setup."
+      exit 1
+    end
+  else
+    warn "pg_isready not found; skipping PostgreSQL check."
+  end
 
   # puts "\n== Copying sample files =="
   # unless File.exist?("config/database.yml")
