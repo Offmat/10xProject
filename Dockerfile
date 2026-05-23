@@ -2,8 +2,8 @@
 # check=error=true
 
 # This Dockerfile is designed for production, not development. Use with Kamal or build'n'run by hand:
-# docker build -t bootstrap_scaffold .
-# docker run -d -p 80:80 -e RAILS_MASTER_KEY=<value from config/master.key> --name bootstrap_scaffold bootstrap_scaffold
+# docker build -t all_aboard .
+# docker run -d -p 80:80 -e RAILS_MASTER_KEY=<value from config/master.key> --name all_aboard all_aboard
 
 # For a containerized dev environment, see Dev Containers: https://guides.rubyonrails.org/getting_started_with_devcontainer.html
 
