@@ -11,11 +11,11 @@ all-aBoard is a Rails 8.1 app (Ruby 3.4, PostgreSQL, Hotwire via importmap) for 
 
 ## Project structure
 
-- `app/` — MVC, jobs, mailers.
+- `app/` — MVC, services, jobs, mailers; MVP domains in @app/AGENTS.md.
 - `config/` — app configuration; DB names `all_aboard_*` in @config/database.yml.
 - `context/foundation/` — PRD, tech stack, lessons; edit in place per @context/foundation/README.md.
 - `context/changes/` — in-flight change folders; finish with `/10x-archive`, not by editing `archive/` directly.
-- `bin/` — `setup`, `ci`, `dev`, `rubocop`, `brakeman`, `bundler-audit`, `rails`.
+- `bin/` — `setup`, `ci`, `dev`, `rspec`, `rubocop`, `brakeman`, `bundler-audit`, `rails`.
 - Bootstrap audit: @context/changes/bootstrap-verification/verification.md.
 
 ## Build, test, and development
@@ -25,18 +25,16 @@ all-aBoard is a Rails 8.1 app (Ruby 3.4, PostgreSQL, Hotwire via importmap) for 
 - Dev server: `bin/dev` or `bin/setup --run-server` (both start `bin/rails server`).
 - Local CI: `bin/ci` runs @config/ci.rb (RuboCop, bundler-audit, importmap audit, Brakeman).
 - Lint: `bin/rubocop` (Omakase: @.rubocop.yml).
-
-Tests were skipped at bootstrap (`--skip-test` in verification log); no `test/` directory and `rails/test_unit` is disabled in @config/application.rb. Do not assume `bin/rails test` until a test stack is added.
+- Tests: **RSpec** under `spec/` — `bin/rspec` or `bundle exec rspec` (see @spec/AGENTS.md). Prepare DB: `bin/rails db:test:prepare`. `rails/test_unit` remains disabled in @config/application.rb; do not use `bin/rails test`.
 
 ## Coding style
 
 - Ruby 3.4.4 (@.ruby-version).
-- Module `BootstrapScaffold` in @config/application.rb is scaffold residue — rename when domain code should read `AllAboard`.
 - @app/controllers/application_controller.rb restricts to modern browsers; change only if the product requires broader support.
 
 ## Commits and CI
 
-Recent history uses short imperative subjects and occasional `lesson N:` prefixes; no strict Conventional Commits rule yet. PRs to `main` must pass @.github/workflows/ci.yml: Brakeman, bundler-audit, importmap audit, RuboCop. No test job in CI until tests exist.
+Recent history uses short imperative subjects and occasional `lesson N:` prefixes; no strict Conventional Commits rule yet. PRs to `main` must pass @.github/workflows/ci.yml: Brakeman, bundler-audit, importmap audit, RuboCop. Local `bin/ci` also runs RSpec; GitHub Actions has no `rspec` job yet.
 
 ## Security
 
@@ -44,5 +42,5 @@ Recent history uses short imperative subjects and occasional `lesson N:` prefixe
 
 ## Architecture pointers
 
-- MVP flows (auth, sessions, friends, notifications): @context/foundation/prd.md.
+- MVP flows and business rules: @context/foundation/prd.md.
 - 10x course skill router (Cursor): @.cursor/rules/10x-course.mdc — do not duplicate its tables here.
