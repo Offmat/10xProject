@@ -10,7 +10,7 @@ See @AGENTS.md at the repo root for repo-wide rules.
 
 ## Folders
 
-- `context/foundation/` — cross-change docs (PRD, tech stack, lessons). Superseded foundation docs move to `foundation/archive/YYYY-MM-DD-<name>.md`, not `context/archive/`. Conventions: @context/foundation/README.md.
+- `context/foundation/` — cross-change docs (PRD, tech stack, infrastructure, lessons). Superseded foundation docs move to `foundation/archive/YYYY-MM-DD-<name>.md`, not `context/archive/`. Conventions: @context/foundation/README.md.
 - `context/changes/` — one folder per in-flight change; identity in `change.md`. Created via course `/10x-new`; finish/archive workflow: @AGENTS.md.
 - `context/archive/` — read-only completed changes from `changes/`; write rules: @AGENTS.md.
 
