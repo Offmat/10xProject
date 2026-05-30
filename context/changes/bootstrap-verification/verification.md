@@ -97,7 +97,7 @@ _Re-run after `bundle install` (2026-05-22). Initial bootstrap audit failed beca
 | team_size               | solo |
 | deployment_target       | railway |
 | ci_provider             | github-actions |
-| ci_default_flow         | auto-deploy-on-merge |
+| ci_default_flow         | railway-autodeploy-on-merge-with-gha-quality-gates |
 | has_auth                | true |
 | has_payments            | false |
 | has_realtime            | false |

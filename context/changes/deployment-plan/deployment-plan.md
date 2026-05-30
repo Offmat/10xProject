@@ -1,9 +1,11 @@
 # Railway integration and deploy plan
 
-**Stored at:** `context/deployment-plan.md`  
-**Source of truth:** [`context/foundation/infrastructure.md`](foundation/infrastructure.md) (Railway, Dockerfile builder, four Postgres DBs, risk register).
+**Stored at:** `context/changes/deployment-plan/deployment-plan.md`  
+**Source of truth:** [`context/foundation/infrastructure.md`](../../foundation/infrastructure.md) (Railway, Dockerfile builder, four Postgres DBs, risk register).
 
-**Deploy model:** Railway **GitHub autodeploy** on `main` — **not** a `railway up` GitHub Actions workflow. Existing [`.github/workflows/ci.yml`](../.github/workflows/ci.yml) stays for quality gates only; enable **Wait for CI** so deploy runs only after CI passes ([Railway docs](https://docs.railway.com/deployments/github-autodeploys)).
+**Deploy model (target):** Railway **GitHub autodeploy** on `main` — **not** a `railway up` GitHub Actions workflow. Existing [`.github/workflows/ci.yml`](../../.github/workflows/ci.yml) stays for quality gates only; enable **Wait for CI** so deploy runs only after CI passes ([Railway docs](https://docs.railway.com/deployments/github-autodeploys)).
+
+**Live today (Phases 0–3):** Project `all-aboard`, services `Postgres` + `web`, production URL `https://web-production-8431bc.up.railway.app` (`/up` → 200; `/` → 404 until a `root` route exists). First deploy via `railway up`; GitHub source **not** connected yet (Phase 4). `db:prepare` runs in both `railway.toml` `preDeployCommand` and `bin/docker-entrypoint` — optional follow-up to drop one.
 
 ---
 
@@ -77,12 +79,12 @@ restartPolicyType = "ON_FAILURE"
 
 Rails merges `DATABASE_URL` and `CACHE_DATABASE_URL` / `QUEUE_DATABASE_URL` / `CABLE_DATABASE_URL` into [`config/database.yml`](../config/database.yml) production connections per [Rails multi-DB env docs](https://guides.rubyonrails.org/active_record_multiple_databases.html).
 
-3. **Production app config** (small follow-ups when domain exists):
+3. **Production app config** — **done** in repo:
 
-- [`config/environments/production.rb`](../config/environments/production.rb): set `config.action_mailer.default_url_options` host from `ENV["RAILWAY_PUBLIC_DOMAIN"]`; uncomment `assume_ssl` / `force_ssl` when serving on Railway HTTPS.
-- **Action Cable gap:** [`config/cable.yml`](../config/cable.yml) uses `adapter: redis` in production but PRD has no realtime and infrastructure has **no Redis**. For v1 deploy, either switch production cable to `async` / `solid_cable` (matches Solid* gems) or accept that Action Cable is unused until realtime ships — verify boot with `RAILS_ENV=production bin/rails runner 'puts :ok'`.
+- [`config/environments/production.rb`](../config/environments/production.rb): `assume_ssl` / `force_ssl`, mailer host from `ENV["RAILWAY_PUBLIC_DOMAIN"]`.
+- [`config/cable.yml`](../config/cable.yml): production `adapter: solid_cable` (no Redis). Verified: `RAILS_ENV=production bin/rails runner 'puts :ok'`.
 
-4. **Docs alignment:** Update [`context/foundation/tech-stack.md`](foundation/tech-stack.md) `ci_default_flow` note to “Railway autodeploy on merge + GHA quality gates (Wait for CI)” — not “GHA deploy”.
+4. **Docs alignment** — **done:** [`context/foundation/tech-stack.md`](../../foundation/tech-stack.md) `ci_default_flow` and deploy prose; [`context/foundation/infrastructure.md`](../../foundation/infrastructure.md) current-deployment section aligned with this plan.
 
 5. **Optional:** [`.env.example`](../.env.example) listing Railway variable names (no secrets).
 
@@ -113,7 +115,7 @@ Mark `[x]` as you complete each item.
 - [x] **P1.2** `railway add --database postgres --json` → **PostgreSQL** service (always pass `--json`; verify with `railway service list --json` before retrying)
 - [x] **P1.3** `railway add --service web --json` → empty **Web** service. If the CLI still prompts interactively, choose **Empty Service**, name `web`, then **Esc** at “Enter a variable” — env vars are set in Phase 2, not here.
 - [ ] **P1.4** Postgres → **Backups** enabled (MVP posture) — dashboard only
-- [x] **P1.5** After P1.1–P1.2: `railway connect postgres` → run SQL from infrastructure.md:
+- [x] **P1.5** After P1.1–P1.2: `railway connect postgres` **or** local `psql` via Postgres `DATABASE_PUBLIC_URL` → run SQL from infrastructure.md:
 
 ```sql
 CREATE DATABASE all_aboard_production_cache;
@@ -171,7 +173,7 @@ Repo-side Phase 2 fixes (done): `config/cable.yml` → `solid_cable`; `config/en
 - [x] **P3.1** First deploy via CLI **or** dashboard: `railway up --ci` linked to web service (validates build before GitHub wiring)
 - [x] **P3.2** Watch **build logs** then **deploy logs** for `db:prepare` / migration output
 - [x] **P3.3** Hit `https://<domain>/up` → expect **200** — `https://web-production-8431bc.up.railway.app/up`
-- [x] **P3.4** Hit root (may 404 until routes exist — OK for infra validation)
+- [x] **P3.4** Hit root (may 404 until routes exist — OK for infra validation). Rails dev-only welcome at `/` is not mounted in production.
 - [x] **P3.5** `railway logs -n 200` — no recurring DB connection errors
 
 **Edge — deploy stuck / timeout on `db:prepare`:**
@@ -218,7 +220,7 @@ Repo-side Phase 2 fixes (done): `config/cable.yml` → `solid_cable`; `config/en
 - [ ] **P5.2** Migration policy: backward-compatible migrations only
 - [ ] **P5.3** One **backup restore drill** on Postgres (infrastructure MVP checklist)
 - [ ] **P5.4** Optional: enable **PITR** before real users
-- [ ] **P5.5** Update root [`AGENTS.md`](../AGENTS.md) deploy pointer if any new env vars or commands
+- [x] **P5.5** Update root [`AGENTS.md`](../AGENTS.md) deploy pointer if any new env vars or commands
 - [ ] **P5.6** Optional: `railway mcp install` for Cursor
 
 **Edge — bad migration shipped:** Redeploy previous **app** image; restore DB from backup/PITR fork — human-approved ([PITR docs](https://docs.railway.com/volumes/point-in-time-recovery)).
@@ -231,8 +233,8 @@ Repo-side Phase 2 fixes (done): `config/cable.yml` → `solid_cable`; `config/en
 
 - [ ] **V1** Autodeploy: merge/push to `main` → new Railway deployment without manual `railway up`
 - [ ] **V2** Wait for CI: failed lint on `main` → deploy skipped
-- [ ] **V3** `/up` returns 200 after deploy
-- [ ] **V4** Four DBs exist; `db:prepare` succeeds for primary + cache + queue + cable
+- [x] **V3** `/up` returns 200 after deploy — verified via CLI deploy (`web-production-8431bc.up.railway.app/up`)
+- [x] **V4** Four DBs exist; `db:prepare` succeeds for primary + cache + queue + cable — verified on deploy (re-run after Phase 4 autodeploy)
 - [ ] **V5** `bin/ci` still the local pre-push habit; production secrets not in git
 
 ---
@@ -258,10 +260,10 @@ No `RAILWAY_TOKEN` in GitHub for deploy. Optional future: add RSpec to GHA so Wa
 
 ## Implementation order
 
-1. Add `railway.toml` + any production.rb / cable.yml fixes.
-2. Execute Phases 0–4 in Railway dashboard/CLI.
-3. Update `tech-stack.md` deploy flow note.
-4. Check off checkpoints in this file as you go.
+1. ~~Add `railway.toml` + production.rb / cable.yml / entrypoint fixes.~~ **Done** (committed).
+2. ~~Phases 0–3~~ **Done** via CLI; **Phase 4** next (GitHub source in dashboard).
+3. ~~Update `tech-stack.md` and `infrastructure.md`.~~ **Done**.
+4. Check off checkpoints in this file as you go — then Phase 5–6 after autodeploy.
 
 ---
 

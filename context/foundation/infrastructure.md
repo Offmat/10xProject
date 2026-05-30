@@ -79,7 +79,7 @@ The team chose Railway for MCP speed and one-project Postgres. Week one deploys 
 ## Operational Story
 
 - **Preview deploys**: Create a `staging` environment in the Railway project (duplicate env or separate branch deploy). Railway supports per-environment services and variables; PR previews are not automatic like Vercel — use a staging service or ephemeral environment. Fork PRs need explicit project-token / workflow setup.
-- **Secrets**: Service variables in Railway project/environment (encrypted at rest). Set `RAILS_MASTER_KEY`, `SECRET_KEY_BASE`, and DB credentials via dashboard or `railway variables set`. GitHub Actions uses `RAILWAY_TOKEN` (project token) for deploy-only CI. Rotation: update variable → `railway redeploy`. Agents may set non-production secrets via MCP/CLI; production credential rotation should stay human-approved.
+- **Secrets**: Service variables in Railway project/environment (encrypted at rest). Set `RAILS_MASTER_KEY` and DB URLs via dashboard or `railway variable set`. **Production deploy trigger:** Railway GitHub autodeploy on `main` with **Wait for CI** — not a GitHub Actions `railway up` workflow and **no** `RAILWAY_TOKEN` in GitHub Secrets for deploy (see @context/changes/deployment-plan/deployment-plan.md). Optional: project token + GHA only if you deliberately choose CLI deploy in CI instead of Railway webhooks. Rotation: update variable → redeploy. Agents may set non-production secrets via MCP/CLI; production credential rotation should stay human-approved.
 - **Rollback**: Dashboard → Deployments → select prior successful deploy → **Redeploy**. CLI: `railway redeploy` redeploys *current* code; for prior artifact use deployment ID from `railway deployment list` and dashboard Redeploy. DB migrations do not roll back automatically — keep migrations backward-compatible or restore from backup/PITR fork.
 - **Approval**: Human should approve production deploys, primary secret rotation, Postgres HA conversion, and PITR restore cutover. Agents may run `railway up` to staging, tail logs, and set non-prod variables unattended.
 - **Logs**: `railway logs` (stream), `railway logs -n 100 --json`, `railway logs --build`, `railway logs <DEPLOYMENT_ID>`. MCP tools expose deploy and log operations. Metrics: `railway metrics`.
@@ -90,10 +90,12 @@ The team chose Railway for MCP speed and one-project Postgres. Week one deploys 
 
 | Database | Purpose |
 |---|---|
-| `all_aboard_production` | Primary app data (users, friends, sessions, stats) |
+| `railway` (Railway default via `${{Postgres.DATABASE_URL}}`) | Primary app data at MVP — Rails merges `DATABASE_URL` over `database.yml` names |
 | `all_aboard_production_cache` | Solid Cache |
 | `all_aboard_production_queue` | Solid Queue (future background jobs) |
 | `all_aboard_production_cable` | Solid Cable (future WebSockets) |
+
+`config/database.yml` lists `all_aboard_production` for the primary connection name; in production on Railway the effective database is whatever `DATABASE_URL` specifies (currently `railway`).
 
 Create extra databases after Postgres provision:
 
@@ -121,6 +123,22 @@ CREATE DATABASE all_aboard_production_cable;
 | Shared Postgres blast radius (multi-MVP) | Devil's advocate | L | M | Separate DB names and users per app; no shared `DATABASE_URL` |
 | Local `railway run` cannot reach internal Postgres | Unknown unknowns | M | L | Run migrations only in deploy entrypoint or `railway ssh` |
 | Solid* load inflates single Postgres usage | Research finding | M | M | Monitor metrics; split to dedicated Postgres service if queue load grows |
+| Thruster listens on wrong port vs Railway `PORT` | Deploy session (May 2026) | M | M | `bin/docker-entrypoint` sets `HTTP_PORT` from runtime `PORT`; do not use `${{PORT}}` in Railway service variables |
+
+## Current deployment (May 2026)
+
+Executed per @context/changes/deployment-plan/deployment-plan.md (Phases 0–3 complete; Phase 4 GitHub autodeploy pending):
+
+| Item | Value |
+|---|---|
+| Railway project | `all-aboard` |
+| Services | `Postgres`, `web` |
+| Production URL | `https://web-production-8431bc.up.railway.app` |
+| Health | `/up` → 200 |
+| Builder | `railway.toml` → Dockerfile (Thruster + jemalloc) |
+| Cable (production) | `solid_cable` — no Redis service |
+| First deploy | `railway up` from linked repo (CLI); GitHub source not wired yet |
+| Open ops | Postgres backups (P1.4), spend limit (P1.6), GitHub autodeploy + Wait for CI (Phase 4) |
 
 ## Getting Started
 
@@ -129,8 +147,9 @@ CREATE DATABASE all_aboard_production_cable;
 2. **Link project and add Postgres** (from repo root):
    ```bash
    railway login
-   railway init          # create or link project
-   railway add           # select PostgreSQL
+   railway init --name all-aboard   # run railway link if init times out without linking
+   railway add --database postgres --json
+   railway add --service web --json
    ```
 
 3. **Configure builder** — prefer the existing production Dockerfile (Ruby 3.4.4, Thruster, jemalloc) over Nixpacks defaults. In Railway service settings set builder to **Dockerfile**, or add `railway.toml`:
@@ -140,25 +159,32 @@ CREATE DATABASE all_aboard_production_cable;
    dockerfilePath = "Dockerfile"
    ```
 
-4. **Set secrets** (dashboard or CLI):
+4. **Set secrets** (dashboard or CLI) — see variable table in @context/changes/deployment-plan/deployment-plan.md:
    ```bash
-   railway variables set RAILS_MASTER_KEY="$(cat config/master.key)"
-   railway variables set RAILS_ENV=production
+   railway service link web
+   printf "%s" "$(cat config/master.key)" | railway variable set RAILS_MASTER_KEY --stdin --service web
+   railway variable set RAILS_ENV=production --service web
+   railway variable set DATABASE_URL='${{Postgres.DATABASE_URL}}' --service web
+   # CACHE_DATABASE_URL, QUEUE_DATABASE_URL, CABLE_DATABASE_URL — see deployment plan
    ```
-   Railway injects `DATABASE_URL` from the linked Postgres service. Create cache/queue/cable databases (SQL above) and ensure `config/database.yml` production URLs resolve (same host, different database names).
+   Create cache/queue/cable databases (SQL above). Thruster: `bin/docker-entrypoint` exports `HTTP_PORT` from Railway's runtime `PORT`.
 
 5. **Deploy and verify**:
    ```bash
-   railway up --ci          # CI-friendly: build logs, exit on build complete
-   railway logs             # runtime logs
-   railway connect postgres # psql shell for DB setup
+   railway up --detach
+   railway logs --build       # image build
+   railway logs               # runtime; look for db:prepare
+   curl -I https://<your-domain>/up
    ```
 
 6. **Agent MCP** (optional): `railway mcp install` — configures local MCP for Cursor; use `--remote` for hosted OAuth MCP.
 
-7. **GitHub Actions** — use project token (`RAILWAY_TOKEN`) with `railway up --ci` on merge to `main`; store token in GitHub Secrets. Aligns with `tech-stack.md` CI intent (auto-deploy-on-merge).
+7. **GitHub autodeploy (Phase 4)** — in Railway dashboard: service `web` → connect repo `Offmat/10xProject`, branch `main`, enable autodeploy and **Wait for CI**. GitHub Actions (`.github/workflows/ci.yml`) runs quality gates only — **do not** add a GHA `railway up` deploy workflow or `RAILWAY_TOKEN` for production deploy.
 
-**Note:** `bin/docker-entrypoint` already runs `db:prepare` when starting `./bin/rails server` via Thruster — no separate release-phase command needed if start command stays `./bin/thrust ./bin/rails server`.
+**Notes:**
+
+- `railway.toml` sets `preDeployCommand = "bin/rails db:prepare"`; `bin/docker-entrypoint` also runs `db:prepare` before `./bin/rails server` — both run today; consider removing entrypoint `db:prepare` once pre-deploy is stable.
+- Start command stays `./bin/thrust ./bin/rails server` (Dockerfile `CMD`).
 
 ## Out of Scope
 
