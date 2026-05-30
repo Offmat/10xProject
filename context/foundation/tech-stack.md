@@ -5,9 +5,9 @@ project_name: all-aboard
 hints:
   language_family: ruby
   team_size: solo
-  deployment_target: fly
+  deployment_target: railway
   ci_provider: github-actions
-  ci_default_flow: auto-deploy-on-merge
+  ci_default_flow: railway-autodeploy-on-merge-with-gha-quality-gates
   bootstrapper_confidence: verified
   path_taken: standard
   quality_override: false
@@ -21,4 +21,4 @@ hints:
 
 ## Why this stack
 
-all-aBoard is a greenfield web-app with a three-week, after-hours MVP: email/password auth, friend circles, session logging with confirm/reject, in-app notifications, and filtered stats — all natural Rails territory. You chose Ruby and accepted the vetted default for web apps in that family: Ruby on Rails with PostgreSQL, which the bootstrapper has run end-to-end (verified confidence). Fly matches the starter’s default deploy path; GitHub Actions with auto-deploy-on-merge keeps CI simple for a solo build. Auth is in scope per the PRD; payments, realtime websockets, AI/LLM features, and background-job queues are not required for v1.
+all-aBoard is a greenfield web-app with a three-week, after-hours MVP: email/password auth, friend circles, session logging with confirm/reject, in-app notifications, and filtered stats — all natural Rails territory. You chose Ruby and accepted the vetted default for web apps in that family: Ruby on Rails with PostgreSQL, which the bootstrapper has run end-to-end (verified confidence). Deploy target is **Railway** with co-located managed PostgreSQL (see @context/foundation/infrastructure.md); **Railway autodeploy on merge to `main`** with GitHub Actions quality gates (Wait for CI) — not a GHA deploy workflow. Auth is in scope per the PRD; payments, realtime websockets, AI/LLM features, and background-job queues are not required for v1.

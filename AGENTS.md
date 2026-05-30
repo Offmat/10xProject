@@ -1,6 +1,6 @@
 # Repository Guidelines
 
-all-aBoard is a Rails 8.1 app (Ruby 3.4, PostgreSQL, Hotwire via importmap) for logging board-game sessions across friend groups. Product scope: @context/foundation/prd.md. Stack and deploy intent: @context/foundation/tech-stack.md.
+all-aBoard is a Rails 8.1 app (Ruby 3.4, PostgreSQL, Hotwire via importmap) for logging board-game sessions across friend groups. Product scope: @context/foundation/prd.md. Stack: @context/foundation/tech-stack.md. Deploy platform: @context/foundation/infrastructure.md (Railway).
 
 ## Hard rules
 
@@ -13,7 +13,7 @@ all-aBoard is a Rails 8.1 app (Ruby 3.4, PostgreSQL, Hotwire via importmap) for 
 
 - `app/` — MVC, services, jobs, mailers; MVP domains in @app/AGENTS.md.
 - `config/` — app configuration; DB names `all_aboard_*` in @config/database.yml.
-- `context/foundation/` — PRD, tech stack, lessons; edit in place per @context/foundation/README.md.
+- `context/foundation/` — PRD, tech stack, infrastructure, lessons; edit in place per @context/foundation/README.md.
 - `context/changes/` — in-flight change folders; finish with `/10x-archive`, not by editing `archive/` directly.
 - `bin/` — `setup`, `ci`, `dev`, `rspec`, `rubocop`, `brakeman`, `bundler-audit`, `rails`.
 - Bootstrap audit: @context/changes/bootstrap-verification/verification.md.
@@ -43,4 +43,5 @@ Recent history uses short imperative subjects and occasional `lesson N:` prefixe
 ## Architecture pointers
 
 - MVP flows and business rules: @context/foundation/prd.md.
+- Deploy platform and DB strategy: @context/foundation/infrastructure.md.
 - 10x course skill router (Cursor): @.cursor/rules/10x-course.mdc — do not duplicate its tables here.
