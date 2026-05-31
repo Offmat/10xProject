@@ -5,7 +5,7 @@
 
 **Deploy model (target):** Railway **GitHub autodeploy** on `main` — **not** a `railway up` GitHub Actions workflow. Existing [`.github/workflows/ci.yml`](../../.github/workflows/ci.yml) stays for quality gates only; enable **Wait for CI** so deploy runs only after CI passes ([Railway docs](https://docs.railway.com/deployments/github-autodeploys)).
 
-**Live today (Phases 0–3):** Project `all-aboard`, services `Postgres` + `web`, production URL `https://web-production-8431bc.up.railway.app` (`/up` → 200; `/` → 404 until a `root` route exists). First deploy via `railway up`; GitHub source **not** connected yet (Phase 4). `db:prepare` runs in both `railway.toml` `preDeployCommand` and `bin/docker-entrypoint` — optional follow-up to drop one.
+**Live today (Phases 0–4, partial 6):** Project `all-aboard`, services `Postgres` + `web`, production URL `https://web-production-8431bc.up.railway.app` (`/up` → 200). GitHub autodeploy on `main` with **Wait for CI** — verified: failed GHA on `main` → Railway deploy does not run (**V2**). `db:prepare` runs in both `railway.toml` `preDeployCommand` and `bin/docker-entrypoint` — optional follow-up to drop one.
 
 ---
 
@@ -96,6 +96,23 @@ Rails merges `DATABASE_URL` and `CACHE_DATABASE_URL` / `QUEUE_DATABASE_URL` / `C
 
 Mark `[x]` as you complete each item.
 
+### Ops drills timing (deploy, DB, backups)
+
+Phases **0–4** validated **empty-stack** infra: image build, env vars, four Postgres databases, `db:prepare` with no domain migrations, health check.
+
+**Defer drills and re-verification until after the first MVP vertical slice(s)** — at least one **domain migration** shipped via the normal deploy path (seeds optional; migrations matter more than `db:seed`).
+
+| Deferred after first slice | Why wait |
+|---------------------------|----------|
+| **P5.1** rollback rehearsal | Meaningful only when a deploy carries schema/code you care about reverting |
+| **P5.2** migration policy | Needs real migrations to exercise backward-compatible rules |
+| **P5.3** backup restore drill | Empty DB proves Railway UI, not recovery of app data |
+| **P5.4** PITR (optional) | Enable before real users; drill value rises once primary DB holds domain rows |
+| **V4** follow-up | Re-run `db:prepare`/migration output on autodeploy once domain migrations exist |
+| **Phase 7** staging | Isolates migration experiments once you have migrations to experiment with |
+
+**Not deferred by this rule:** GitHub autodeploy (Phase 4), Wait for CI gate (**V2** — verified), `/up` (V3), `bin/ci` habit (V5), enabling Postgres **Backups** toggle (**P1.4** — config only, not a restore test), optional **P5.6** MCP.
+
 ### Phase 0 — Prerequisites
 
 - [x] **P0.1** Railway account + Hobby/billing understood (~$10–15/mo per infrastructure estimate)
@@ -114,7 +131,7 @@ Mark `[x]` as you complete each item.
 - [x] **P1.1** `railway init` → new project `all-aboard` (or link existing). If the repo is not linked afterward, run `railway link --project all-aboard` (or `--project <id>`) from the repo root — `init` creates the project but a timeout or non-interactive shell may leave the local directory unlinked.
 - [x] **P1.2** `railway add --database postgres --json` → **PostgreSQL** service (always pass `--json`; verify with `railway service list --json` before retrying)
 - [x] **P1.3** `railway add --service web --json` → empty **Web** service. If the CLI still prompts interactively, choose **Empty Service**, name `web`, then **Esc** at “Enter a variable” — env vars are set in Phase 2, not here.
-- [ ] **P1.4** Postgres → **Backups** enabled (MVP posture) — dashboard only
+- [ ] **P1.4** Postgres → **Backups** enabled (MVP posture) — dashboard only (enable anytime; **restore drill** deferred → **P5.3** after first app slice)
 - [x] **P1.5** After P1.1–P1.2: `railway connect postgres` **or** local `psql` via Postgres `DATABASE_PUBLIC_URL` → run SQL from infrastructure.md:
 
 ```sql
@@ -192,12 +209,12 @@ Repo-side Phase 2 fixes (done): `config/cable.yml` → `solid_cable`; `config/en
 
 ### Phase 4 — GitHub autodeploy on `main`
 
-- [ ] **P4.1** Web service → **Connect GitHub repo** (`Offmat/10xProject`) — dashboard required; CLI `environment edit` prompts interactively
-- [ ] **P4.2** **Trigger branch:** `main`; **Autodeploy:** Enabled
-- [ ] **P4.3** **Wait for CI:** Enabled (`source.checkSuites` / “Wait for CI” toggle)
-- [ ] **P4.4** **Watch paths:** empty or include `/` (avoid skipping Rails changes)
-- [ ] **P4.5** Push empty commit or doc change to `main` → verify deployment **WAITING** → **SUCCESS** after GHA
-- [ ] **P4.6** Confirm **no** deploy workflow in GHA — only existing CI jobs
+- [x] **P4.1** Web service → **Connect GitHub repo** (`Offmat/10xProject`) — dashboard required; CLI `environment edit` prompts interactively
+- [x] **P4.2** **Trigger branch:** `main`; **Autodeploy:** Enabled
+- [x] **P4.3** **Wait for CI:** Enabled (`source.checkSuites` / “Wait for CI” toggle)
+- [x] **P4.4** **Watch paths:** empty or include `/` (avoid skipping Rails changes)
+- [x] **P4.5** Push empty commit or doc change to `main` → verify deployment **WAITING** → **SUCCESS** after GHA
+- [x] **P4.6** Confirm **no** deploy workflow in GHA — only existing CI jobs
 
 **Dashboard path:** Project `all-aboard` → service `web` → **Settings** → **Source** → Connect `Offmat/10xProject`, branch `main`, enable autodeploy + Wait for CI.
 
@@ -208,22 +225,24 @@ Repo-side Phase 2 fixes (done): `config/cable.yml` → `solid_cable`; `config/en
 3. Disconnect/reconnect repo; Cmd+K → Deploy Latest Commit.
 4. Check [Railway + GitHub status](https://status.railway.app) for webhook outages.
 
-**Edge — CI passes but deploy SKIPPED:** Failed GHA job on push; or watch paths exclude changed files — click **Show Skipped** in deployment history.
+**Edge — CI fails, deploy never runs:** Verified — Railway waits on GHA; failed workflow on `main` blocks deploy. Fix Brakeman/RuboCop/importmap (or failing job) before merge.
 
-**Edge — CI fails, deploy never runs:** Fix Brakeman/RuboCop/importmap on branch before merge.
+**Edge — deploy SKIPPED while CI passed:** Watch paths exclude changed files — click **Show Skipped** in deployment history; or investigate Railway/GitHub webhook lag.
 
 ---
 
 ### Phase 5 — Production hardening (MVP)
 
-- [ ] **P5.1** Document rollback: Dashboard → Deployments → prior success → **Redeploy** (schema does not roll back)
-- [ ] **P5.2** Migration policy: backward-compatible migrations only
-- [ ] **P5.3** One **backup restore drill** on Postgres (infrastructure MVP checklist)
-- [ ] **P5.4** Optional: enable **PITR** before real users
+**Schedule:** **P5.1–P5.4** run **after the first MVP vertical slice(s)** with domain migrations (see [Ops drills timing](#ops-drills-timing-deploy-db-backups)). **P5.5** done; **P5.6** optional anytime.
+
+- [ ] **P5.1** Document rollback: Dashboard → Deployments → prior success → **Redeploy** (schema does not roll back) — **after first app slice**
+- [ ] **P5.2** Migration policy: backward-compatible migrations only — **after first app slice**
+- [ ] **P5.3** One **backup restore drill** on Postgres (infrastructure MVP checklist) — **after first app slice**
+- [ ] **P5.4** Optional: enable **PITR** before real users — **after first app slice** (enable + drill before inviting real users)
 - [x] **P5.5** Update root [`AGENTS.md`](../AGENTS.md) deploy pointer if any new env vars or commands
 - [ ] **P5.6** Optional: `railway mcp install` for Cursor
 
-**Edge — bad migration shipped:** Redeploy previous **app** image; restore DB from backup/PITR fork — human-approved ([PITR docs](https://docs.railway.com/volumes/point-in-time-recovery)).
+**Edge — bad migration shipped** (exercise after first slice when migrations exist): Redeploy previous **app** image; restore DB from backup/PITR fork — human-approved ([PITR docs](https://docs.railway.com/volumes/point-in-time-recovery)).
 
 **Edge — spend cap hit:** Services may **stop** — raise cap or reduce resources; check Usage weekly.
 
@@ -231,15 +250,17 @@ Repo-side Phase 2 fixes (done): `config/cable.yml` → `solid_cable`; `config/en
 
 ### Phase 6 — Verification checklist
 
-- [ ] **V1** Autodeploy: merge/push to `main` → new Railway deployment without manual `railway up`
-- [ ] **V2** Wait for CI: failed lint on `main` → deploy skipped
+- [x] **V1** Autodeploy: merge/push to `main` → new Railway deployment without manual `railway up`
+- [x] **V2** Wait for CI: failed GHA on `main` → Railway deploy does not run — verified manually
 - [x] **V3** `/up` returns 200 after deploy — verified via CLI deploy (`web-production-8431bc.up.railway.app/up`)
-- [x] **V4** Four DBs exist; `db:prepare` succeeds for primary + cache + queue + cable — verified on deploy (re-run after Phase 4 autodeploy)
+- [x] **V4** Four DBs exist; `db:prepare` succeeds for primary + cache + queue + cable — verified on deploy (empty schema). **Follow-up after first app slice:** re-verify deploy logs show domain migration output on autodeploy
 - [ ] **V5** `bin/ci` still the local pre-push habit; production secrets not in git
 
 ---
 
 ### Phase 7 — Optional staging (later)
+
+**Schedule:** **after first app slice** (needs domain migrations worth isolating — see [Ops drills timing](#ops-drills-timing-deploy-db-backups)).
 
 - [ ] Duplicate **environment** or branch-deploy service `staging` + separate Postgres (isolates migration experiments per infrastructure pre-mortem)
 
@@ -261,9 +282,9 @@ No `RAILWAY_TOKEN` in GitHub for deploy. Optional future: add RSpec to GHA so Wa
 ## Implementation order
 
 1. ~~Add `railway.toml` + production.rb / cable.yml / entrypoint fixes.~~ **Done** (committed).
-2. ~~Phases 0–3~~ **Done** via CLI; **Phase 4** next (GitHub source in dashboard).
+2. ~~Phases 0–4~~ **Done** (GitHub autodeploy + Wait for CI; **V2** verified).
 3. ~~Update `tech-stack.md` and `infrastructure.md`.~~ **Done**.
-4. Check off checkpoints in this file as you go — then Phase 5–6 after autodeploy.
+4. **Phase 5 deploy/DB/backup drills (P5.1–P5.4) and Phase 6 V4 follow-up** after the first MVP vertical slice(s) with domain migrations; see [Ops drills timing](#ops-drills-timing-deploy-db-backups). **V5** anytime.
 
 ---
 
