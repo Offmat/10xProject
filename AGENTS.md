@@ -34,7 +34,7 @@ all-aBoard is a Rails 8.1 app (Ruby 3.4, PostgreSQL, Hotwire via importmap) for 
 
 ## Commits and CI
 
-Recent history uses short imperative subjects and occasional `lesson N:` prefixes; no strict Conventional Commits rule yet. PRs to `main` must pass @.github/workflows/ci.yml: Brakeman, bundler-audit, importmap audit, RuboCop. Local `bin/ci` also runs RSpec; GitHub Actions has no `rspec` job yet.
+Recent history uses short imperative subjects and occasional `lesson N:` prefixes; no strict Conventional Commits rule yet. PRs to `main` must pass @.github/workflows/ci.yml: Brakeman, bundler-audit, importmap audit, RuboCop, RSpec (`spec/`). Local `bin/ci` runs the same checks via @config/ci.rb.
 
 ## Security
 
