@@ -274,9 +274,9 @@ This scaffold intentionally tracks Devise-adjacent conventions. If Devise is ado
 
 #### Automated
 
-- [x] 3.1 Auth helper, model, and request coverage pass in `bin/rspec`
-- [x] 3.2 Full local CI passes via `bin/ci`
+- [x] 3.1 Auth helper, model, and request coverage pass in `bin/rspec` — 21426b3
+- [x] 3.2 Full local CI passes via `bin/ci` — 21426b3
 
 #### Manual
 
-- [x] 3.3 A new contributor can follow documented auth conventions and locate main auth boundaries quickly
+- [x] 3.3 A new contributor can follow documented auth conventions and locate main auth boundaries quickly — 21426b3
