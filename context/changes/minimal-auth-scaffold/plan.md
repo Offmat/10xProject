@@ -261,22 +261,22 @@ This scaffold intentionally tracks Devise-adjacent conventions. If Devise is ado
 
 #### Automated
 
-- [x] 2.1 Rate-limit behavior is covered by request specs and passes in `bin/rspec`
-- [x] 2.2 Audit logging expectations are validated at spec level in `bin/rspec`
-- [x] 2.3 Security checks pass in `bin/brakeman`
+- [x] 2.1 Rate-limit behavior is covered by request specs and passes in `bin/rspec` — 2de6664
+- [x] 2.2 Audit logging expectations are validated at spec level in `bin/rspec` — 2de6664
+- [x] 2.3 Security checks pass in `bin/brakeman` — 2de6664
 
 #### Manual
 
-- [x] 2.4 Repeated failed login attempts trigger throttling behavior as specified
-- [x] 2.5 Sign-in/sign-out actions produce expected audit log entries in development logs
+- [x] 2.4 Repeated failed login attempts trigger throttling behavior as specified — 2de6664
+- [x] 2.5 Sign-in/sign-out actions produce expected audit log entries in development logs — 2de6664
 
 ### Phase 3: Test harness and migration-friendly convention lock-in
 
 #### Automated
 
-- [ ] 3.1 Auth helper, model, and request coverage pass in `bin/rspec`
-- [ ] 3.2 Full local CI passes via `bin/ci`
+- [x] 3.1 Auth helper, model, and request coverage pass in `bin/rspec`
+- [x] 3.2 Full local CI passes via `bin/ci`
 
 #### Manual
 
-- [ ] 3.3 A new contributor can follow documented auth conventions and locate main auth boundaries quickly
+- [x] 3.3 A new contributor can follow documented auth conventions and locate main auth boundaries quickly

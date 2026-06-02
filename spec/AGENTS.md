@@ -20,6 +20,14 @@ Application conventions: @app/AGENTS.md. Repo commands and CI: @AGENTS.md.
 | `spec/factories/` | FactoryBot definitions (`create(:user)`, etc.) |
 | `spec/support/` | shared helpers — auto-loaded via @spec/rails_helper.rb |
 
+## Authentication specs
+
+- Request specs are the primary auth integration surface (`spec/requests/authentication_spec.rb`).
+- Use helpers from @spec/support/authentication_helpers.rb: `sign_in_as`, `sign_out`, `register_user` (default password `'password'`).
+- Rate-limit request specs only: stub `ActionController::Base.cache_store#increment` with a `MemoryStore` in that example group's `before` block (`config.cache_store` is `:null_store` in test). Do not stub globally.
+- Assert externally visible behavior (redirects, flash, guards) — not cookie/session record internals unless testing the model layer.
+- Auth audit expectations: prefer `expect(AuthAuditLogger).to receive(:log).with(hash_including(...))` before the request; service unit coverage lives in `spec/services/auth_audit_logger_spec.rb`.
+
 ## Conventions
 
 - Prefer FactoryBot (`create`, `build`) over YAML fixtures. Copy `describe`/`context`/`it` naming and matcher style from the nearest `_spec.rb` in the same folder. Run `bin/rubocop` on touched spec files.

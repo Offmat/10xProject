@@ -34,34 +34,23 @@ RSpec.describe 'Authentication', type: :request do
 
   describe 'sign up, sign in, and sign out' do
     it 'registers a user, signs in, accesses a protected action, and signs out' do
-      post users_path, params: {
-        user: {
-          email: 'newplayer@example.com',
-          password: 'password',
-          password_confirmation: 'password'
-        }
-      }
+      register_user(email: 'newplayer@example.com')
 
       expect(response).to redirect_to(root_path)
       follow_redirect!
       expect(response).to have_http_status(:ok)
 
-      delete session_path
-      expect(response).to redirect_to(new_session_path)
+      sign_out
 
-      post session_path, params: { email: 'newplayer@example.com', password: 'password' }
-      expect(response).to redirect_to(root_url)
-      follow_redirect!
-
-      delete session_path
-      expect(response).to redirect_to(new_session_path)
+      sign_in_as(User.find_by!(email: 'newplayer@example.com'))
+      sign_out
     end
 
     it 'signs in an existing user' do
-      sign_in_as(create(:user))
+      user = create(:user)
 
-      delete session_path
-      expect(response).to redirect_to(new_session_path)
+      sign_in_as(user)
+      sign_out
     end
   end
 
@@ -86,11 +75,12 @@ RSpec.describe 'Authentication', type: :request do
 
   describe 'session creation rate limiting' do
     let(:user) { create(:user) }
-    let(:rate_limit_cache) { ActiveSupport::Cache::MemoryStore.new }
 
+    # test env uses :null_store; rate_limit needs a real increment backend
     before do
+      cache = ActiveSupport::Cache::MemoryStore.new
       allow(ActionController::Base.cache_store).to receive(:increment) do |key, amount = 1, **options|
-        rate_limit_cache.increment(key, amount, **options)
+        cache.increment(key, amount, **options)
       end
     end
 

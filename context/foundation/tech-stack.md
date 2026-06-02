@@ -32,3 +32,5 @@ Use Rails built-in authentication for MVP, but keep auth code close to Devise-st
 - Isolate auth plumbing in dedicated concerns/services; avoid spreading direct session internals across domain code.
 - Keep request specs centered on externally visible auth behavior (login/logout/guards), not private implementation details.
 - Avoid introducing custom auth primitives that diverge from mainstream Rails/Devise patterns unless required by product scope.
+
+Agent-oriented file map (F-01 scaffold): @app/AGENTS.md. Request-spec helpers: @spec/support/authentication_helpers.rb (`sign_in_as`, `sign_out`, `register_user`). Rate-limit specs stub cache increment only in their example group.

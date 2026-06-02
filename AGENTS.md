@@ -32,7 +32,7 @@ all-aBoard is a Rails 8.1 app (Ruby 3.4, PostgreSQL, Hotwire via importmap) for 
 - Ruby 3.4.4 (@.ruby-version).
 - Prefer single-quoted strings; use double quotes only when the string needs interpolation (`"#{…}"`) or embedded single quotes.
 - @app/controllers/application_controller.rb restricts to modern browsers; change only if the product requires broader support.
-- Auth convention: implement MVP auth with Rails built-ins, but keep naming and boundaries close to Devise patterns (`User`-centric model, `current_user` helpers, `authenticate_user!`-style guards, explicit sign-in/sign-out flow) to preserve an easy future migration path.
+- Auth convention: Rails built-ins with Devise-adjacent naming (`User`, `current_user`, `authenticate_user!`-style guards). File map and boundaries: @app/AGENTS.md (Authentication section). Stack rationale: @context/foundation/tech-stack.md (Auth implementation convention).
 
 ## Commits and CI
 
