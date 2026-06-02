@@ -246,29 +246,29 @@ This scaffold intentionally tracks Devise-adjacent conventions. If Devise is ado
 
 #### Automated
 
-- [x] 1.1 Auth dependencies install cleanly via `bin/setup`
-- [x] 1.2 Database prepare/migrations succeed via `bin/rails db:prepare`
-- [x] 1.3 Auth model and request specs pass via `bin/rspec`
-- [x] 1.4 Lint and static checks pass via `bin/rubocop` and `bin/brakeman`
+- [x] 1.1 Auth dependencies install cleanly via `bin/setup` — 01df31a
+- [x] 1.2 Database prepare/migrations succeed via `bin/rails db:prepare` — 01df31a
+- [x] 1.3 Auth model and request specs pass via `bin/rspec` — 01df31a
+- [x] 1.4 Lint and static checks pass via `bin/rubocop` and `bin/brakeman` — 01df31a
 
 #### Manual
 
-- [x] 1.5 User can sign up, sign in, and sign out from local app flow
-- [x] 1.6 Password reset request and reset completion flow work end-to-end in development
-- [x] 1.7 Public allowlist endpoints remain reachable while protected routes redirect/deny as intended
+- [x] 1.5 User can sign up, sign in, and sign out from local app flow — 01df31a
+- [x] 1.6 Password reset request and reset completion flow work end-to-end in development — 01df31a
+- [x] 1.7 Public allowlist endpoints remain reachable while protected routes redirect/deny as intended — 01df31a
 
 ### Phase 2: Harden authentication and observability
 
 #### Automated
 
-- [ ] 2.1 Rate-limit behavior is covered by request specs and passes in `bin/rspec`
-- [ ] 2.2 Audit logging expectations are validated at spec level in `bin/rspec`
-- [ ] 2.3 Security checks pass in `bin/brakeman`
+- [x] 2.1 Rate-limit behavior is covered by request specs and passes in `bin/rspec`
+- [x] 2.2 Audit logging expectations are validated at spec level in `bin/rspec`
+- [x] 2.3 Security checks pass in `bin/brakeman`
 
 #### Manual
 
-- [ ] 2.4 Repeated failed login attempts trigger throttling behavior as specified
-- [ ] 2.5 Sign-in/sign-out actions produce expected audit log entries in development logs
+- [x] 2.4 Repeated failed login attempts trigger throttling behavior as specified
+- [x] 2.5 Sign-in/sign-out actions produce expected audit log entries in development logs
 
 ### Phase 3: Test harness and migration-friendly convention lock-in
 

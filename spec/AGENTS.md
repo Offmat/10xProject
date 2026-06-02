@@ -7,6 +7,7 @@ Application conventions: @app/AGENTS.md. Repo commands and CI: @AGENTS.md.
 - Spec files end with `_spec.rb`; place them under the folder that mirrors `app/` (e.g. `app/models/user.rb` → `spec/models/user_spec.rb`).
 - Use `require 'rails_helper'` for anything loading Rails; `require 'spec_helper'` only for plain Ruby units with no Rails.
 - Do not commit examples that depend on production data or real external APIs.
+- Do not change application code solely to make specs pass. Prefer test-side fixes: stubs, helpers, factories, or `config/environments/test.rb`. If a production change is the only viable path, stop and ask how to proceed before editing `app/`.
 
 ## Layout
 
@@ -22,4 +23,5 @@ Application conventions: @app/AGENTS.md. Repo commands and CI: @AGENTS.md.
 ## Conventions
 
 - Prefer FactoryBot (`create`, `build`) over YAML fixtures. Copy `describe`/`context`/`it` naming and matcher style from the nearest `_spec.rb` in the same folder. Run `bin/rubocop` on touched spec files.
+- **Message expectations:** when verifying that code calls a collaborator, prefer setting the expectation before the action — `expect(Collaborator).to receive(:method).with(...)` then run the code under test. Use `allow` + `have_received` only when setup must run first (e.g. sign-in before asserting sign-out) or when one action needs several post-hoc assertions on the same mock.
 - Service integration specs: assert DB side effects and authorization boundaries, not only return values.
