@@ -246,16 +246,16 @@ This scaffold intentionally tracks Devise-adjacent conventions. If Devise is ado
 
 #### Automated
 
-- [ ] 1.1 Auth dependencies install cleanly via `bin/setup`
-- [ ] 1.2 Database prepare/migrations succeed via `bin/rails db:prepare`
-- [ ] 1.3 Auth model and request specs pass via `bin/rspec`
-- [ ] 1.4 Lint and static checks pass via `bin/rubocop` and `bin/brakeman`
+- [x] 1.1 Auth dependencies install cleanly via `bin/setup`
+- [x] 1.2 Database prepare/migrations succeed via `bin/rails db:prepare`
+- [x] 1.3 Auth model and request specs pass via `bin/rspec`
+- [x] 1.4 Lint and static checks pass via `bin/rubocop` and `bin/brakeman`
 
 #### Manual
 
-- [ ] 1.5 User can sign up, sign in, and sign out from local app flow
-- [ ] 1.6 Password reset request and reset completion flow work end-to-end in development
-- [ ] 1.7 Public allowlist endpoints remain reachable while protected routes redirect/deny as intended
+- [x] 1.5 User can sign up, sign in, and sign out from local app flow
+- [x] 1.6 Password reset request and reset completion flow work end-to-end in development
+- [x] 1.7 Public allowlist endpoints remain reachable while protected routes redirect/deny as intended
 
 ### Phase 2: Harden authentication and observability
 
