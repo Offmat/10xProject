@@ -31,6 +31,7 @@ all-aBoard is a Rails 8.1 app (Ruby 3.4, PostgreSQL, Hotwire via importmap) for 
 
 - Ruby 3.4.4 (@.ruby-version).
 - @app/controllers/application_controller.rb restricts to modern browsers; change only if the product requires broader support.
+- Auth convention: implement MVP auth with Rails built-ins, but keep naming and boundaries close to Devise patterns (`User`-centric model, `current_user` helpers, `authenticate_user!`-style guards, explicit sign-in/sign-out flow) to preserve an easy future migration path.
 
 ## Commits and CI
 
