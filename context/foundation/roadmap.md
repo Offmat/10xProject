@@ -32,8 +32,8 @@ The product wedge — the one trait that, if removed, makes this a generic score
 | ID | Change ID | Outcome (user can …) | Prerequisites | PRD refs | Status |
 |---|---|---|---|---|---|
 | F-01 | minimal-auth-scaffold | (foundation) email/password auth scaffold: User model, sessions, protected routes | — | FR-001, Access Control | done |
-| F-02 | seed-game-catalog | (foundation) predefined catalog (~20 games) available for session picker | F-01 | FR-009, Business Logic | proposed |
-| S-01 | email-password-auth | create an account, log in, and log out | F-01 | FR-001, US-01 | proposed |
+| F-02 | seed-game-catalog | (foundation) predefined catalog (~20 games) available for session picker | F-01 | FR-009, Business Logic | ready |
+| S-01 | email-password-auth | create an account, log in, and log out | F-01 | FR-001, US-01 | ready |
 | S-02 | mutual-friend-circle | send a friend request; accept or decline; see active friends | S-01 | FR-002, US-01 | proposed |
 | S-03 | log-session-with-confirm | log a session with catalog game, registered friend, and unregistered player; co-player gets in-app notification and confirms or rejects; logger sees history immediately | S-02, F-02 | US-01, FR-003, FR-004, FR-005, FR-006, FR-009 | proposed |
 | S-04 | session-stats-filters | view statistics for sessions they participated in, with filters | S-03 | FR-007 | proposed |
@@ -85,7 +85,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Blockers:** —
 - **Unknowns:** —
 - **Risk:** Small, explicit seed — avoids inventing catalog UI/API before the first session slice needs it; does not build session logging ahead of S-03.
-- **Status:** proposed
+- **Status:** ready
 
 ## Slices
 
@@ -94,13 +94,13 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Outcome:** user can create an account, log in, and log out.
 - **Change ID:** email-password-auth
 - **PRD refs:** FR-001, US-01
-- **Prerequisites:** F-01 ([minimal-auth-scaffold](../changes/minimal-auth-scaffold/plan.md#impl-review-addendum-2026-06-04) — carry forward impl-review deferrals below)
-- **Carry-forward from F-01 impl review** ([plan addendum](../changes/minimal-auth-scaffold/plan.md#impl-review-addendum-2026-06-04)): session cookie TTL + server-side active scope; `Session.sweep` (index on `sessions.created_at` already landed); staging `secure:` cookie if needed; ambiguous registration errors (no email enumeration)
+- **Prerequisites:** F-01 ([minimal-auth-scaffold](../archive/2026-06-02-minimal-auth-scaffold/plan.md#impl-review-addendum-2026-06-04) — carry forward impl-review deferrals below)
+- **Carry-forward from F-01 impl review** ([plan addendum](../archive/2026-06-02-minimal-auth-scaffold/plan.md#impl-review-addendum-2026-06-04)): session cookie TTL + server-side active scope; `Session.sweep` (index on `sessions.created_at` already landed); staging `secure:` cookie if needed; ambiguous registration errors (no email enumeration)
 - **Parallel with:** —
 - **Blockers:** —
 - **Unknowns:** —
 - **Risk:** First user-visible slice; proves deploy path still works with real users before friend/session complexity.
-- **Status:** proposed
+- **Status:** ready
 
 ### S-02: Mutual friend circle
 
@@ -144,9 +144,9 @@ Issue URLs and board setup: @context/foundation/backlog.md.
 
 | Roadmap ID | Change ID | Suggested issue title | Ready for `/10x-plan` | Notes |
 |---|---|---|---|---|
-| F-01 | minimal-auth-scaffold | Scaffold email/password auth (User, sessions, protection) | yes | Unblocks all slices; no prerequisites |
-| F-02 | seed-game-catalog | Seed predefined board-game catalog (~20 titles) | no | After F-01 |
-| S-01 | email-password-auth | Sign up, log in, log out | no | After F-01 |
+| F-01 | minimal-auth-scaffold | Scaffold email/password auth (User, sessions, protection) | — | Done (archived) |
+| F-02 | seed-game-catalog | Seed predefined board-game catalog (~20 titles) | yes | F-01 done |
+| S-01 | email-password-auth | Sign up, log in, log out | yes | F-01 done; carry forward F-01 impl-review deferrals |
 | S-02 | mutual-friend-circle | Friend requests with mutual acceptance | no | After S-01 |
 | S-03 | log-session-with-confirm | Log session + in-app confirm/reject (US-01) | no | North star; after S-02 and F-02 |
 | S-04 | session-stats-filters | Personal session stats with filters | no | After S-03 |
