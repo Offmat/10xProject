@@ -3,7 +3,7 @@ project: all-aBoard
 version: 1
 status: draft
 created: 2026-05-31
-updated: 2026-05-31
+updated: 2026-06-04
 prd_version: 1
 main_goal: speed
 top_blocker: time
@@ -31,7 +31,7 @@ The product wedge — the one trait that, if removed, makes this a generic score
 
 | ID | Change ID | Outcome (user can …) | Prerequisites | PRD refs | Status |
 |---|---|---|---|---|---|
-| F-01 | minimal-auth-scaffold | (foundation) email/password auth scaffold: User model, sessions, protected routes | — | FR-001, Access Control | ready |
+| F-01 | minimal-auth-scaffold | (foundation) email/password auth scaffold: User model, sessions, protected routes | — | FR-001, Access Control | done |
 | F-02 | seed-game-catalog | (foundation) predefined catalog (~20 games) available for session picker | F-01 | FR-009, Business Logic | proposed |
 | S-01 | email-password-auth | create an account, log in, and log out | F-01 | FR-001, US-01 | proposed |
 | S-02 | mutual-friend-circle | send a friend request; accept or decline; see active friends | S-01 | FR-002, US-01 | proposed |
@@ -72,7 +72,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Blockers:** —
 - **Unknowns:** —
 - **Risk:** Sequenced first because baseline reports auth absent; without it no slice is plannable. Kept minimal — full login UX ships in S-01.
-- **Status:** ready
+- **Status:** done
 
 ### F-02: Seed game catalog
 
@@ -166,4 +166,4 @@ _No cross-cutting roadmap questions. PRD `## Open Questions` were resolved 2026-
 
 ## Done
 
-(Empty on first generation. `/10x-archive` appends here when a matching change is archived.)
+- **F-01: (foundation) User model, email/password credentials, session issuance, and route protection are in place for vertical slices to build on.** — Archived 2026-06-04 → `context/archive/2026-06-02-minimal-auth-scaffold/`. Lesson: —.
