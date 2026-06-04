@@ -1,9 +1,9 @@
 ---
 change_id: minimal-auth-scaffold
 title: Minimal email/password auth scaffold
-status: implemented
+status: impl_reviewed
 created: 2026-06-02
-updated: 2026-06-02
+updated: 2026-06-04
 archived_at: null
 ---
 

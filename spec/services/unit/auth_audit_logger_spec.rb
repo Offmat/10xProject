@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe AuthAuditLogger do
+RSpec.describe AuthAuditLogger, type: :service do
   describe '.log' do
     it 'emits structured auth audit entries without secrets' do
       expect(Rails.logger).to receive(:info) do |message|

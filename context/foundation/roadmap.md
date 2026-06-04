@@ -94,7 +94,8 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Outcome:** user can create an account, log in, and log out.
 - **Change ID:** email-password-auth
 - **PRD refs:** FR-001, US-01
-- **Prerequisites:** F-01
+- **Prerequisites:** F-01 ([minimal-auth-scaffold](../changes/minimal-auth-scaffold/plan.md#impl-review-addendum-2026-06-04) — carry forward impl-review deferrals below)
+- **Carry-forward from F-01 impl review** ([plan addendum](../changes/minimal-auth-scaffold/plan.md#impl-review-addendum-2026-06-04)): session cookie TTL + server-side active scope; `Session.sweep` (index on `sessions.created_at` already landed); staging `secure:` cookie if needed; ambiguous registration errors (no email enumeration)
 - **Parallel with:** —
 - **Blockers:** —
 - **Unknowns:** —

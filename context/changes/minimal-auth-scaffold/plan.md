@@ -21,6 +21,23 @@ A registered user can sign up, sign in, sign out, and request/reset password wit
 - `db/schema.rb` is empty except extension setup, so auth schema can be introduced without migration conflicts.
 - `spec/rails_helper.rb` auto-loads `spec/support/**/*.rb`, enabling auth test helper patterns for request specs.
 
+## Impl review addendum (2026-06-04)
+
+Session lifetime and cookie hardening intentionally match the **Rails 8 authentication generator** (`cookies.signed.permanent[:session_id]`). The [Rails Security Guide](https://guides.rubyonrails.org/security.html#session-expiry) expects **app-defined** expiry (cookie `expires` and/or server-side `Session.sweep` by `created_at`) when policy matters — not shipped in F-01.
+
+**Deferred to [S-01: Email/password auth](../../foundation/roadmap.md#s-01-emailpassword-auth)** (`change_id: email-password-auth`, not started) or pre-public launch:
+
+- Bounded session cookie TTL and server-side active-session scope in `find_session_by_cookie`
+- Periodic stale-session cleanup (`Session.sweep`; `index_sessions_on_created_at` added in F-01 impl review)
+- Explicit `secure:` on non-production HTTPS (e.g. staging) if needed beyond `secure: Rails.env.production?` added in impl review
+- Registration failure copy that does not reveal email uniqueness (account enumeration)
+
+When planning S-01, copy this checklist into that change’s `plan.md` (or `plan-brief.md`) so it is not lost between slices.
+
+Revocation on sign-out and per-device DB rows remain the F-01 security model.
+
+**Generator output (not listed in original phases):** `ApplicationCable::Connection` resolves `current_user` from the signed `session_id` cookie — same boundary as HTTP auth; keep when Action Cable is used.
+
 ## What We're NOT Doing
 
 - OAuth providers, passwordless login, passkeys, SSO, or multi-factor auth.

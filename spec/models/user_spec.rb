@@ -12,6 +12,8 @@ RSpec.describe User, type: :model do
   describe 'validations' do
     it { is_expected.to validate_presence_of(:email) }
     it { is_expected.to validate_uniqueness_of(:email).case_insensitive }
+    it { is_expected.to allow_value('player@example.com').for(:email) }
+    it { is_expected.not_to allow_value('notanemail').for(:email) }
   end
 
   describe 'email normalization' do
@@ -30,11 +32,11 @@ RSpec.describe User, type: :model do
     it 'authenticates with the correct password' do
       user = described_class.create!(
         email: 'player@example.com',
-        password: 'secret',
-        password_confirmation: 'secret'
+        password: 'secret12',
+        password_confirmation: 'secret12'
       )
 
-      expect(described_class.authenticate_by(email: 'player@example.com', password: 'secret')).to eq(user)
+      expect(described_class.authenticate_by(email: 'player@example.com', password: 'secret12')).to eq(user)
       expect(described_class.authenticate_by(email: 'player@example.com', password: 'wrong')).to be_nil
     end
   end
