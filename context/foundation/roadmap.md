@@ -3,7 +3,7 @@ project: all-aBoard
 version: 1
 status: draft
 created: 2026-05-31
-updated: 2026-06-04
+updated: 2026-06-05
 prd_version: 1
 main_goal: speed
 top_blocker: time
@@ -33,6 +33,7 @@ The product wedge — the one trait that, if removed, makes this a generic score
 |---|---|---|---|---|---|
 | F-01 | minimal-auth-scaffold | (foundation) email/password auth scaffold: User model, sessions, protected routes | — | FR-001, Access Control | done |
 | F-02 | seed-game-catalog | (foundation) predefined catalog (~20 games) available for session picker | F-01 | FR-009, Business Logic | ready |
+| F-03 | tailwind-daisyui-setup | (foundation) Tailwind CSS + daisyUI in asset pipeline; base theme and component classes in ERB | — | — | ready |
 | S-01 | email-password-auth | create an account, log in, and log out | F-01 | FR-001, US-01 | ready |
 | S-02 | mutual-friend-circle | send a friend request; accept or decline; see active friends | S-01 | FR-002, US-01 | proposed |
 | S-03 | log-session-with-confirm | log a session with catalog game, registered friend, and unregistered player; co-player gets in-app notification and confirms or rejects; logger sees history immediately | S-02, F-02 | US-01, FR-003, FR-004, FR-005, FR-006, FR-009 | proposed |
@@ -46,6 +47,7 @@ Navigation aid — groups items that share a Prerequisites chain. Canonical orde
 |---|---|---|---|
 | A | MVP path | `F-01` → `S-01` → `S-02` → `S-03` → `S-04` | Speed bias: strict must-have order through north star (`S-03`) then stats. |
 | B | Catalog seed | `F-02` | Runs parallel with `S-02` after `F-01`; joins main path at `S-03` (game picker prerequisite). |
+| C | UI styling | `F-03` | Independent of MVP path; no prerequisites — can land anytime to polish product UI in any slice. |
 
 ## Baseline
 
@@ -85,6 +87,19 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Blockers:** —
 - **Unknowns:** —
 - **Risk:** Small, explicit seed — avoids inventing catalog UI/API before the first session slice needs it; does not build session logging ahead of S-03.
+- **Status:** ready
+
+### F-03: Tailwind CSS + daisyUI setup
+
+- **Outcome:** (foundation) Tailwind CSS and daisyUI are integrated via `tailwindcss-rails` (no Node.js); a base daisyUI theme and semantic component classes (`btn`, `card`, `alert`, etc.) are available in ERB views and layouts.
+- **Change ID:** tailwind-daisyui-setup
+- **PRD refs:** —
+- **Unlocks:** S-01, S-02, S-03, S-04 (polished product UI in any vertical slice; none blocked without it)
+- **Prerequisites:** —
+- **Parallel with:** S-01, S-02, F-02
+- **Blockers:** —
+- **Unknowns:** daisyUI theme choice (e.g. `corporate`, `business`, `nord`) — pick during `/10x-plan`
+- **Risk:** Additive infra only; existing plain CSS in `application.css` can coexist until views migrate incrementally.
 - **Status:** ready
 
 ## Slices
@@ -146,6 +161,7 @@ Issue URLs and board setup: @context/foundation/backlog.md.
 |---|---|---|---|---|
 | F-01 | minimal-auth-scaffold | Scaffold email/password auth (User, sessions, protection) | — | Done (archived) |
 | F-02 | seed-game-catalog | Seed predefined board-game catalog (~20 titles) | yes | F-01 done |
+| F-03 | tailwind-daisyui-setup | Add Tailwind CSS + daisyUI (tailwindcss-rails, base theme) | yes | No prerequisites; parallel with S-01 / S-02 / F-02 |
 | S-01 | email-password-auth | Sign up, log in, log out | yes | F-01 done; carry forward F-01 impl-review deferrals |
 | S-02 | mutual-friend-circle | Friend requests with mutual acceptance | no | After S-01 |
 | S-03 | log-session-with-confirm | Log session + in-app confirm/reject (US-01) | no | North star; after S-02 and F-02 |
