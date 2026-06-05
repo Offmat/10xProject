@@ -1,0 +1,33 @@
+---
+description: Prefer built-in WebSearch over Exa MCP for routine lookups; use Exa only for deep research or on request
+alwaysApply: true
+---
+
+# Web search tool selection
+
+Default to **built-in WebSearch** (and **WebFetch** for a known URL). Do not route routine lookups through Exa MCP.
+
+## Use WebSearch / WebFetch
+
+- Library or gem versions, changelogs, release notes
+- Framework or API documentation lookups
+- Debugging errors, stack traces, common fixes
+- Quick factual checks while coding or reviewing
+
+Use **WebFetch** when the user supplies a specific URL or the target page is already known.
+
+## Use Exa MCP only when
+
+- The user explicitly asks (e.g. "use Exa", "search with Exa")
+- Deep research: platform comparisons, market or competitor analysis, multi-source fact-checking
+- Semantic search where keyword match is insufficient (broad intent, no exact terms)
+- Skills that expect web research at depth (e.g. `/10x-infra-research`)
+
+## When both could work
+
+Choose **WebSearch**. Exa calls cost API credits; WebSearch is sufficient for simple questions.
+
+## Do not
+
+- Use Exa for every web lookup just because it is configured
+- Replace WebSearch with Exa for versions, docs, or routine coding questions
