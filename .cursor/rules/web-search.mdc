@@ -1,18 +1,20 @@
 ---
-description: Prefer built-in WebSearch over Exa MCP for routine lookups; use Exa only for deep research or on request
+description: Route docs to Context7; prefer WebSearch over Exa for routine web lookups; Exa for deep research only
 alwaysApply: true
 ---
 
 # Web search tool selection
 
-Default to **built-in WebSearch** (and **WebFetch** for a known URL). Do not route routine lookups through Exa MCP.
+**Library/framework/API documentation** → **Context7 MCP** (global rule from `ctx7 setup`). Do not use WebSearch or Exa for that when Context7 is configured. Prefer version-specific queries for this stack (Rails 8.1, Hotwire/Turbo, Stimulus, RSpec).
+
+Default to **built-in WebSearch** (and **WebFetch** for a known URL) for everything else. Do not route routine lookups through Exa MCP.
 
 ## Use WebSearch / WebFetch
 
 - Library or gem versions, changelogs, release notes
-- Framework or API documentation lookups
 - Debugging errors, stack traces, common fixes
 - Quick factual checks while coding or reviewing
+- Fallback when Context7 has no match or MCP is unavailable
 
 Use **WebFetch** when the user supplies a specific URL or the target page is already known.
 
