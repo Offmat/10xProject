@@ -3,7 +3,7 @@ project: all-aBoard
 version: 1
 status: draft
 created: 2026-05-31
-updated: 2026-06-05
+updated: 2026-06-07
 prd_version: 1
 main_goal: speed
 top_blocker: time
@@ -32,7 +32,7 @@ The product wedge — the one trait that, if removed, makes this a generic score
 | ID | Change ID | Outcome (user can …) | Prerequisites | PRD refs | Status |
 |---|---|---|---|---|---|
 | F-01 | minimal-auth-scaffold | (foundation) email/password auth scaffold: User model, sessions, protected routes | — | FR-001, Access Control | done |
-| F-02 | seed-game-catalog | (foundation) game catalog persisted via import service fetching external API (e.g. BGG, ~20 titles); console for MVP | F-01 | FR-009, Business Logic | ready |
+| F-02 | seed-game-catalog | (foundation) Wikidata import service + ~20-game MVP seed via console | F-01 | FR-009, Business Logic | planning |
 | F-03 | tailwind-daisyui-setup | (foundation) Tailwind CSS + daisyUI in asset pipeline; base theme and component classes in ERB | — | — | ready |
 | S-01 | email-password-auth | create an account, log in, and log out | F-01 | FR-001, US-01 | ready |
 | S-02 | mutual-friend-circle | send a friend request; accept or decline; see active friends | S-01 | FR-002, US-01 | proposed |
@@ -46,7 +46,7 @@ Navigation aid — groups items that share a Prerequisites chain. Canonical orde
 | Stream | Theme | Chain | Note |
 |---|---|---|---|
 | A | MVP path | `F-01` → `S-01` → `S-02` → `S-03` → `S-04` | Speed bias: strict must-have order through north star (`S-03`) then stats. |
-| B | Catalog import | `F-02` | Runs parallel with `S-02` after `F-01`; joins main path at `S-03` (game picker prerequisite). |
+| B | Catalog import | `F-02` | Wikidata adapter for MVP; provider switch deferred to P-07. Runs parallel with `S-02` after `F-01`; joins main path at `S-03`. |
 | C | UI styling | `F-03` | Independent of MVP path; no prerequisites — can land anytime to polish product UI in any slice. |
 
 ## Baseline
@@ -78,16 +78,17 @@ Foundations below assume these are present and do NOT re-scaffold them.
 
 ### F-02: Import game catalog
 
-- **Outcome:** (foundation) `Game` records and an import service fetch ~20 predefined titles from an external game database API (e.g. BoardGameGeek) and persist locally; operator invokes via Rails console; no UI or user catalog editing.
+- **Outcome:** (foundation) Reusable operator import service with a **Wikidata adapter** fetches board-game data (CC0), persists `Game` records locally, and accepts a parameterized batch. F-02 seeds ~20 titles for development and S-03 via Rails console; the same service supports wide-catalog operator imports later (P-03 wraps UI and auth only). No user or admin catalog editing in MVP. Switching or adding another provider (e.g. BoardGameGeek) is post-MVP (P-07).
 - **Change ID:** seed-game-catalog
-- **PRD refs:** FR-009, Business Logic (catalog on session log), Open Questions (catalog seeding — re-resolved: external API import service)
-- **Unlocks:** S-03 (game picker on session log); future P-03 (admin UI wraps same service)
+- **PRD refs:** FR-009, Business Logic (catalog on session log), Open Questions (catalog seeding, provider — Wikidata for MVP)
+- **Unlocks:** S-03 (game picker on session log); P-03 (admin UI wraps same import service)
 - **Prerequisites:** F-01
 - **Parallel with:** S-02
 - **Blockers:** —
-- **Unknowns:** external API choice and client (BGG API vs alternatives), auth/rate limits, fields to persist, idempotency key (e.g. external ID) — resolve in `/10x-plan`
-- **Risk:** External API dependency and rate limits on import; session flow reads local catalog only — no user-facing live lookup in MVP.
-- **Status:** ready
+- **Unknowns:** Wikidata client gem choice, fields to persist, `wikidata_id` (and optional `bgg_id` cross-ref) as idempotency keys — resolve in `/10x-plan`. Batching and Wikidata query rate courtesy are in F-02 scope even when MVP only imports ~20 titles.
+- **Risk:** Wikidata coverage and field quality vary by title; session flow reads local catalog only — no user-facing live lookup in MVP. Richer metadata or BGG licensing deferred to P-07.
+- **Change folder:** [seed-game-catalog](../changes/seed-game-catalog/change.md)
+- **Status:** planning
 
 ### F-03: Tailwind CSS + daisyUI setup
 
@@ -160,7 +161,7 @@ Issue URLs and board setup: @context/foundation/backlog.md.
 | Roadmap ID | Change ID | Suggested issue title | Ready for `/10x-plan` | Notes |
 |---|---|---|---|---|
 | F-01 | minimal-auth-scaffold | Scaffold email/password auth (User, sessions, protection) | — | Done (archived) |
-| F-02 | seed-game-catalog | Import game catalog from external API (e.g. BGG, ~20 titles, console) | yes | F-01 done |
+| F-02 | seed-game-catalog | Import game catalog from Wikidata (~20-game MVP seed, console) | yes | F-01 done; Wikidata adapter only |
 | F-03 | tailwind-daisyui-setup | Add Tailwind CSS + daisyUI (tailwindcss-rails, base theme) | yes | No prerequisites; parallel with S-01 / S-02 / F-02 |
 | S-01 | email-password-auth | Sign up, log in, log out | yes | F-01 done; carry forward F-01 impl-review deferrals |
 | S-02 | mutual-friend-circle | Friend requests with mutual acceptance | no | After S-01 |
@@ -169,7 +170,7 @@ Issue URLs and board setup: @context/foundation/backlog.md.
 
 ## Open Roadmap Questions
 
-_No cross-cutting roadmap questions. PRD `## Open Questions` were resolved 2026-05-21 (login mechanism, friend-circle policy); catalog seeding re-resolved 2026-06-05 (external API import service, console invocation)._
+_No cross-cutting roadmap questions. PRD `## Open Questions` were resolved 2026-05-21 (login mechanism, friend-circle policy); catalog seeding re-resolved 2026-06-05 (import service, console invocation); catalog provider for MVP set to Wikidata 2026-06-07 (switch/evaluation → P-07)._
 
 ## Parked
 
@@ -177,7 +178,8 @@ _No cross-cutting roadmap questions. PRD `## Open Questions` were resolved 2026-
 - **Per-game ratings** — Why parked: PRD Non-Goals.
 - **Admin account / catalog curation** — Why parked: PRD Non-Goals; flat users only in MVP. F-02 delivers the import service; P-03 adds admin auth + UI around it.
 - **Push notifications** — Why parked: PRD Non-Goals; in-app inbox only in v1.
-- **User-facing external game lookup** — Why parked: PRD Non-Goals; no live third-party search during session log. Operator catalog import from external API (e.g. BGG) lands in F-02.
+- **User-facing external game lookup** — Why parked: PRD Non-Goals; no live third-party search during session log (P-05).
+- **Catalog provider switch (e.g. BoardGameGeek)** — Why parked: MVP ships Wikidata adapter only (F-02); legal/licensing and richer metadata re-evaluation deferred until after MVP. May add a second adapter or replace Wikidata behind the same import service — not committed. Roadmap **P-07** (`catalog-provider-switch`).
 - **Team workspaces / formal leagues** — Why parked: PRD Non-Goals.
 
 ## Done

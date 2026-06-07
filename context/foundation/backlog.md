@@ -2,7 +2,7 @@
 project: all-aBoard
 version: 1
 created: 2026-06-01
-updated: 2026-06-05
+updated: 2026-06-07
 system: github-issues
 roadmap_version: 1
 ---
@@ -49,6 +49,7 @@ Deferred scope from roadmap `## Parked`. Not in MVP v1 milestone; project board 
 | P-04 | push-notifications | [#15](https://github.com/Offmat/10xProject/issues/15) |
 | P-05 | external-game-database | [#16](https://github.com/Offmat/10xProject/issues/16) |
 | P-06 | team-workspaces | [#17](https://github.com/Offmat/10xProject/issues/17) |
+| P-07 | catalog-provider-switch | — |
 
 ## Labels
 
@@ -57,7 +58,7 @@ Deferred scope from roadmap `## Parked`. Not in MVP v1 milestone; project board 
 | `roadmap` | All items derived from roadmap.md |
 | `foundation` | F-01, F-02 |
 | `slice` | S-01 … S-04 |
-| `parked` | P-01 … P-06 |
+| `parked` | P-01 … P-07 |
 | `north-star` | S-03 only |
 | `ready` | F-01 (roadmap status `ready`) |
 | `stream-a` | MVP path chain |
@@ -75,3 +76,4 @@ Built-in **Status**: Todo for active MVP items; Done for parked items.
 - **2026-06-01** — Migrated 6 active + 6 parked roadmap items to GitHub Issues via `gh` CLI. Source: @context/foundation/roadmap.md (v1).
 - **2026-06-05** — F-02 reframed: import service + console invocation (roadmap v1 edit-in-place). F-01 done; F-02 and S-01 unblocked.
 - **2026-06-05** — F-02 clarified: catalog import fetches from external game database API (e.g. BGG), not bundled data file; user-facing live lookup remains parked (P-05).
+- **2026-06-07** — F-02 catalog provider set to Wikidata for MVP; BGG/provider switch parked as P-07 (`catalog-provider-switch`); no GitHub issue yet.
