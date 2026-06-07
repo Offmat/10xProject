@@ -179,6 +179,7 @@ _No cross-cutting roadmap questions. PRD `## Open Questions` were resolved 2026-
 - **Admin account / catalog curation** — Why parked: PRD Non-Goals; flat users only in MVP. F-02 delivers the import service; P-03 adds admin auth + UI around it.
 - **Push notifications** — Why parked: PRD Non-Goals; in-app inbox only in v1.
 - **User-facing external game lookup** — Why parked: PRD Non-Goals; no live third-party search during session log (P-05).
+- **Game cover images** — Why parked: game picker works as text list for MVP; Wikidata P18 rarely has recognizable box art (Commons hosts component photos, not covers); hosting/thumbnailing requires Active Storage or external bucket not yet configured. Middle ground (nullable `image_url` column + Commons URL) can be added in a single migration when S-03 UI calls for it. Roadmap **P-08** (`game-catalog-images`).
 - **Catalog provider switch (e.g. BoardGameGeek)** — Why parked: MVP ships Wikidata adapter only (F-02); legal/licensing and richer metadata re-evaluation deferred until after MVP. May add a second adapter or replace Wikidata behind the same import service — not committed. Roadmap **P-07** (`catalog-provider-switch`).
 - **Team workspaces / formal leagues** — Why parked: PRD Non-Goals.
 

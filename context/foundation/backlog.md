@@ -50,6 +50,7 @@ Deferred scope from roadmap `## Parked`. Not in MVP v1 milestone; project board 
 | P-05 | external-game-database | [#16](https://github.com/Offmat/10xProject/issues/16) |
 | P-06 | team-workspaces | [#17](https://github.com/Offmat/10xProject/issues/17) |
 | P-07 | catalog-provider-switch | — |
+| P-08 | game-catalog-images | — |
 
 ## Labels
 
@@ -58,7 +59,7 @@ Deferred scope from roadmap `## Parked`. Not in MVP v1 milestone; project board 
 | `roadmap` | All items derived from roadmap.md |
 | `foundation` | F-01, F-02 |
 | `slice` | S-01 … S-04 |
-| `parked` | P-01 … P-07 |
+| `parked` | P-01 … P-08 |
 | `north-star` | S-03 only |
 | `ready` | F-01 (roadmap status `ready`) |
 | `stream-a` | MVP path chain |

@@ -3,7 +3,7 @@ change_id: seed-game-catalog
 title: Import game catalog from Wikidata (F-02)
 created: 2026-06-07
 updated: 2026-06-07
-status: preparing
+status: planned
 archived_at: null
 ---
 
