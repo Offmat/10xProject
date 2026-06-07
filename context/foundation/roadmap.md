@@ -32,7 +32,7 @@ The product wedge — the one trait that, if removed, makes this a generic score
 | ID | Change ID | Outcome (user can …) | Prerequisites | PRD refs | Status |
 |---|---|---|---|---|---|
 | F-01 | minimal-auth-scaffold | (foundation) email/password auth scaffold: User model, sessions, protected routes | — | FR-001, Access Control | done |
-| F-02 | seed-game-catalog | (foundation) predefined catalog (~20 games) available for session picker | F-01 | FR-009, Business Logic | ready |
+| F-02 | seed-game-catalog | (foundation) game catalog persisted via import service fetching external API (e.g. BGG, ~20 titles); console for MVP | F-01 | FR-009, Business Logic | ready |
 | F-03 | tailwind-daisyui-setup | (foundation) Tailwind CSS + daisyUI in asset pipeline; base theme and component classes in ERB | — | — | ready |
 | S-01 | email-password-auth | create an account, log in, and log out | F-01 | FR-001, US-01 | ready |
 | S-02 | mutual-friend-circle | send a friend request; accept or decline; see active friends | S-01 | FR-002, US-01 | proposed |
@@ -46,7 +46,7 @@ Navigation aid — groups items that share a Prerequisites chain. Canonical orde
 | Stream | Theme | Chain | Note |
 |---|---|---|---|
 | A | MVP path | `F-01` → `S-01` → `S-02` → `S-03` → `S-04` | Speed bias: strict must-have order through north star (`S-03`) then stats. |
-| B | Catalog seed | `F-02` | Runs parallel with `S-02` after `F-01`; joins main path at `S-03` (game picker prerequisite). |
+| B | Catalog import | `F-02` | Runs parallel with `S-02` after `F-01`; joins main path at `S-03` (game picker prerequisite). |
 | C | UI styling | `F-03` | Independent of MVP path; no prerequisites — can land anytime to polish product UI in any slice. |
 
 ## Baseline
@@ -76,17 +76,17 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Risk:** Sequenced first because baseline reports auth absent; without it no slice is plannable. Kept minimal — full login UX ships in S-01.
 - **Status:** done
 
-### F-02: Seed game catalog
+### F-02: Import game catalog
 
-- **Outcome:** (foundation) Predefined catalog of ~20 popular board games is persisted and selectable; no admin or user catalog editing.
+- **Outcome:** (foundation) `Game` records and an import service fetch ~20 predefined titles from an external game database API (e.g. BoardGameGeek) and persist locally; operator invokes via Rails console; no UI or user catalog editing.
 - **Change ID:** seed-game-catalog
-- **PRD refs:** FR-009, Business Logic (catalog on session log), Open Questions (catalog seeding — resolved: hardcoded list in app)
-- **Unlocks:** S-03 (game picker on session log)
+- **PRD refs:** FR-009, Business Logic (catalog on session log), Open Questions (catalog seeding — re-resolved: external API import service)
+- **Unlocks:** S-03 (game picker on session log); future P-03 (admin UI wraps same service)
 - **Prerequisites:** F-01
 - **Parallel with:** S-02
 - **Blockers:** —
-- **Unknowns:** —
-- **Risk:** Small, explicit seed — avoids inventing catalog UI/API before the first session slice needs it; does not build session logging ahead of S-03.
+- **Unknowns:** external API choice and client (BGG API vs alternatives), auth/rate limits, fields to persist, idempotency key (e.g. external ID) — resolve in `/10x-plan`
+- **Risk:** External API dependency and rate limits on import; session flow reads local catalog only — no user-facing live lookup in MVP.
 - **Status:** ready
 
 ### F-03: Tailwind CSS + daisyUI setup
@@ -160,7 +160,7 @@ Issue URLs and board setup: @context/foundation/backlog.md.
 | Roadmap ID | Change ID | Suggested issue title | Ready for `/10x-plan` | Notes |
 |---|---|---|---|---|
 | F-01 | minimal-auth-scaffold | Scaffold email/password auth (User, sessions, protection) | — | Done (archived) |
-| F-02 | seed-game-catalog | Seed predefined board-game catalog (~20 titles) | yes | F-01 done |
+| F-02 | seed-game-catalog | Import game catalog from external API (e.g. BGG, ~20 titles, console) | yes | F-01 done |
 | F-03 | tailwind-daisyui-setup | Add Tailwind CSS + daisyUI (tailwindcss-rails, base theme) | yes | No prerequisites; parallel with S-01 / S-02 / F-02 |
 | S-01 | email-password-auth | Sign up, log in, log out | yes | F-01 done; carry forward F-01 impl-review deferrals |
 | S-02 | mutual-friend-circle | Friend requests with mutual acceptance | no | After S-01 |
@@ -169,15 +169,15 @@ Issue URLs and board setup: @context/foundation/backlog.md.
 
 ## Open Roadmap Questions
 
-_No cross-cutting roadmap questions. PRD `## Open Questions` were resolved 2026-05-21 (login mechanism, catalog seeding, friend-circle policy)._
+_No cross-cutting roadmap questions. PRD `## Open Questions` were resolved 2026-05-21 (login mechanism, friend-circle policy); catalog seeding re-resolved 2026-06-05 (external API import service, console invocation)._
 
 ## Parked
 
 - **FR-008: recommended-games list** — Why parked: nice-to-have per PRD; not on primary Success Criteria path; defer while `main_goal` is speed and `top_blocker` is time.
 - **Per-game ratings** — Why parked: PRD Non-Goals.
-- **Admin account / catalog curation** — Why parked: PRD Non-Goals; flat users only in MVP.
+- **Admin account / catalog curation** — Why parked: PRD Non-Goals; flat users only in MVP. F-02 delivers the import service; P-03 adds admin auth + UI around it.
 - **Push notifications** — Why parked: PRD Non-Goals; in-app inbox only in v1.
-- **External game database integration** — Why parked: PRD Non-Goals.
+- **User-facing external game lookup** — Why parked: PRD Non-Goals; no live third-party search during session log. Operator catalog import from external API (e.g. BGG) lands in F-02.
 - **Team workspaces / formal leagues** — Why parked: PRD Non-Goals.
 
 ## Done

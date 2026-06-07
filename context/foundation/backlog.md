@@ -2,7 +2,7 @@
 project: all-aBoard
 version: 1
 created: 2026-06-01
-updated: 2026-06-01
+updated: 2026-06-05
 system: github-issues
 roadmap_version: 1
 ---
@@ -28,9 +28,9 @@ Dependency order — pick the first row whose blockers are closed.
 
 | Roadmap ID | Change ID | Issue | Ready for `/10x-plan` | Blocked by |
 |---|---|---|---|---|
-| F-01 | minimal-auth-scaffold | [#6](https://github.com/Offmat/10xProject/issues/6) | yes | — |
-| F-02 | seed-game-catalog | [#7](https://github.com/Offmat/10xProject/issues/7) | no | #6 |
-| S-01 | email-password-auth | [#8](https://github.com/Offmat/10xProject/issues/8) | no | #6 |
+| F-01 | minimal-auth-scaffold | [#6](https://github.com/Offmat/10xProject/issues/6) | — | — |
+| F-02 | seed-game-catalog | [#7](https://github.com/Offmat/10xProject/issues/7) | yes | — |
+| S-01 | email-password-auth | [#8](https://github.com/Offmat/10xProject/issues/8) | yes | — |
 | S-02 | mutual-friend-circle | [#9](https://github.com/Offmat/10xProject/issues/9) | no | #8 |
 | S-03 | log-session-with-confirm | [#10](https://github.com/Offmat/10xProject/issues/10) | no | #9, #7 |
 | S-04 | session-stats-filters | [#11](https://github.com/Offmat/10xProject/issues/11) | no | #10 |
@@ -61,7 +61,7 @@ Deferred scope from roadmap `## Parked`. Not in MVP v1 milestone; project board 
 | `north-star` | S-03 only |
 | `ready` | F-01 (roadmap status `ready`) |
 | `stream-a` | MVP path chain |
-| `stream-b` | Catalog seed (F-02) |
+| `stream-b` | Catalog import (F-02) |
 | `wontfix` | Parked / PRD non-goals |
 
 ## Project board fields
@@ -73,3 +73,5 @@ Built-in **Status**: Todo for active MVP items; Done for parked items.
 ## History
 
 - **2026-06-01** — Migrated 6 active + 6 parked roadmap items to GitHub Issues via `gh` CLI. Source: @context/foundation/roadmap.md (v1).
+- **2026-06-05** — F-02 reframed: import service + console invocation (roadmap v1 edit-in-place). F-01 done; F-02 and S-01 unblocked.
+- **2026-06-05** — F-02 clarified: catalog import fetches from external game database API (e.g. BGG), not bundled data file; user-facing live lookup remains parked (P-05).

@@ -3,6 +3,7 @@ project: all-aBoard
 version: 1
 status: draft
 created: 2026-05-21
+updated: 2026-06-05
 context_type: greenfield
 product_type: web-app
 target_scale:
@@ -49,6 +50,7 @@ End-to-end flow proves shared session tracking works:
 - Unregistered players (name + score only) can always be included in a session log; they never log in or use the app.
 - The user who creates a session log always sees that session in their own history and stats immediately after save, regardless of co-player confirm/reject/pending.
 - No admin role or admin-only game catalog in MVP.
+- Game catalog is populated operationally (import service fetches from an external game database API via Rails console), not by users or admin UI.
 - Users only see statistics for sessions they participated in.
 
 ## User Stories
@@ -91,7 +93,7 @@ End-to-end flow proves shared session tracking works:
 - FR-009: User can select a game from a predefined catalog when logging a session. Priority: must-have
   > Socrates: No counter-argument; it stands as written.
 
-_Predefined game catalog for MVP: minimal hardcoded list (~20 popular board games) shipped with the product; no admin, user, or runtime catalog editing in v1._
+_Predefined game catalog for MVP: ~20 popular board games persisted via an operator-facing import service that fetches from an external game database API (e.g. BoardGameGeek); MVP invocation is Rails console only; session UI reads the local catalog only — no live third-party lookup for end users; no admin or user catalog editing in v1._
 
 ### Statistics
 
@@ -131,16 +133,16 @@ The rule consumes: who logged the session, which registered players were include
 
 **Roles (MVP):** flat user model only. Every registered user has the same capabilities; no admin role in MVP.
 
-**Post-MVP:** admin capabilities (e.g. curating game catalog) explicitly deferred — not part of first shippable version.
+**Post-MVP:** admin capabilities (e.g. curating game catalog) explicitly deferred — not part of first shippable version. Post-MVP admin catalog curation should wrap the same import service (UI and auth only).
 
 ## Non-Goals
 
 - **Avoid: per-game ratings** — no star scores on games in MVP.
 - **Avoid: admin account** — flat users only; no admin role.
-- **Avoid: users or admins adding new games to the catalog** — predefined catalog only in v1.
+- **Avoid: users or admins adding new games to the catalog** — predefined catalog only in v1; no in-app or admin UI for catalog edits (operator console import is not end-user catalog editing).
 - **Avoid: complex recommendation algorithms** — simple frequency-weighted nice-to-have at most; not a recommender system.
 - **Avoid: push notifications** — in-app inbox only.
-- **Avoid: external game database integration** — no third-party game lookup in v1.
+- **Avoid: user-facing external game lookup** — no live third-party search or lookup during session logging in v1; users pick from the locally persisted catalog. Operator-side catalog import from an external API (e.g. BGG) is in scope for F-02 only.
 - **Avoid: team workspaces / formal league management** — friend circles, not org-style leagues.
 
 ## Open Questions
@@ -148,5 +150,5 @@ The rule consumes: who logged the session, which registered players were include
 _All resolved 2026-05-21._
 
 1. **Login mechanism** — **Resolved:** email + password for MVP.
-2. **Game catalog seeding** — **Resolved:** minimal hardcoded list (~20 popular board games) in the app; catalog changes require a new release (no admin UI, no user-added games).
+2. **Game catalog seeding** — **Resolved (2026-06-05):** catalog populated via operator import service fetching from an external game database API (e.g. BoardGameGeek, ~20 titles for MVP); games persisted locally; MVP invocation is Rails console only; no user-facing live lookup, admin UI, or user-added games in v1.
 3. **Friend-circle add policy** — **Resolved:** mutual confirmation (request → accept/decline).
