@@ -30,3 +30,12 @@ MVP auth uses Rails built-in patterns with Devise-adjacent naming so a future ge
 ### Routes
 
 `resource :session`, `resources :passwords`, `resources :users` (new/create only) — see @config/routes.rb.
+
+## Services convention
+
+All services live under `app/services/`, namespaced by domain (e.g. `GameCatalog::ImportService` in `app/services/game_catalog/`). Flat files for cross-cutting utilities (e.g. @app/services/auth_audit_logger.rb).
+
+- **Orchestrator / business-action classes** expose a single public `.call` class method. Name the class after the action: `ImportService`, `CreateSession`.
+- **Infrastructure / utility classes** (HTTP clients, loggers, mappers) may use a descriptive method name (`.fetch`, `.log`) when `.call` would be less clear.
+- One public method per class. Keep internals private.
+- Do not add an `ApplicationService` base class until there are 5+ services sharing the same delegation boilerplate.
