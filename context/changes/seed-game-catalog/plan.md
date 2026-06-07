@@ -212,7 +212,7 @@ Build the three service classes (WikidataClient, WikidataMapper, ImportService) 
 
 **File**: `spec/services/unit/game_catalog/wikidata_mapper_spec.rb`
 
-**Intent**: Test all mapping paths: rich entity extraction, label fallback chain (en → mul → seed_name → nil raises), quantity parsing (strip `+`, to_i), year extraction from time claims, play time conversion (minutes pass-through, hours × 60), unknown unit → nil + warning, rank preference (preferred > normal > deprecated), missing claims → nil.
+**Intent**: Test all mapping paths: rich entity extraction, label fallback chain (en → mul → seed_name → nil returns nil + logs warning), quantity parsing (strip `+`, to_i), year extraction from time claims, play time conversion (minutes pass-through, hours × 60), unknown unit → nil + warning, rank preference (preferred > normal > deprecated), missing claims → nil.
 
 **Contract**: Uses `parsed_wikidata_fixture('wbgetentities_batch')` for rich/sparse entities. Also tests edge cases with hand-built minimal entity hashes. Includes `WikidataFixtures` module.
 
@@ -222,7 +222,7 @@ Build the three service classes (WikidataClient, WikidataMapper, ImportService) 
 
 **Intent**: Orchestrator that reads the seed list YAML, delegates to WikidataClient for fetching and WikidataMapper for parsing, then upserts Game records. Returns a structured result with counts and warnings.
 
-**Contract**: Class `GameCatalog::ImportService` with `.call(seed_file: Rails.root.join('db/seeds/mvp_seed_list.yml'))` returning `{ created: Integer, updated: Integer, skipped: Integer, warnings: Array<String> }`. Uses `Game.find_or_initialize_by(wikidata_id:)` then `assign_attributes` then `save!`. Sets `imported_at` to `Time.current` on every successful persist. Collects warnings from mapper and any validation failures (logs + increments `skipped` counter instead of raising).
+**Contract**: Class `GameCatalog::ImportService` with `.call(seed_file: Rails.root.join('db/seeds/mvp_seed_list.yml'))` returning `{ created: Integer, updated: Integer, skipped: Integer, warnings: Array<String> }`. Uses `Game.find_or_initialize_by(wikidata_id:)` then `assign_attributes` then `save!`. Sets `imported_at` to `Time.current` on every successful persist. Collects warnings from mapper and any validation failures (logs + increments `skipped` counter instead of raising). When a seed entry's `wikidata_id` is absent from the API response (entity not returned), skips that entry and appends a warning — does not raise.
 
 #### 8. ImportService unit spec
 
@@ -334,7 +334,7 @@ Note: Q-ids are best-effort from known Wikidata entries. The implementer should 
 
 **Intent**: End-to-end test proving the full flow works: read seed list → fetch (WebMock) → parse → persist → idempotent re-import. Uses real DB, stubbed HTTP.
 
-**Contract**: Includes `WikidataFixtures`. Stubs Wikidata API with WebMock returning `wbgetentities_batch.json`. Tests: first import creates expected number of games with correct attributes, second import updates (no duplicates, same count), `imported_at` is set, `source` is `'wikidata'`.
+**Contract**: Includes `WikidataFixtures`. Uses a test-specific seed file (`spec/fixtures/wikidata/test_seed_list.yml`) with 2–3 entries matching the entities in the JSON fixture — passed via `ImportService.call(seed_file:)`. Stubs Wikidata API with WebMock returning `wbgetentities_batch.json`. Tests: first import creates expected number of games with correct attributes, second import updates (no duplicates, same count), `imported_at` is set, `source` is `'wikidata'`.
 
 #### 5. Create db/seeds directory
 
