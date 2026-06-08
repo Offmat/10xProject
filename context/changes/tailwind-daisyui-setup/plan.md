@@ -353,46 +353,46 @@ Verify the Docker production build works with the new Tailwind + daisyUI pipelin
 
 #### Automated
 
-- [x] 1.1 `bundle install` completes without errors
-- [x] 1.2 `npm install` completes without errors
-- [x] 1.3 `bin/rails tailwindcss:build` produces output CSS with daisyUI classes
-- [x] 1.4 `bin/dev` starts both web and css processes
-- [x] 1.5 `bin/setup` completes with daisyUI available after reinstalling dependencies
-- [x] 1.6 `bin/ci` passes with the new npm/Tailwind prerequisites in place
-- [x] 1.7 `bin/rubocop` passes
+- [x] 1.1 `bundle install` completes without errors — 94deae7
+- [x] 1.2 `npm install` completes without errors — 94deae7
+- [x] 1.3 `bin/rails tailwindcss:build` produces output CSS with daisyUI classes — 94deae7
+- [x] 1.4 `bin/dev` starts both web and css processes — 94deae7
+- [x] 1.5 `bin/setup` completes with daisyUI available after reinstalling dependencies — 94deae7
+- [x] 1.6 `bin/ci` passes with the new npm/Tailwind prerequisites in place — 94deae7
+- [x] 1.7 `bin/rubocop` passes — 94deae7
 
 #### Manual
 
-- [x] 1.8 Page loads without CSS errors in browser console
-- [x] 1.9 Tailwind watcher rebuilds CSS on file save
+- [x] 1.8 Page loads without CSS errors in browser console — 94deae7
+- [x] 1.9 Tailwind watcher rebuilds CSS on file save — 94deae7
 
 ### Phase 2: Layout Shell & Home Page
 
 #### Automated
 
-- [x] 2.1 `bin/rails tailwindcss:build` succeeds
-- [x] 2.2 `bin/rspec` passes
-- [x] 2.3 `bin/rubocop` passes
-- [x] 2.4 No references to old `.home*` CSS classes in any `.erb` file
+- [x] 2.1 `bin/rails tailwindcss:build` succeeds — 94deae7
+- [x] 2.2 `bin/rspec` passes — 94deae7
+- [x] 2.3 `bin/rubocop` passes — 94deae7
+- [x] 2.4 No references to old `.home*` CSS classes in any `.erb` file — 94deae7
 
 #### Manual
 
-- [x] 2.5 Home page renders with abyss theme
-- [x] 2.6 Flash messages display as daisyUI alerts
-- [x] 2.7 Navbar placeholder is visible and responsive
-- [x] 2.8 Auth pages render without errors (unstyled but functional)
-- [x] 2.9 No asset errors in browser console
+- [x] 2.5 Home page renders with abyss theme — 94deae7
+- [x] 2.6 Flash messages display as daisyUI alerts — 94deae7
+- [x] 2.7 Navbar placeholder is visible and responsive — 94deae7
+- [x] 2.8 Auth pages render without errors (unstyled but functional) — 94deae7
+- [x] 2.9 No asset errors in browser console — 94deae7
 
 ### Phase 3: CI & Production Verification
 
 #### Automated
 
-- [x] 3.1 `docker build .` succeeds
-- [x] 3.2 `bin/setup` completes on fresh clone
-- [x] 3.3 `bin/ci` passes
-- [x] 3.4 `bin/rspec` passes
+- [x] 3.1 `docker build .` succeeds — 946ff4f
+- [x] 3.2 `bin/setup` completes on fresh clone — 946ff4f
+- [x] 3.3 `bin/ci` passes — 946ff4f
+- [x] 3.4 `bin/rspec` passes — 946ff4f
 
 #### Manual
 
-- [x] 3.5 Docker container serves home page with Tailwind styling
-- [x] 3.6 No regressions in auth flows
+- [x] 3.5 Docker container serves home page with Tailwind styling — 946ff4f
+- [x] 3.6 No regressions in auth flows — 946ff4f
