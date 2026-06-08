@@ -3,7 +3,7 @@ project: all-aBoard
 version: 1
 status: draft
 created: 2026-05-31
-updated: 2026-06-07
+updated: 2026-06-08
 prd_version: 1
 main_goal: speed
 top_blocker: time
@@ -33,7 +33,7 @@ The product wedge — the one trait that, if removed, makes this a generic score
 |---|---|---|---|---|---|
 | F-01 | minimal-auth-scaffold | (foundation) email/password auth scaffold: User model, sessions, protected routes | — | FR-001, Access Control | done |
 | F-02 | seed-game-catalog | (foundation) Wikidata import service + ~20-game MVP seed via console | F-01 | FR-009, Business Logic | planning |
-| F-03 | tailwind-daisyui-setup | (foundation) Tailwind CSS + daisyUI in asset pipeline; base theme and component classes in ERB | — | — | implemented |
+| F-03 | tailwind-daisyui-setup | (foundation) Tailwind CSS + daisyUI in asset pipeline; base theme and component classes in ERB | — | — | done |
 | S-01 | email-password-auth | create an account, log in, and log out | F-01 | FR-001, US-01 | ready |
 | S-02 | mutual-friend-circle | send a friend request; accept or decline; see active friends | S-01 | FR-002, US-01 | proposed |
 | S-03 | log-session-with-confirm | log a session with catalog game, registered friend, and unregistered player; co-player gets in-app notification and confirms or rejects; logger sees history immediately | S-02, F-02 | US-01, FR-003, FR-004, FR-005, FR-006, FR-009 | proposed |
@@ -101,7 +101,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Blockers:** —
 - **Unknowns:** daisyUI theme choice (e.g. `corporate`, `business`, `nord`) — pick during `/10x-plan`
 - **Risk:** Additive infra; hand-written CSS removed; auth views remain unstyled until S-01.
-- **Status:** implemented
+- **Status:** done
 
 ## Slices
 
@@ -186,3 +186,4 @@ _No cross-cutting roadmap questions. PRD `## Open Questions` were resolved 2026-
 ## Done
 
 - **F-01: (foundation) User model, email/password credentials, session issuance, and route protection are in place for vertical slices to build on.** — Archived 2026-06-04 → `context/archive/2026-06-02-minimal-auth-scaffold/`. Lesson: —.
+- **F-03: (foundation) Tailwind CSS and daisyUI are integrated via `tailwindcss-rails` (standalone CLI + npm for daisyUI plugin); abyss theme; base layout shell with nav placeholder, flash partial, and page container.** — Archived 2026-06-08 → `context/archive/2026-06-07-tailwind-daisyui-setup/`. Lesson: —.
