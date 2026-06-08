@@ -1,0 +1,7 @@
+{
+  "name": "all-aboard",
+  "private": true,
+  "dependencies": {
+    "daisyui": "^5.0.0"
+  }
+}

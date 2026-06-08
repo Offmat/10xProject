@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html data-theme="abyss">
   <head>
     <title><%= content_for(:title) || "all-aBoard" %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -18,12 +18,25 @@
     <link rel="icon" href="/icon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="/icon.png">
 
-    <%# Includes all stylesheet files in app/assets/stylesheets %>
-    <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
+    <%= stylesheet_link_tag "tailwind", "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
   </head>
 
-  <body>
-    <%= yield %>
+  <body class="min-h-screen bg-base-100">
+    <div class="navbar bg-base-200 shadow-sm">
+      <div class="navbar-start">
+        <%= link_to "all-aBoard", root_path, class: "btn btn-ghost text-xl" %>
+      </div>
+      <div class="navbar-end gap-2">
+        <%= link_to "Sign in", new_session_path, class: "btn btn-ghost btn-sm" %>
+        <%= link_to "Sign up", new_user_path, class: "btn btn-primary btn-sm" %>
+      </div>
+    </div>
+
+    <%= render "shared/flash" %>
+
+    <main class="container mx-auto px-4 py-8">
+      <%= yield %>
+    </main>
   </body>
 </html>
