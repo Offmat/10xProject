@@ -1,7 +1,5 @@
 <h1>Sign up</h1>
 
-<%= tag.div(flash[:alert], style: 'color:red') if flash[:alert] %>
-
 <%= form_with model: @user, url: users_path do |form| %>
   <% if @user.errors.any? %>
     <%= tag.div(@user.errors.full_messages.to_sentence, style: 'color:red') %>

@@ -33,7 +33,7 @@ The product wedge — the one trait that, if removed, makes this a generic score
 |---|---|---|---|---|---|
 | F-01 | minimal-auth-scaffold | (foundation) email/password auth scaffold: User model, sessions, protected routes | — | FR-001, Access Control | done |
 | F-02 | seed-game-catalog | (foundation) Wikidata import service + ~20-game MVP seed via console | F-01 | FR-009, Business Logic | planning |
-| F-03 | tailwind-daisyui-setup | (foundation) Tailwind CSS + daisyUI in asset pipeline; base theme and component classes in ERB | — | — | ready |
+| F-03 | tailwind-daisyui-setup | (foundation) Tailwind CSS + daisyUI in asset pipeline; base theme and component classes in ERB | — | — | implemented |
 | S-01 | email-password-auth | create an account, log in, and log out | F-01 | FR-001, US-01 | ready |
 | S-02 | mutual-friend-circle | send a friend request; accept or decline; see active friends | S-01 | FR-002, US-01 | proposed |
 | S-03 | log-session-with-confirm | log a session with catalog game, registered friend, and unregistered player; co-player gets in-app notification and confirms or rejects; logger sees history immediately | S-02, F-02 | US-01, FR-003, FR-004, FR-005, FR-006, FR-009 | proposed |
@@ -92,7 +92,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 
 ### F-03: Tailwind CSS + daisyUI setup
 
-- **Outcome:** (foundation) Tailwind CSS and daisyUI are integrated via `tailwindcss-rails` (no Node.js); a base daisyUI theme and semantic component classes (`btn`, `card`, `alert`, etc.) are available in ERB views and layouts.
+- **Outcome:** (foundation) Tailwind CSS and daisyUI are integrated via `tailwindcss-rails` (standalone CLI + npm for daisyUI plugin); abyss theme; base layout shell with nav placeholder, flash partial, and page container.
 - **Change ID:** tailwind-daisyui-setup
 - **PRD refs:** —
 - **Unlocks:** S-01, S-02, S-03, S-04 (polished product UI in any vertical slice; none blocked without it)
@@ -100,8 +100,8 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Parallel with:** S-01, S-02, F-02
 - **Blockers:** —
 - **Unknowns:** daisyUI theme choice (e.g. `corporate`, `business`, `nord`) — pick during `/10x-plan`
-- **Risk:** Additive infra only; existing plain CSS in `application.css` can coexist until views migrate incrementally.
-- **Status:** ready
+- **Risk:** Additive infra; hand-written CSS removed; auth views remain unstyled until S-01.
+- **Status:** implemented
 
 ## Slices
 
@@ -114,7 +114,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Carry-forward from F-01 impl review** ([plan addendum](../archive/2026-06-02-minimal-auth-scaffold/plan.md#impl-review-addendum-2026-06-04)): session cookie TTL + server-side active scope; `Session.sweep` (index on `sessions.created_at` already landed); staging `secure:` cookie if needed; ambiguous registration errors (no email enumeration)
 - **Parallel with:** —
 - **Blockers:** —
-- **Unknowns:** —
+- **Unknowns:** Auth views use bare HTML from F-01 scaffold — restyle with daisyUI form/input/btn classes (F-03 provides the foundation).
 - **Risk:** First user-visible slice; proves deploy path still works with real users before friend/session complexity.
 - **Status:** ready
 

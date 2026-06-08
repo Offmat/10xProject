@@ -14,6 +14,8 @@ gem 'importmap-rails'
 gem 'turbo-rails'
 # Hotwire's modest JavaScript framework [https://stimulus.hotwired.dev]
 gem 'stimulus-rails'
+# Tailwind CSS via standalone CLI [https://github.com/rails/tailwindcss-rails]
+gem 'tailwindcss-rails'
 # Build JSON APIs with ease [https://github.com/rails/jbuilder]
 gem 'jbuilder'
 
@@ -60,6 +62,8 @@ end
 group :development do
   # Use console on exceptions pages [https://github.com/rails/web-console]
   gem 'web-console'
+  # Process manager for bin/dev (Procfile.dev)
+  gem 'foreman'
 end
 
 gem 'shoulda-matchers', '~> 7.0', groups: %i[development test]

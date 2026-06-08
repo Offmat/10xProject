@@ -34,3 +34,10 @@ Use Rails built-in authentication for MVP, but keep auth code close to Devise-st
 - Avoid introducing custom auth primitives that diverge from mainstream Rails/Devise patterns unless required by product scope.
 
 Agent-oriented file map (F-01 scaffold): @app/AGENTS.md. Request-spec helpers: @spec/support/authentication_helpers.rb (`sign_in_as`, `sign_out`, `register_user`). Rate-limit specs stub cache increment only in their example group.
+
+## Frontend (F-03)
+
+- **CSS build:** Tailwind CSS 4 via `tailwindcss-rails` (standalone CLI, no Node runtime at compile time). Input: `app/assets/tailwind/application.css`; output: `app/assets/builds/tailwind.css`.
+- **daisyUI:** npm dependency (`daisyui` in `package.json`); configured via `@plugin "daisyui"` in the Tailwind input file. Theme: `abyss` (default).
+- **Dev workflow:** `bin/dev` runs Foreman with `Procfile.dev` (web + `tailwindcss:watch`). Run `npm install` after clone (`bin/setup` handles this).
+- **CI/production:** GitHub Actions and `bin/setup` install npm deps and run `bin/rails tailwindcss:build` before specs; Docker build runs `npm ci` before `assets:precompile`.

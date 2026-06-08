@@ -16,6 +16,17 @@ FileUtils.chdir APP_ROOT do
   system! "bundle config set --local path vendor/bundle"
   system("bundle check") || system!("bundle install")
 
+  puts "\n== Installing npm dependencies =="
+  if system("command -v npm > /dev/null 2>&1")
+    system! "npm install"
+  else
+    warn "npm not found; Tailwind/daisyUI builds require npm. Install Node.js, then re-run bin/setup."
+    exit 1
+  end
+
+  puts "\n== Building Tailwind CSS =="
+  system! "bin/rails tailwindcss:build"
+
   puts "\n== Checking gems for known vulnerabilities =="
   unless system("bin/bundler-audit check")
     warn "bundler-audit reported issues (setup continues). Review output above."
@@ -48,4 +59,6 @@ FileUtils.chdir APP_ROOT do
     STDOUT.flush # flush the output before exec(2) so that it displays
     exec "bin/dev"
   end
+
+  exit 0 if ARGV.include?("--skip-server")
 end
