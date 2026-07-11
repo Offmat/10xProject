@@ -441,44 +441,44 @@ Note: Q-ids are best-effort from known Wikidata entries. The implementer should 
 
 #### Automated
 
-- [x] 1.1 Migration applies cleanly: `bin/rails db:migrate`
-- [x] 1.2 Model spec passes: `bin/rspec spec/models/game_spec.rb`
-- [x] 1.3 Bundle installs without errors: `bundle install`
-- [x] 1.4 All existing specs still pass: `bin/rspec`
-- [x] 1.5 Lint passes: `bin/rubocop`
+- [x] 1.1 Migration applies cleanly: `bin/rails db:migrate` — 822df41
+- [x] 1.2 Model spec passes: `bin/rspec spec/models/game_spec.rb` — 822df41
+- [x] 1.3 Bundle installs without errors: `bundle install` — 822df41
+- [x] 1.4 All existing specs still pass: `bin/rspec` — 822df41
+- [x] 1.5 Lint passes: `bin/rubocop` — 822df41
 
 #### Manual
 
-- [ ] 1.6 Game.create! with valid attrs succeeds in console
-- [ ] 1.7 Duplicate wikidata_id raises RecordNotUnique
+- [x] 1.6 Game.create! with valid attrs succeeds in console — 822df41
+- [x] 1.7 Duplicate wikidata_id raises RecordNotUnique — 822df41
 
 ### Phase 2: Service Layer
 
 #### Automated
 
-- [x] 2.1 Client spec passes: `bin/rspec spec/services/unit/game_catalog/wikidata_client_spec.rb`
-- [x] 2.2 Mapper spec passes: `bin/rspec spec/services/unit/game_catalog/wikidata_mapper_spec.rb`
-- [x] 2.3 ImportService spec passes: `bin/rspec spec/services/unit/game_catalog/import_service_spec.rb`
-- [x] 2.4 All existing specs still pass: `bin/rspec`
-- [x] 2.5 Lint passes: `bin/rubocop`
-- [x] 2.6 No Brakeman warnings: `bin/brakeman`
+- [x] 2.1 Client spec passes: `bin/rspec spec/services/unit/game_catalog/wikidata_client_spec.rb` — 822df41
+- [x] 2.2 Mapper spec passes: `bin/rspec spec/services/unit/game_catalog/wikidata_mapper_spec.rb` — 822df41
+- [x] 2.3 ImportService spec passes: `bin/rspec spec/services/unit/game_catalog/import_service_spec.rb` — 822df41
+- [x] 2.4 All existing specs still pass: `bin/rspec` — 822df41
+- [x] 2.5 Lint passes: `bin/rubocop` — 822df41
+- [x] 2.6 No Brakeman warnings: `bin/brakeman` — 822df41
 
 #### Manual
 
-- [ ] 2.7 WikidataMapper.call with minimal entity hash returns expected result in console
+- [x] 2.7 WikidataMapper.call with minimal entity hash returns expected result in console — 822df41
 
 ### Phase 3: Orchestration & Integration
 
 #### Automated
 
-- [x] 3.1 Integration test passes: `bin/rspec spec/services/integration/game_catalog_import_spec.rb`
-- [x] 3.2 Rake task spec passes: `bin/rspec spec/tasks/game_catalog_rake_spec.rb`
-- [x] 3.3 Full suite passes: `bin/rspec`
-- [x] 3.4 Lint passes: `bin/rubocop`
-- [x] 3.5 CI checks pass: `bin/ci`
+- [x] 3.1 Integration test passes: `bin/rspec spec/services/integration/game_catalog_import_spec.rb` — 822df41
+- [x] 3.2 Rake task spec passes: `bin/rspec spec/tasks/game_catalog_rake_spec.rb` — 822df41
+- [x] 3.3 Full suite passes: `bin/rspec` — 822df41
+- [x] 3.4 Lint passes: `bin/rubocop` — 822df41
+- [x] 3.5 CI checks pass: `bin/ci` — 822df41
 
 #### Manual
 
-- [ ] 3.6 `bin/rails game_catalog:import` creates ~20 games from real Wikidata
-- [ ] 3.7 Re-run produces 0 created, ~20 updated (idempotent)
-- [ ] 3.8 Rich game has all fields populated; sparse game has nils
+- [x] 3.6 `bin/rails game_catalog:import` creates ~20 games from real Wikidata — 822df41
+- [x] 3.7 Re-run produces 0 created, ~20 updated (idempotent) — 822df41
+- [x] 3.8 Rich game has all fields populated; sparse game has nils — 822df41
