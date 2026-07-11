@@ -3,7 +3,7 @@ project: all-aBoard
 version: 1
 status: draft
 created: 2026-05-31
-updated: 2026-06-08
+updated: 2026-07-11
 prd_version: 1
 main_goal: speed
 top_blocker: time
@@ -32,7 +32,7 @@ The product wedge — the one trait that, if removed, makes this a generic score
 | ID | Change ID | Outcome (user can …) | Prerequisites | PRD refs | Status |
 |---|---|---|---|---|---|
 | F-01 | minimal-auth-scaffold | (foundation) email/password auth scaffold: User model, sessions, protected routes | — | FR-001, Access Control | done |
-| F-02 | seed-game-catalog | (foundation) Wikidata import service + ~20-game MVP seed via console | F-01 | FR-009, Business Logic | implemented |
+| F-02 | seed-game-catalog | (foundation) Wikidata import service + ~20-game MVP seed via console | F-01 | FR-009, Business Logic | done |
 | F-03 | tailwind-daisyui-setup | (foundation) Tailwind CSS + daisyUI in asset pipeline; base theme and component classes in ERB | — | — | done |
 | S-01 | email-password-auth | create an account, log in, and log out | F-01 | FR-001, US-01 | ready |
 | S-02 | mutual-friend-circle | send a friend request; accept or decline; see active friends | S-01 | FR-002, US-01 | proposed |
@@ -88,7 +88,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Unknowns:** ~~Wikidata client gem choice~~ resolved: no gem — SPARQL Query Service via `Net::HTTP` (stdlib). Fields: `name`, `description`, `bgg_id`, `min_players`, `max_players`, `year_published`, `play_time_minutes`. Idempotency on `wikidata_id`. SPARQL `VALUES` clause handles full batch in one request (no chunking needed).
 - **Risk:** Wikidata coverage and field quality vary by title; session flow reads local catalog only — no user-facing live lookup in MVP. Richer metadata or BGG licensing deferred to P-07.
 - **Change folder:** [seed-game-catalog](../changes/seed-game-catalog/change.md)
-- **Status:** implemented
+- **Status:** done
 
 ### F-03: Tailwind CSS + daisyUI setup
 
@@ -187,3 +187,4 @@ _No cross-cutting roadmap questions. PRD `## Open Questions` were resolved 2026-
 
 - **F-01: (foundation) User model, email/password credentials, session issuance, and route protection are in place for vertical slices to build on.** — Archived 2026-06-04 → `context/archive/2026-06-02-minimal-auth-scaffold/`. Lesson: —.
 - **F-03: (foundation) Tailwind CSS and daisyUI are integrated via `tailwindcss-rails` (standalone CLI + npm for daisyUI plugin); abyss theme; base layout shell with nav placeholder, flash partial, and page container.** — Archived 2026-06-08 → `context/archive/2026-06-07-tailwind-daisyui-setup/`. Lesson: —.
+- **F-02: (foundation) Reusable operator import service with a **Wikidata adapter** fetches board-game data (CC0) via the SPARQL Query Service, persists `Game` records locally, and accepts a parameterized batch. F-02 seeds ~20 titles for development and S-03 via Rails console; the same service supports wide-catalog operator imports later (P-03 wraps UI and auth only). No user or admin catalog editing in MVP. Switching or adding another provider (e.g. BoardGameGeek) is post-MVP (P-07).** — Archived 2026-07-11 → `context/archive/2026-06-07-seed-game-catalog/`. Lesson: —.
