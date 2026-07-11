@@ -68,7 +68,7 @@ group :development do
   gem 'foreman'
 end
 
-gem 'shoulda-matchers', '~> 7.0', groups: %i[development test]
+gem 'shoulda-matchers', '~> 8.0', groups: %i[development test]
 gem 'factory_bot_rails', '~> 6.5', groups: %i[development test]
 
 group :test do
