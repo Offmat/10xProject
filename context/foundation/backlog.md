@@ -2,7 +2,7 @@
 project: all-aBoard
 version: 1
 created: 2026-06-01
-updated: 2026-06-07
+updated: 2026-06-08
 system: github-issues
 roadmap_version: 1
 ---
@@ -78,3 +78,4 @@ Built-in **Status**: Todo for active MVP items; Done for parked items.
 - **2026-06-05** — F-02 reframed: import service + console invocation (roadmap v1 edit-in-place). F-01 done; F-02 and S-01 unblocked.
 - **2026-06-05** — F-02 clarified: catalog import fetches from external game database API (e.g. BGG), not bundled data file; user-facing live lookup remains parked (P-05).
 - **2026-06-07** — F-02 catalog provider set to Wikidata for MVP; BGG/provider switch parked as P-07 (`catalog-provider-switch`); no GitHub issue yet.
+- **2026-06-08** — F-02 data access switched from Wikidata Action API (`wbgetentities`) to SPARQL Query Service (`query.wikidata.org/sparql`). `wdt:` truthy values eliminate manual rank sorting; single SPARQL `VALUES` query replaces chunked entity fetches; mapper reduced from 109 to 63 lines.

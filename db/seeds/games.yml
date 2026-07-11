@@ -1,0 +1,183 @@
+# Snapshot of MVP game catalog (imported from Wikidata via game_catalog:import).
+# Regenerate after re-import: bin/rails runner "File.write('db/seeds/games.yml', Game.order(:wikidata_id).map { |g| g.attributes.except('id', 'created_at', 'updated_at', 'imported_at') }.to_yaml)"
+---
+- bgg_id: '237182'
+  description: 2018 board game
+  max_players: 4
+  min_players: 2
+  name: Root
+  play_time_minutes:
+  source: wikidata
+  wikidata_id: Q101242941
+  year_published: 2018
+- bgg_id: '224517'
+  description: 2018 boardgame
+  max_players: 4
+  min_players: 2
+  name: 'Brass: Birmingham'
+  play_time_minutes: 120
+  source: wikidata
+  wikidata_id: Q108033998
+  year_published: 2018
+- bgg_id: '36218'
+  description: 2008 designer card game created by Donald X. Vaccarino
+  max_players: 4
+  min_players: 2
+  name: Dominion
+  play_time_minutes:
+  source: wikidata
+  wikidata_id: Q1238110
+  year_published: 2008
+- bgg_id: '70323'
+  description: 2011 dice and board game
+  max_players: 6
+  min_players: 2
+  name: King of Tokyo
+  play_time_minutes:
+  source: wikidata
+  wikidata_id: Q15264238
+  year_published: 2011
+- bgg_id: '822'
+  description: 2000 board game
+  max_players: 6
+  min_players: 2
+  name: Carcassonne
+  play_time_minutes:
+  source: wikidata
+  wikidata_id: Q17262
+  year_published: 2000
+- bgg_id: '13'
+  description: board game (1995)
+  max_players: 4
+  min_players: 3
+  name: The Settlers of Catan
+  play_time_minutes: 75
+  source: wikidata
+  wikidata_id: Q17271
+  year_published: 1995
+- bgg_id: '68448'
+  description: 2010 card game
+  max_players: 7
+  min_players: 2
+  name: 7 Wonders
+  play_time_minutes: 30
+  source: wikidata
+  wikidata_id: Q17276
+  year_published: 2010
+- bgg_id: '148228'
+  description: 2014 board game
+  max_players: 4
+  min_players: 2
+  name: Splendor
+  play_time_minutes: 30
+  source: wikidata
+  wikidata_id: Q20037103
+  year_published: 2014
+- bgg_id: '9209'
+  description: 2004 board game
+  max_players: 5
+  min_players: 2
+  name: Ticket to Ride
+  play_time_minutes: 30
+  source: wikidata
+  wikidata_id: Q228308
+  year_published: 2004
+- bgg_id: '178900'
+  description: 2015 spy-themed word-affiliation board game
+  max_players: 8
+  min_players: 4
+  name: Codenames
+  play_time_minutes: 15
+  source: wikidata
+  wikidata_id: Q25203543
+  year_published: 2016
+- bgg_id: '167791'
+  description: 2016 board game
+  max_players: 5
+  min_players: 1
+  name: Terraforming Mars
+  play_time_minutes: 120
+  source: wikidata
+  wikidata_id: Q36718832
+  year_published: 2016
+- bgg_id: '169786'
+  description: 2016 strategy boardgame
+  max_players: 5
+  min_players: 1
+  name: Scythe
+  play_time_minutes: 115
+  source: wikidata
+  wikidata_id: Q36719002
+  year_published: 2016
+- bgg_id: '174430'
+  description: 2017 board game
+  max_players: 4
+  min_players: 1
+  name: Gloomhaven
+  play_time_minutes: 120
+  source: wikidata
+  wikidata_id: Q36816341
+  year_published: 2017
+- bgg_id: '31260'
+  description: 2007 board game
+  max_players: 5
+  min_players: 1
+  name: Agricola
+  play_time_minutes:
+  source: wikidata
+  wikidata_id: Q396644
+  year_published: 2007
+- bgg_id: '230802'
+  description: 2017 board game
+  max_players: 4
+  min_players: 2
+  name: Azul
+  play_time_minutes:
+  source: wikidata
+  wikidata_id: Q44367843
+  year_published: 2017
+- bgg_id: '30549'
+  description: 2008 cooperative board game
+  max_players: 4
+  min_players: 2
+  name: Pandemic
+  play_time_minutes:
+  source: wikidata
+  wikidata_id: Q531592
+  year_published: 2008
+- bgg_id: '162886'
+  description: 2017 board game
+  max_players: 4
+  min_players: 1
+  name: Spirit Island
+  play_time_minutes: 120
+  source: wikidata
+  wikidata_id: Q58409118
+  year_published: 2017
+- bgg_id: '199792'
+  description: 2018 board game
+  max_players: 4
+  min_players: 1
+  name: Everdell
+  play_time_minutes:
+  source: wikidata
+  wikidata_id: Q60773519
+  year_published: 2018
+- bgg_id: '266192'
+  description: 2019 board game by Elizabeth Hargrave
+  max_players: 7
+  min_players: 1
+  name: Wingspan
+  play_time_minutes: 40
+  source: wikidata
+  wikidata_id: Q65784798
+  year_published: 2019
+- bgg_id: '39856'
+  description: 2008 party card game
+  max_players: 8
+  min_players: 3
+  name: Dixit
+  play_time_minutes:
+  source: wikidata
+  wikidata_id: Q906623
+  year_published: 2008
