@@ -46,6 +46,8 @@ group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem 'debug', platforms: %i[ mri windows ], require: 'debug/prelude'
 
+  gem 'pry-rails'
+
   # Audits gems for known security defects (use config/bundler-audit.yml to ignore issues)
   gem 'bundler-audit', require: false
 
@@ -68,3 +70,7 @@ end
 
 gem 'shoulda-matchers', '~> 7.0', groups: %i[development test]
 gem 'factory_bot_rails', '~> 6.5', groups: %i[development test]
+
+group :test do
+  gem 'webmock', '~> 3.26'
+end

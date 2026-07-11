@@ -1,8 +1,20 @@
 # Game Catalog Import Service (F-02) Implementation Plan
 
+## Post-implementation deviation (2026-06-08)
+
+> **Data access switched from Action API (`wbgetentities`) to SPARQL Query Service.** The three-class architecture (WikidataClient → WikidataMapper → ImportService) is preserved, but the HTTP boundary and mapper contracts changed:
+>
+> - **WikidataClient** now queries `query.wikidata.org/sparql` with a `VALUES` clause instead of `wbgetentities` with chunked IDs. Single request for all QIDs.
+> - **WikidataMapper** receives flat SPARQL bindings (array of rows) instead of nested entity JSON. Maps columns directly — no rank sorting, snaktype checks, or claim traversal. Play time unit conversion (hours → minutes) is handled in SPARQL via `BIND(IF(...))`.
+> - **ImportService** adapted: client returns bindings array, mapper returns attrs list. Missing entities detected by comparing returned QIDs against seed list.
+>
+> Motivation: eliminate ~50 lines of brittle JSON traversal (rank ordering, datavalue type checks, unit URI parsing). SPARQL `wdt:` prefix returns truthy values automatically.
+>
+> See `doubts.md` for accepted risks (D1–D6) and resolutions.
+
 ## Overview
 
-Build a reusable operator import service with a Wikidata adapter that fetches board game data via the Action API (`wbgetentities`), maps entity JSON to game attributes, and upserts `Game` records idempotently. The service seeds ~20 titles for development and S-03, uses `Net::HTTP` (stdlib), retries once on failure, and reports results with per-game warnings. The same service supports larger imports later (P-03 wraps UI/auth only).
+Build a reusable operator import service with a Wikidata SPARQL adapter that fetches board game data via the SPARQL Query Service (`query.wikidata.org/sparql`), maps flat result bindings to game attributes, and upserts `Game` records idempotently. The service seeds ~20 titles for development and S-03, uses `Net::HTTP` (stdlib), retries once on failure, and reports results. The same service supports larger imports later (P-03 wraps UI/auth only).
 
 ## Current State Analysis
 
@@ -20,7 +32,7 @@ The codebase is at the auth-only stage:
 - `db/migrate/20260602150526_create_users.rb` — Migration pattern: domain columns first, `t.timestamps`, indexes outside block
 - `spec/services/unit/auth_audit_logger_spec.rb` — Unit spec pattern: `type: :service`, stub collaborators, assert behavior
 - `spec/rails_helper.rb:26` — Support auto-loading: `Rails.root.glob("spec/support/**/*.rb").sort_by(&:to_s).each { |f| require f }`
-- Wikidata API verified live: `wbgetentities` returns up to 50 entities per request; `languages=en|mul` needed for label fallback
+- Wikidata API verified live: ~~`wbgetentities` returns up to 50 entities per request~~ switched to SPARQL Query Service; `VALUES` clause handles all QIDs in one request; `wikibase:language "en,mul"` for label fallback
 
 ## Desired End State
 
@@ -206,7 +218,7 @@ Build the three service classes (WikidataClient, WikidataMapper, ImportService) 
 
 **Intent**: Pure data transformation — takes a single Wikidata entity hash and returns an attributes hash suitable for `Game` creation/update. Handles label fallback (en → mul → seed_name), claim extraction with rank preference, quantity parsing (strip `+`), time extraction (year from precision-9 dates), and play time unit conversion (minutes + hours → minutes).
 
-**Contract**: Class `GameCatalog::WikidataMapper` with `.call(entity, seed_name: nil)` returning a hash with keys: `wikidata_id`, `name`, `description`, `bgg_id`, `min_players`, `max_players`, `year_published`, `play_time_minutes`, `source`. Logs warnings via `Rails.logger.warn` for: unknown play time units, missing labels with no seed_name fallback.
+**Contract**: Class `GameCatalog::WikidataMapper` with `.call(entity, seed_name: nil)` returning `{ attrs: Hash, warnings: Array<String> }` where attrs has keys: `wikidata_id`, `name`, `description`, `bgg_id`, `min_players`, `max_players`, `year_published`, `play_time_minutes`, `source`. Collects warnings (unknown play time units, missing labels with no seed_name fallback) in the returned array for ImportService to aggregate. Label fallback chain: en → mul → P373 (Commons category) → seed_name.
 
 #### 6. WikidataMapper unit spec
 
@@ -418,7 +430,8 @@ Note: Q-ids are best-effort from known Wikidata entries. The implementer should 
 - Unit spec pattern: `spec/services/unit/auth_audit_logger_spec.rb`
 - Factory pattern: `spec/factories/users.rb`
 - Spec conventions: `spec/AGENTS.md`
-- Wikidata API docs: `https://www.wikidata.org/w/api.php?action=help&modules=wbgetentities`
+- Wikidata SPARQL docs: `https://www.wikidata.org/wiki/Wikidata:SPARQL_tutorial`
+- Wikidata WikiProject Board Games: `https://www.wikidata.org/wiki/Wikidata:WikiProject_Board_Games`
 
 ## Progress
 
@@ -428,11 +441,11 @@ Note: Q-ids are best-effort from known Wikidata entries. The implementer should 
 
 #### Automated
 
-- [ ] 1.1 Migration applies cleanly: `bin/rails db:migrate`
-- [ ] 1.2 Model spec passes: `bin/rspec spec/models/game_spec.rb`
-- [ ] 1.3 Bundle installs without errors: `bundle install`
-- [ ] 1.4 All existing specs still pass: `bin/rspec`
-- [ ] 1.5 Lint passes: `bin/rubocop`
+- [x] 1.1 Migration applies cleanly: `bin/rails db:migrate`
+- [x] 1.2 Model spec passes: `bin/rspec spec/models/game_spec.rb`
+- [x] 1.3 Bundle installs without errors: `bundle install`
+- [x] 1.4 All existing specs still pass: `bin/rspec`
+- [x] 1.5 Lint passes: `bin/rubocop`
 
 #### Manual
 
@@ -443,12 +456,12 @@ Note: Q-ids are best-effort from known Wikidata entries. The implementer should 
 
 #### Automated
 
-- [ ] 2.1 Client spec passes: `bin/rspec spec/services/unit/game_catalog/wikidata_client_spec.rb`
-- [ ] 2.2 Mapper spec passes: `bin/rspec spec/services/unit/game_catalog/wikidata_mapper_spec.rb`
-- [ ] 2.3 ImportService spec passes: `bin/rspec spec/services/unit/game_catalog/import_service_spec.rb`
-- [ ] 2.4 All existing specs still pass: `bin/rspec`
-- [ ] 2.5 Lint passes: `bin/rubocop`
-- [ ] 2.6 No Brakeman warnings: `bin/brakeman`
+- [x] 2.1 Client spec passes: `bin/rspec spec/services/unit/game_catalog/wikidata_client_spec.rb`
+- [x] 2.2 Mapper spec passes: `bin/rspec spec/services/unit/game_catalog/wikidata_mapper_spec.rb`
+- [x] 2.3 ImportService spec passes: `bin/rspec spec/services/unit/game_catalog/import_service_spec.rb`
+- [x] 2.4 All existing specs still pass: `bin/rspec`
+- [x] 2.5 Lint passes: `bin/rubocop`
+- [x] 2.6 No Brakeman warnings: `bin/brakeman`
 
 #### Manual
 
@@ -458,11 +471,11 @@ Note: Q-ids are best-effort from known Wikidata entries. The implementer should 
 
 #### Automated
 
-- [ ] 3.1 Integration test passes: `bin/rspec spec/services/integration/game_catalog_import_spec.rb`
-- [ ] 3.2 Rake task spec passes: `bin/rspec spec/tasks/game_catalog_rake_spec.rb`
-- [ ] 3.3 Full suite passes: `bin/rspec`
-- [ ] 3.4 Lint passes: `bin/rubocop`
-- [ ] 3.5 CI checks pass: `bin/ci`
+- [x] 3.1 Integration test passes: `bin/rspec spec/services/integration/game_catalog_import_spec.rb`
+- [x] 3.2 Rake task spec passes: `bin/rspec spec/tasks/game_catalog_rake_spec.rb`
+- [x] 3.3 Full suite passes: `bin/rspec`
+- [x] 3.4 Lint passes: `bin/rubocop`
+- [x] 3.5 CI checks pass: `bin/ci`
 
 #### Manual
 

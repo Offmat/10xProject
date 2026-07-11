@@ -1,0 +1,24 @@
+{
+  "results": {
+    "bindings": [
+      {
+        "game": { "type": "uri", "value": "http://www.wikidata.org/entity/Q36718832" },
+        "gameLabel": { "xml:lang": "mul", "type": "literal", "value": "Terraforming Mars" },
+        "gameDescription": { "xml:lang": "en", "type": "literal", "value": "2016 board game" },
+        "bggId": { "type": "literal", "value": "167791" },
+        "minPlayers": { "datatype": "http://www.w3.org/2001/XMLSchema#decimal", "type": "literal", "value": "1" },
+        "maxPlayers": { "datatype": "http://www.w3.org/2001/XMLSchema#decimal", "type": "literal", "value": "5" },
+        "pubDate": { "datatype": "http://www.w3.org/2001/XMLSchema#dateTime", "type": "literal", "value": "2016-01-01T00:00:00Z" },
+        "playTime": { "datatype": "http://www.w3.org/2001/XMLSchema#decimal", "type": "literal", "value": "120" }
+      },
+      {
+        "game": { "type": "uri", "value": "http://www.wikidata.org/entity/Q17271" },
+        "gameLabel": { "xml:lang": "en", "type": "literal", "value": "The Settlers of Catan" },
+        "bggId": { "type": "literal", "value": "13" },
+        "minPlayers": { "datatype": "http://www.w3.org/2001/XMLSchema#decimal", "type": "literal", "value": "3" },
+        "maxPlayers": { "datatype": "http://www.w3.org/2001/XMLSchema#decimal", "type": "literal", "value": "4" },
+        "pubDate": { "datatype": "http://www.w3.org/2001/XMLSchema#dateTime", "type": "literal", "value": "1995-01-01T00:00:00Z" }
+      }
+    ]
+  }
+}

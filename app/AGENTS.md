@@ -38,4 +38,5 @@ All services live under `app/services/`, namespaced by domain (e.g. `GameCatalog
 - **Orchestrator / business-action classes** expose a single public `.call` class method. Name the class after the action: `ImportService`, `CreateSession`.
 - **Infrastructure / utility classes** (HTTP clients, loggers, mappers) may use a descriptive method name (`.fetch`, `.log`) when `.call` would be less clear.
 - One public method per class. Keep internals private.
+- When a class stores instance variables, add a private `attr_reader` and use the reader instead of `@`-prefixed access throughout the class.
 - Do not add an `ApplicationService` base class until there are 5+ services sharing the same delegation boilerplate.

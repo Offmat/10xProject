@@ -10,9 +10,26 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_06_04_120000) do
+ActiveRecord::Schema[8.1].define(version: 2026_06_07_120000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
+
+  create_table "games", force: :cascade do |t|
+    t.string "bgg_id"
+    t.datetime "created_at", null: false
+    t.string "description"
+    t.datetime "imported_at"
+    t.integer "max_players"
+    t.integer "min_players"
+    t.string "name", null: false
+    t.integer "play_time_minutes"
+    t.string "source", default: "wikidata", null: false
+    t.datetime "updated_at", null: false
+    t.string "wikidata_id", null: false
+    t.integer "year_published"
+    t.index ["bgg_id"], name: "index_games_on_bgg_id"
+    t.index ["wikidata_id"], name: "index_games_on_wikidata_id", unique: true
+  end
 
   create_table "sessions", force: :cascade do |t|
     t.datetime "created_at", null: false
