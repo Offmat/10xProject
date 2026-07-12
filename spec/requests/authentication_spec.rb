@@ -114,6 +114,51 @@ RSpec.describe 'Authentication', type: :request do
     end
   end
 
+  describe 'authenticated UI' do
+    it 'shows welcome message and sign-out control on the home page' do
+      user = create(:user, email: 'player@example.com')
+      sign_in_as(user)
+
+      get root_path
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include('Welcome back, player')
+      expect(response.body).to include('Sign out')
+      expect(response.body).not_to include('Sign up')
+    end
+  end
+
+  describe 'registration anti-enumeration' do
+    it 'returns a generic error for duplicate email' do
+      create(:user, email: 'taken@example.com')
+
+      post users_path, params: {
+        user: {
+          email: 'taken@example.com',
+          password: 'password',
+          password_confirmation: 'password'
+        }
+      }
+
+      expect(response).to have_http_status(:unprocessable_entity)
+      expect(response.body).to include('Unable to create account')
+      expect(response.body).not_to include('already been taken')
+    end
+  end
+
+  describe 'session expiry' do
+    it 'treats an expired session as logged out' do
+      user = create(:user)
+      sign_in_as(user)
+      user.sessions.last.update_column(:created_at, 31.days.ago)
+
+      get root_path
+
+      expect(response.body).not_to include('Welcome back')
+      expect(response.body).to include('Sign in')
+    end
+  end
+
   describe 'auth audit logging' do
     let(:user) { create(:user) }
 

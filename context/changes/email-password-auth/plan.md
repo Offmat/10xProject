@@ -314,25 +314,25 @@ No schema migration required — TTL uses existing `sessions.created_at` and ind
 
 #### Automated
 
-- [x] 2.1 `bin/rspec spec/requests/authentication_spec.rb` — existing specs pass (no regression)
-- [x] 2.2 `bin/rubocop` passes on touched files
+- [x] 2.1 `bin/rspec spec/requests/authentication_spec.rb` — existing specs pass (no regression) — 4200b7f
+- [x] 2.2 `bin/rubocop` passes on touched files — 4200b7f
 
 #### Manual
 
-- [x] 2.3 Auth pages render styled cards on mobile and desktop
-- [x] 2.4 Navbar truncates long email on narrow viewport
-- [x] 2.5 Duplicate registration shows generic error only
-- [x] 2.6 Sign out flow and guest navbar revert verified
+- [x] 2.3 Auth pages render styled cards on mobile and desktop — 4200b7f
+- [x] 2.4 Navbar truncates long email on narrow viewport — 4200b7f
+- [x] 2.5 Duplicate registration shows generic error only — 4200b7f
+- [x] 2.6 Sign out flow and guest navbar revert verified — 4200b7f
 
 ### Phase 3: Tests & Verification
 
 #### Automated
 
-- [ ] 3.1 `bin/rspec` full suite passes
-- [ ] 3.2 `bin/rubocop` passes
-- [ ] 3.3 `bin/ci` passes
+- [x] 3.1 `bin/rspec` full suite passes
+- [x] 3.2 `bin/rubocop` passes
+- [x] 3.3 `bin/ci` passes
 
 #### Manual
 
-- [ ] 3.4 End-to-end smoke: register → welcome → sign out → sign in → sign out
-- [ ] 3.5 Visual check: abyss theme consistent across auth pages and layout
+- [x] 3.4 End-to-end smoke: register → welcome → sign out → sign in → sign out
+- [x] 3.5 Visual check: abyss theme consistent across auth pages and layout
