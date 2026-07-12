@@ -301,14 +301,14 @@ No schema migration required — TTL uses existing `sessions.created_at` and ind
 
 #### Automated
 
-- [ ] 1.1 `bin/rspec spec/models/session_spec.rb` — existing specs pass (no regression)
-- [ ] 1.2 `bin/rspec spec/requests/authentication_spec.rb` — existing specs pass (no regression)
-- [ ] 1.3 `bin/rubocop` passes on touched files
+- [x] 1.1 `bin/rspec spec/models/session_spec.rb` — existing specs pass (no regression)
+- [x] 1.2 `bin/rspec spec/requests/authentication_spec.rb` — existing specs pass (no regression)
+- [x] 1.3 `bin/rubocop` passes on touched files
 
 #### Manual
 
-- [ ] 1.4 Sign in, verify cookie has ~30-day expiry in browser devtools
-- [ ] 1.5 `bin/rails sessions:sweep` runs without error and reports count
+- [x] 1.4 Sign in, verify cookie has ~30-day expiry in browser devtools
+- [x] 1.5 `bin/rails sessions:sweep` runs without error and reports count
 
 ### Phase 2: Auth UI & Navigation
 
