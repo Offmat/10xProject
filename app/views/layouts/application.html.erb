@@ -28,8 +28,13 @@
         <%= link_to "all-aBoard", root_path, class: "btn btn-ghost text-xl" %>
       </div>
       <div class="navbar-end gap-2">
-        <%= link_to "Sign in", new_session_path, class: "btn btn-ghost btn-sm" %>
-        <%= link_to "Sign up", new_user_path, class: "btn btn-primary btn-sm" %>
+        <% if authenticated? %>
+          <span class="max-w-[12rem] truncate text-sm sm:max-w-none"><%= current_user.email %></span>
+          <%= button_to 'Sign out', session_path, method: :delete, class: 'btn btn-ghost btn-sm' %>
+        <% else %>
+          <%= link_to "Sign in", new_session_path, class: "btn btn-ghost btn-sm" %>
+          <%= link_to "Sign up", new_user_path, class: "btn btn-primary btn-sm" %>
+        <% end %>
       </div>
     </div>
 

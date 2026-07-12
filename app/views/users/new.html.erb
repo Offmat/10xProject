@@ -1,15 +1,43 @@
-<h1>Sign up</h1>
+<% content_for :title, 'Sign up' %>
 
-<%= form_with model: @user, url: users_path do |form| %>
-  <% if @user.errors.any? %>
-    <%= tag.div(@user.errors.full_messages.to_sentence, style: 'color:red') %>
+<%= render layout: 'shared/auth_card', locals: { title: 'Sign up' } do %>
+  <% if @registration_error.present? %>
+    <div class="alert alert-error" role="alert"><%= @registration_error %></div>
+  <% elsif @user.errors.any? %>
+    <div class="alert alert-error" role="alert"><%= @user.errors.full_messages.to_sentence %></div>
   <% end %>
 
-  <%= form.email_field :email, required: true, autofocus: true, autocomplete: "username", placeholder: "Email" %><br>
-  <%= form.password_field :password, required: true, autocomplete: "new-password", placeholder: "Password", maxlength: 72 %><br>
-  <%= form.password_field :password_confirmation, required: true, autocomplete: "new-password", placeholder: "Confirm password", maxlength: 72 %><br>
-  <%= form.submit "Create account" %>
-<% end %>
+  <%= form_with model: @user, url: users_path, class: 'space-y-4' do |form| %>
+    <div class="form-control">
+      <label class="label" for="user_email">
+        <span class="label-text">Email</span>
+      </label>
+      <%= form.email_field :email, required: true, autofocus: true, autocomplete: 'username',
+            placeholder: 'Email', id: 'user_email', class: 'input input-bordered w-full' %>
+    </div>
 
-<br>
-<%= link_to "Already have an account? Sign in", new_session_path %>
+    <div class="form-control">
+      <label class="label" for="user_password">
+        <span class="label-text">Password</span>
+      </label>
+      <%= form.password_field :password, required: true, autocomplete: 'new-password',
+            placeholder: 'Password', maxlength: 72, id: 'user_password',
+            class: 'input input-bordered w-full' %>
+    </div>
+
+    <div class="form-control">
+      <label class="label" for="user_password_confirmation">
+        <span class="label-text">Confirm password</span>
+      </label>
+      <%= form.password_field :password_confirmation, required: true, autocomplete: 'new-password',
+            placeholder: 'Confirm password', maxlength: 72, id: 'user_password_confirmation',
+            class: 'input input-bordered w-full' %>
+    </div>
+
+    <%= form.submit 'Create account', class: 'btn btn-primary w-full' %>
+  <% end %>
+
+  <p class="mt-4 text-center text-sm">
+    <%= link_to 'Already have an account? Sign in', new_session_path, class: 'link link-primary' %>
+  </p>
+<% end %>

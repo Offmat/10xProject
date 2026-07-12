@@ -15,6 +15,10 @@ class UsersController < ApplicationController
       start_new_session_for @user
       redirect_to root_path, notice: 'Welcome to all-aBoard!'
     else
+      if @user.errors.any? && @user.errors.attribute_names.all? { |name| name == :email }
+        @registration_error = 'Unable to create account. Check your details and try again.'
+        @user.errors.clear
+      end
       render :new, status: :unprocessable_entity
     end
   end

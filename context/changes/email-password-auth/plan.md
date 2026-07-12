@@ -301,28 +301,28 @@ No schema migration required — TTL uses existing `sessions.created_at` and ind
 
 #### Automated
 
-- [x] 1.1 `bin/rspec spec/models/session_spec.rb` — existing specs pass (no regression)
-- [x] 1.2 `bin/rspec spec/requests/authentication_spec.rb` — existing specs pass (no regression)
-- [x] 1.3 `bin/rubocop` passes on touched files
+- [x] 1.1 `bin/rspec spec/models/session_spec.rb` — existing specs pass (no regression) — ace5252
+- [x] 1.2 `bin/rspec spec/requests/authentication_spec.rb` — existing specs pass (no regression) — ace5252
+- [x] 1.3 `bin/rubocop` passes on touched files — ace5252
 
 #### Manual
 
-- [x] 1.4 Sign in, verify cookie has ~30-day expiry in browser devtools
-- [x] 1.5 `bin/rails sessions:sweep` runs without error and reports count
+- [x] 1.4 Sign in, verify cookie has ~30-day expiry in browser devtools — ace5252
+- [x] 1.5 `bin/rails sessions:sweep` runs without error and reports count — ace5252
 
 ### Phase 2: Auth UI & Navigation
 
 #### Automated
 
-- [ ] 2.1 `bin/rspec spec/requests/authentication_spec.rb` — existing specs pass (no regression)
-- [ ] 2.2 `bin/rubocop` passes on touched files
+- [x] 2.1 `bin/rspec spec/requests/authentication_spec.rb` — existing specs pass (no regression)
+- [x] 2.2 `bin/rubocop` passes on touched files
 
 #### Manual
 
-- [ ] 2.3 Auth pages render styled cards on mobile and desktop
-- [ ] 2.4 Navbar truncates long email on narrow viewport
-- [ ] 2.5 Duplicate registration shows generic error only
-- [ ] 2.6 Sign out flow and guest navbar revert verified
+- [x] 2.3 Auth pages render styled cards on mobile and desktop
+- [x] 2.4 Navbar truncates long email on narrow viewport
+- [x] 2.5 Duplicate registration shows generic error only
+- [x] 2.6 Sign out flow and guest navbar revert verified
 
 ### Phase 3: Tests & Verification
 

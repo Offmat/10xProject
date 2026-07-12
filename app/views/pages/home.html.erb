@@ -3,7 +3,11 @@
 <section class="flex min-h-[60vh] flex-col items-center justify-center text-center">
   <header class="space-y-3">
     <h1 class="text-4xl font-bold tracking-tight sm:text-5xl">all-aBoard</h1>
-    <p class="text-lg text-base-content/70">Log board game sessions across your friend groups.</p>
+    <% if authenticated? %>
+      <p class="text-lg text-base-content/70">Welcome back, <%= current_user.email.split('@').first %></p>
+    <% else %>
+      <p class="text-lg text-base-content/70">Log board game sessions across your friend groups.</p>
+    <% end %>
   </header>
 
   <p class="badge badge-outline badge-primary mt-10">App is running — MVP coming soon.</p>

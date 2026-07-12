@@ -1,0 +1,12 @@
+<section class="flex min-h-[60vh] flex-col items-center justify-center">
+  <div class="card w-full max-w-md bg-base-200 shadow-xl">
+    <div class="card-body">
+      <h1 class="card-title text-2xl"><%= title %></h1>
+      <% if local_assigns[:subtitle].present? %>
+        <p class="text-base-content/70"><%= subtitle %></p>
+      <% end %>
+
+      <%= yield %>
+    </div>
+  </div>
+</section>
