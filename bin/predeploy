@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+set -e
+
+# Wait for Postgres to accept connections before running migrations.
+# Railway does not retry a failed pre-deploy command, so guard against
+# the database still being in its startup phase on cold starts.
+ATTEMPTS=0
+MAX_ATTEMPTS=30
+until bin/rails runner "ActiveRecord::Base.connection.execute('SELECT 1')" >/dev/null 2>&1; do
+  ATTEMPTS=$((ATTEMPTS + 1))
+  if [ "$ATTEMPTS" -ge "$MAX_ATTEMPTS" ]; then
+    echo "Database not ready after ${MAX_ATTEMPTS} attempts, aborting." >&2
+    exit 1
+  fi
+  echo "Waiting for database to accept connections (attempt ${ATTEMPTS}/${MAX_ATTEMPTS})..."
+  sleep 2
+done
+
+exec bin/rails db:prepare
