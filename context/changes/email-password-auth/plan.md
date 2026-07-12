@@ -328,11 +328,11 @@ No schema migration required — TTL uses existing `sessions.created_at` and ind
 
 #### Automated
 
-- [x] 3.1 `bin/rspec` full suite passes
-- [x] 3.2 `bin/rubocop` passes
-- [x] 3.3 `bin/ci` passes
+- [x] 3.1 `bin/rspec` full suite passes — 18ba2b3
+- [x] 3.2 `bin/rubocop` passes — 18ba2b3
+- [x] 3.3 `bin/ci` passes — 18ba2b3
 
 #### Manual
 
-- [x] 3.4 End-to-end smoke: register → welcome → sign out → sign in → sign out
-- [x] 3.5 Visual check: abyss theme consistent across auth pages and layout
+- [x] 3.4 End-to-end smoke: register → welcome → sign out → sign in → sign out — 18ba2b3
+- [x] 3.5 Visual check: abyss theme consistent across auth pages and layout — 18ba2b3

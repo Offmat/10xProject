@@ -1,9 +1,9 @@
 ---
 change_id: email-password-auth
 title: Sign up, log in, and log out
-status: implementing
+status: implemented
 created: 2026-07-12
-updated: 2026-07-12
+updated: 2026-07-13
 archived_at: null
 ---
 
