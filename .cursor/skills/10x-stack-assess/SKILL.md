@@ -50,7 +50,7 @@ When this skill is invoked:
 
 ### Step 0 — Cwd precondition
 
-Detect project markers by running a shell command like:
+Detect project markers by executing a shell command to find relevant files:
 
 ```bash
 find . -maxdepth 1 \( -name "package.json" -o -name "Cargo.toml" -o -name "pyproject.toml" -o -name "go.mod" -o -name "Gemfile" -o -name "composer.json" -o -name "*.csproj" -o -name "pubspec.yaml" \) 2>/dev/null
@@ -88,7 +88,7 @@ Read project files to identify the stack. The detection is file-driven — read 
 
 - CI/CD: `.github/workflows/`, `.gitlab-ci.yml`, `Jenkinsfile`, `.circleci/config.yml`, `cloudbuild.yaml`
 - Deployment: `Dockerfile`, `docker-compose.yml`, `fly.toml`, `vercel.json`, `netlify.toml`, `wrangler.toml`, `render.yaml`, `railway.json`, `Procfile`
-- Instruction files: the project's AI configuration file (AGENTS.md), `AGENTS.md`, the AI tool's configuration directory/rules, `.github/copilot-instructions.md`
+- Instruction files: the project's AI configuration file (AGENTS.md), `AGENTS.md`, the AI tool's configuration directory/.cursor/rules, `.github/copilot-instructions.md`
 - Config quality: `.editorconfig`, `.prettierrc*`, `.eslintrc*`, `tsconfig.json` (strict mode check)
 
 Echo the detected stack back to the user:
@@ -107,9 +107,10 @@ Detected stack:
 
 Ask for confirmation:
 
-Ask the user: "Is this detection accurate? Anything missing or wrong?" with options:
-- "Accurate — proceed (Recommended)" (description: "Continue with this detected stack.")
-- "Correct something" (description: "I'll fix the detection before scoring.")
+Ask the user: "Is this detection accurate? Anything missing or wrong?"
+Options:
+- "Accurate — proceed (Recommended)" (Continue with this detected stack.)
+- "Correct something" (I'll fix the detection before scoring.)
 
 If "Correct something": ask which component to correct, apply the override in memory, proceed.
 
@@ -206,7 +207,7 @@ The verdict is informational, not blocking. Even `significant-friction` doesn't 
 
 ### Step 5 — Write assessment
 
-Check for collision by running a shell command like:
+Check for collision by checking for the file's existence:
 
 ```bash
 test -f context/foundation/stack-assessment.md
@@ -214,10 +215,11 @@ test -f context/foundation/stack-assessment.md
 
 If the file exists, ask:
 
-Ask the user: "context/foundation/stack-assessment.md already exists. How would you like to proceed?" with options:
-- "Overwrite (Recommended)" (description: "Replace the existing assessment. The prior version is lost unless committed.")
-- "Save as stack-assessment-v2.md" (description: "Preserve history. New assessment lands at the next available version slot.")
-- "Abort" (description: "Exit without writing. The conversation assessment is preserved in chat only.")
+Ask the user: "context/foundation/stack-assessment.md already exists. How would you like to proceed?"
+Options:
+- "Overwrite (Recommended)" (Replace the existing assessment. The prior version is lost unless committed.)
+- "Save as stack-assessment-v2.md" (Preserve history. New assessment lands at the next available version slot.)
+- "Abort" (Exit without writing. The conversation assessment is preserved in chat only.)
 
 Build the output file:
 
@@ -253,7 +255,7 @@ gates_failed: <N>
 
 ## Gaps & Compensation
 
-<for each failed gate: what failed, why it matters for AI assistant workflows, and the concrete compensation strategy>
+<for each failed gate: what failed, why it matters for agent workflows, and the concrete compensation strategy>
 
 ### Recommended Instruction File Additions
 
@@ -266,7 +268,7 @@ gates_failed: <N>
 
 Write the content to `context/foundation/stack-assessment.md` (creating `context/foundation/` if it doesn't exist).
 
-After the write, copy the next-step command to the clipboard using a shell command like:
+After the write, copy the next-step command and announce:
 
 ```bash
 echo -n "/10x-health-check" | pbcopy 2>/dev/null || echo -n "/10x-health-check" | clip.exe 2>/dev/null || echo -n "/10x-health-check" | xclip -selection clipboard 2>/dev/null || true
@@ -315,6 +317,6 @@ Single file written: `context/foundation/stack-assessment.md` (or `stack-assessm
 
 5. **Evidence for every score.** Every gate pass or fail must cite the specific file, config section, or absence thereof that justifies the score. No vibes-based assessment.
 
-6. **Skill-internal labels stay internal.** When speaking to the user, never reference gate numbers ("Gate 1"), step letters ("Step 2"), or internal field names (`agent_readiness`, `gates_passed`). Use plain language: "your stack's type safety", "overall AI assistant-readiness", "how many criteria your stack meets."
+6. **Skill-internal labels stay internal.** When speaking to the user, never reference gate numbers ("Gate 1"), step letters ("Step 2"), or internal field names (`agent_readiness`, `gates_passed`). Use plain language: "your stack's type safety", "overall agent-readiness", "how many criteria your stack meets."
 
 7. **Universal language only.** No private vault paths or organization-specific branding in shipped content.

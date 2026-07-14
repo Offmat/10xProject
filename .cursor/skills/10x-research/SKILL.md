@@ -31,7 +31,7 @@ Then wait for the user's research query.
     *   Create research tasks using your AI coding assistant's task management features to track each research area (these appear in the user's status bar). Update them as each area completes.
     *   Consider which directories, files, or architectural patterns are relevant
 
-3.  **Clarify research scope using the AI assistant's question-asking feature**:
+3.  **Clarify research scope using your AI coding assistant's question-asking feature**:
 
     After decomposing the research question, ask the user to align on scope and focus before spawning sub-agents.
 
@@ -50,24 +50,34 @@ Then wait for the user's research query.
 
     **Example** — for an ambiguous query like "how does authentication work":
     Ask the user:
-    - "How deep should this research go?"
-      - Options:
-        - "Quick overview": High-level flow, key files, entry points. ~10 min research.
-        - "Detailed analysis": Full architecture, edge cases, security considerations. Comprehensive doc.
-        - "Specific question": I have a focused question — I'll clarify what exactly I need.
-    - "Which aspects matter most?"
-      - Options:
-        - "Architecture & patterns": How it's structured, design decisions, conventions used.
-        - "Integration points": How it connects to other systems, API boundaries, data flow.
-        - "History & evolution": How it changed over time, past decisions from `context/changes/**/` and `context/archive/**/`.
+    - question: "How deep should this research go?"
+      header: "Depth"
+      options:
+      - label: "Quick overview"
+        description: "High-level flow, key files, entry points. ~10 min research."
+      - label: "Detailed analysis"
+        description: "Full architecture, edge cases, security considerations. Comprehensive doc."
+      - label: "Specific question"
+        description: "I have a focused question — I'll clarify what exactly I need."
+        multiSelect: false
+    - question: "Which aspects matter most?"
+      header: "Focus"
+      options:
+      - label: "Architecture & patterns"
+        description: "How it's structured, design decisions, conventions used."
+      - label: "Integration points"
+        description: "How it connects to other systems, API boundaries, data flow."
+      - label: "History & evolution"
+        description: "How it changed over time, past decisions from `context/changes/**/` and `context/archive/**/`."
+        multiSelect: true
 
     For a clear, scoped query like "find all files using the TaskCreate tool":
-    *   Skip asking questions entirely — the query is unambiguous.
+    *   Skip asking the user entirely — the query is unambiguous.
 
 4.  **Spawn parallel sub-agent tasks for comprehensive research:**
-    *   Create multiple sub-agents to research different aspects concurrently
+    *   Create multiple AI agents to research different aspects concurrently
 
-    Use your AI coding assistant's sub-agent or parallel task execution features:
+    Use your AI coding assistant's ability to create parallel sub-agents:
     *   **Explore agent** (`subagent_type: "Explore"`) — fast file/pattern search, code structure analysis. Use for finding files, tracing code paths, searching for patterns.
     *   **general-purpose agent** (`subagent_type: "general-purpose"`) — deep analysis requiring reading many files and multi-step reasoning. Use for understanding complex systems.
 
@@ -185,12 +195,12 @@ Then wait for the user's research query.
 
 ## Important notes:
 
-*   Use parallel sub-agents for efficiency — main agent synthesizes, sub-agents do deep reading
+*   Use parallel AI agents for efficiency — main agent synthesizes, sub-agents do deep reading
 *   Sub-agent prompts should be specific, read-only, requesting file:line references and usage patterns (not just definitions)
 *   Always run fresh codebase research; use `context/changes/**/` and `context/archive/**/` as supplementary historical context
 *   Research documents should be self-contained with file paths, line numbers, cross-component patterns, and temporal context
 *   Link to GitHub permalinks when possible for permanent references
-*   **Research scoping**: Ask the user to clarify scope/depth/focus before spawning agents, unless the query is already tight and unambiguous
+*   **Research scoping**: Use your AI coding assistant's question-asking feature to clarify scope/depth/focus before spawning agents, unless the query is already tight and unambiguous
 *   **Progress tracking**: Use your AI coding assistant's task management features at the start to create research area tasks, and update them to mark them completed — this gives the user visible progress in their status bar
 *   **File reading**: Always read mentioned files FULLY (no limit/offset) before spawning sub-tasks
 *   **Critical ordering**: Follow the numbered steps exactly

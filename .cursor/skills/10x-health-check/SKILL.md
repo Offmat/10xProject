@@ -161,7 +161,7 @@ Detect the test runner from configuration files:
 | PHP | `phpunit.xml*`, `composer.json` deps | PHPUnit, Pest |
 | .NET | `*.csproj` references | xUnit, NUnit, MSTest |
 
-If a test runner is detected, attempt a dry run to verify tests can execute by executing a shell command:
+If a test runner is detected, attempt a dry run to verify tests can execute by running a shell command:
 
 ```bash
 # JS/TS examples:
@@ -186,7 +186,7 @@ Surface findings:
 
 #### 2b. CI/CD configuration evaluation
 
-Check for CI/CD configuration files by executing a shell command:
+Check for CI/CD configuration files by running a shell command:
 
 ```bash
 find . -maxdepth 2 \( -name ".github" -o -name ".gitlab-ci.yml" -o -name "Jenkinsfile" -o -name ".circleci" -o -name "cloudbuild.yaml" -o -name "bitbucket-pipelines.yml" -o -name ".travis.yml" \) 2>/dev/null
@@ -242,7 +242,7 @@ In-check: test runner <detected/not detected>, CI <provider/not detected>,
 
 #### 3a. Cross-reference with stack-assessment
 
-If `context/foundation/stack-assessment.md` exists, read it and link findings:
+If `context/foundation/stack-assessment.md` exists, read its content and link findings:
 
 - If stack-assess identified a quality-gate failure (e.g., "typed: fail"), and health-check found no type-checking in CI → reinforce: "the stack lacks type safety AND CI doesn't enforce types — compensation is doubly important"
 - If stack-assess identified compensation strategies → check whether the recommended instruction-file entries exist (are `CLAUDE.md` / `AGENTS.md` present? Do they contain the recommended rules?)
@@ -296,22 +296,23 @@ Each fix entry (in both categories) must include:
 
 ### Step 4 — Write health-check.md
 
-Check for collision by executing a shell command:
+Check for collision by checking if the file `context/foundation/health-check.md` exists.
 
-```bash
-test -f context/foundation/health-check.md
-```
-
-If the file exists, ask:
-
-Ask the user: "context/foundation/health-check.md already exists. How would you like to proceed?" with the following options:
-- "Overwrite (Recommended)": "Replace the existing health check. The prior version is lost unless committed."
-- "Save as health-check-v2.md": "Preserve history. New report lands at the next available version slot."
-- "Abort": "Exit without writing. The conversation findings are preserved in chat only."
+If the file exists, ask the user:
+- question: "context/foundation/health-check.md already exists. How would you like to proceed?"
+  header: "Collision"
+  options:
+  - label: "Overwrite (Recommended)"
+    description: "Replace the existing health check. The prior version is lost unless committed."
+  - label: "Save as health-check-v2.md"
+    description: "Preserve history. New report lands at the next available version slot."
+  - label: "Abort"
+    description: "Exit without writing. The conversation findings are preserved in chat only."
+  multiSelect: false
 
 Build the output file per `references/health-check-schema.md`.
 
-Write to `context/foundation/health-check.md` (creating `context/foundation/` if it doesn't exist).
+Write the content to `context/foundation/health-check.md` (creating `context/foundation/` if it doesn't exist).
 
 After the write, print the closing summary:
 

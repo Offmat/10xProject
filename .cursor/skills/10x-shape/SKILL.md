@@ -1,4 +1,3 @@
-```
 ---
 name: 10x-shape
 description: >
@@ -700,4 +699,3 @@ STOP. Do not chain into `/10x-prd` automatically — the user runs it when ready
 - The schema reference (`references/prd-schema.md`) is the single source of truth. Any field name, section name, or checkpoint key referenced in this body MUST exist in the schema doc — if it doesn't, fix the schema doc first.
 - For greenfield, the 10 PRD sections are anticipated in `shape-notes.md` body order so `/10x-prd` can map cleanly. For brownfield, the 11 brownfield PRD sections are anticipated instead (see `references/prd-schema.md`). The names match exactly. Forward-looking content (tech-stack-selector / stack-assess residuals; future technical-roadmap concerns) lives in separate `## Forward to ...` blocks in shape-notes' body and does NOT map into PRD.
 - If the user pushes to skip a phase ("just generate the PRD already"), explain the consequence: missing phases produce hollow PRD sections. Then offer to skip with the cost made explicit. The choice is theirs.
-```

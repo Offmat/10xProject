@@ -91,18 +91,12 @@ If the user did not provide a clear initial framing ("something feels off, fix i
 This step always runs. Before building the dimension map (Step 2) or dispatching parallel sub-agents (Step 3), pause for one round of clarifying questions on every invocation. The goal is to disambiguate the *observation and scope* — "which of these items is the leading concern?", "is this one observation or several?", "is the observable a single symptom or a class of symptoms?" — so the dimension map is built against a focused observation rather than a multi-pronged punch list.
 
 Ask the user:
-- question: "Which of these items is the leading concern? Is this one observation or several? Is the observable a single symptom or a class of symptoms?"
+- question: "Which of these items is the leading concern?" (or similar, to disambiguate observation/scope)
+  header: "Clarifying Observation"
   options:
-  - label: "This is the leading concern"
-    description: "Focus on this specific observation."
-  - label: "These are several observations"
-    description: "Treat these as distinct issues."
-  - label: "This is a single symptom"
-    description: "It's one specific problem."
-  - label: "This is a class of symptoms"
-    description: "It represents a broader category of issues."
+  - label: "Option 1 (describes an observation or scope position)"
+  - label: "Option 2 (describes an observation or scope position)"
   - label: "I'm not sure / haven't separated them yet"
-    description: "I need help distinguishing between these."
 
 These questions are bound by guardrail #4 below ("Narrowing questions ≠ solution questions"). Pre-dispatch questions describe observations or scope positions, never causes or fixes. If you find yourself drafting an option that proposes a fix or approach, you've crossed into /10x-plan territory — stop and rewrite it as an observation.
 
@@ -137,7 +131,7 @@ Going to investigate each in parallel before deciding.
 
 ### Step 3: Spawn parallel hypothesis agents
 
-Register one task per plausible dimension. Then spawn parallel sub-agents — typically 2–4, capped at 5 — using the Task tool, **all in one message** for concurrency.
+Use your AI coding assistant's task management features to register one task per plausible dimension. Then spawn parallel sub-agents — typically 2–4, capped at 5 — using the task tool, **all in one message** for concurrency.
 
 For each hypothesis, the sub-agent investigates: "**If the framing broke at this dimension, what evidence would we expect to see, and does that evidence exist?**"
 
@@ -155,7 +149,7 @@ After all return, synthesize: which hypotheses have **strong**, **weak**, or **n
 
 ### Step 4: Narrowing questions (Socratic, not solution)
 
-Ask the user questions. **The questions and options here are fundamentally different from /10x-plan's**: in /10x-plan, options are *solution choices*; here, options are *hypothesis disambiguators*. The user's answer narrows the hypothesis space.
+Ask the user: **The questions and options here are fundamentally different from /10x-plan's**: in /10x-plan, options are *solution choices*; here, options are *hypothesis disambiguators*. The user's answer narrows the hypothesis space.
 
 **Rules for narrowing questions:**
 

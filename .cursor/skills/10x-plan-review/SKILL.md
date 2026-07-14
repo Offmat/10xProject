@@ -55,7 +55,7 @@ Before any code verification, check the plan against itself. These three scans o
 
 Quick, no sub-agents:
 - **Paths**: Execute a shell command to list files (`ls -l`) on ≥5 file paths the plan claims to modify. Non-existent paths are critical.
-- **Symbols**: Execute a shell command to search (`grep`) for specific functions/config keys the plan references.
+- **Symbols**: Execute a shell command to search for specific functions/config keys the plan references (`grep`).
 - **Brief↔plan consistency**: phases, decisions, scope match?
 
 Report inline: `Grounding: 5/5 paths ✓, 3/3 symbols ✓, brief↔plan ✓`. Only escalate to a finding on failure.
@@ -240,18 +240,10 @@ Plain text, box-drawing. Findings grouped by severity; omit empty groups. PASS d
 
 Then ask:
 
-```
-question: "Plan review complete. How would you like to proceed?"
-header: "Plan Review — [N] findings"
-options:
-  - label: "Triage findings"
-    description: "Walk through each finding and decide."
-  - label: "Save report & triage later"
-    description: "Save the full report. Resume with /10x-plan-review <report-path>."
-  - label: "Save report only"
-    description: "Save and finish — I'll handle the findings myself."
-multiSelect: false
-```
+Ask the user: "Plan review complete. How would you like to proceed?" with options:
+  - "Triage findings" (description: "Walk through each finding and decide.")
+  - "Save report & triage later" (description: "Save the full report. Resume with /10x-plan-review <report-path>.")
+  - "Save report only" (description: "Save and finish — I'll handle the findings myself.")
 
 ### Saving the report
 
@@ -328,24 +320,13 @@ If entered via saved file: read it, parse `### F` headers, filter to `Decision: 
 Walk findings in severity order (CRITICAL → WARNING → OBSERVATION). For each:
 
 **With 2 fix options:**
-```
-question: "F[N] — [title]\n\nSeverity: [sev icon] [SEV]\nImpact: [impact icon] [LEVEL] — [meaning]\nDimension: [dim]\nLocation: [loc]\n\nDetail: [detail]\n\n[Fix A block]\n\n[Fix B block]"
-header: "Finding [current] of [total remaining]"
-options:
-  - label: "Apply Fix A ⭐"
-    description: "[Fix A one-liner]"
-  - label: "Apply Fix B"
-    description: "[Fix B one-liner]"
-  - label: "Fix differently"
-    description: "Different approach — let's discuss."
-  - label: "Skip"
-    description: "Not worth addressing now."
-  - label: "Accept risk"
-    description: "Understood — I'll handle during implementation."
-  - label: "Disagree"
-    description: "Not actually an issue — dismiss."
-multiSelect: false
-```
+Ask the user: "F[N] — [title]\n\nSeverity: [sev icon] [SEV]\nImpact: [impact icon] [LEVEL] — [meaning]\nDimension: [dim]\nLocation: [loc]\n\nDetail: [detail]\n\n[Fix A block]\n\n[Fix B block]" with options:
+  - "Apply Fix A ⭐" (description: "[Fix A one-liner]")
+  - "Apply Fix B" (description: "[Fix B one-liner]")
+  - "Fix differently" (description: "Different approach — let's discuss.")
+  - "Skip" (description: "Not worth addressing now.")
+  - "Accept risk" (description: "Understood — I'll handle during implementation.")
+  - "Disagree" (description: "Not actually an issue — dismiss.")
 
 **With 1 fix option:** same options, but replace "Apply Fix A/B" with a single "Fix in plan".
 
