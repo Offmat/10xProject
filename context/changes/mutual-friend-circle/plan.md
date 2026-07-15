@@ -297,13 +297,13 @@ Single additive migration; no existing data to backfill. `bin/rails db:migrate` 
 
 #### Automated
 
-- [ ] 1.1 Migration applies cleanly: `bin/rails db:migrate` + `db:test:prepare`
-- [ ] 1.2 Model spec passes: `bin/rspec spec/models/friendship_spec.rb`
-- [ ] 1.3 Linting passes: `bin/rubocop`
+- [x] 1.1 Migration applies cleanly: `bin/rails db:migrate` + `db:test:prepare`
+- [x] 1.2 Model spec passes: `bin/rspec spec/models/friendship_spec.rb`
+- [x] 1.3 Linting passes: `bin/rubocop`
 
 #### Manual
 
-- [ ] 1.4 Console: create two users, create pending friendship, `accept!`, confirm `friends` resolves both sides
+- [x] 1.4 Console: create two users, create pending friendship, `accept!`, confirm `friends` resolves both sides
 
 ### Phase 2: Friend request flow (routes, service, controller)
 

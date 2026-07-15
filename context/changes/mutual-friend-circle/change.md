@@ -1,7 +1,7 @@
 ---
 change_id: mutual-friend-circle
 title: Mutual friend circle
-Somestatus: planned
+status: implementing
 created: 2026-07-14
 updated: 2026-07-15
 archived_at: null
