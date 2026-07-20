@@ -53,6 +53,33 @@ RSpec.describe Friendship, type: :model do
         expect(described_class.accepted_involving(alice)).to contain_exactly(accepted_friendship)
       end
     end
+
+    describe '.between' do
+      it 'returns rows in either direction between the two users' do
+        expect(described_class.between(alice, bob)).to contain_exactly(
+          incoming_pending,
+          accepted_friendship
+        )
+      end
+    end
+  end
+
+  describe '.accepted_between?' do
+    let(:alice) { create(:user, email: 'alice@example.com') }
+    let(:bob) { create(:user, email: 'bob@example.com') }
+
+    it 'is true when an accepted row exists in either direction' do
+      create(:friendship, :accepted, requester: bob, addressee: alice)
+
+      expect(described_class.accepted_between?(alice, bob)).to be(true)
+      expect(described_class.accepted_between?(bob, alice)).to be(true)
+    end
+
+    it 'is false for pending or declined relationships' do
+      create(:friendship, requester: alice, addressee: bob)
+
+      expect(described_class.accepted_between?(alice, bob)).to be(false)
+    end
   end
 
   describe '#accept! and #decline!' do

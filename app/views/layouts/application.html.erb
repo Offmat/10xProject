@@ -29,6 +29,12 @@
       </div>
       <div class="navbar-end gap-2">
         <% if authenticated? %>
+          <div class="indicator">
+            <%= link_to 'Friends', friendships_path, class: 'btn btn-ghost btn-sm' %>
+            <% if @incoming_friend_request_count&.positive? %>
+              <span class="indicator-item badge badge-primary badge-sm"><%= @incoming_friend_request_count %></span>
+            <% end %>
+          </div>
           <span class="max-w-[12rem] truncate text-sm sm:max-w-none"><%= current_user.email %></span>
           <%= button_to 'Sign out', session_path, method: :delete, class: 'btn btn-ghost btn-sm' %>
         <% else %>

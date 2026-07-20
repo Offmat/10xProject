@@ -10,6 +10,14 @@ class Friendship < ApplicationRecord
   scope :outgoing_from, ->(user) { pending.where(requester: user) }
   scope :involving, ->(user) { where(requester: user).or(where(addressee: user)) }
   scope :accepted_involving, ->(user) { accepted.involving(user) }
+  scope :between, ->(user_a, user_b) {
+    where(requester: user_a, addressee: user_b)
+      .or(where(requester: user_b, addressee: user_a))
+  }
+
+  def self.accepted_between?(user_a, user_b)
+    accepted.between(user_a, user_b).exists?
+  end
 
   def accept!
     update!(status: :accepted)

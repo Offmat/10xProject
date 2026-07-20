@@ -40,3 +40,8 @@ All services live under `app/services/`, namespaced by domain (e.g. `GameCatalog
 - One public method per class. Keep internals private.
 - When a class stores instance variables, add a private `attr_reader` and use the reader instead of `@`-prefixed access throughout the class.
 - Do not add an `ApplicationService` base class until there are 5+ services sharing the same delegation boilerplate.
+
+## Views convention
+
+- **Do not query the database from views or layouts.** Controllers (or helpers that only read already-assigned ivars) own data loading. Views render assigned instance variables only.
+- Shared layout data that every authenticated page needs (e.g. nav badge counts) is set via a `before_action` on `ApplicationController`, not inline ActiveRecord calls in `application.html.erb`.

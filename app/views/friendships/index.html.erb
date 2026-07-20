@@ -1,0 +1,78 @@
+<% content_for :title, 'Friends' %>
+
+<div class="mx-auto max-w-2xl space-y-8">
+  <div>
+    <h1 class="text-2xl font-bold">Friends</h1>
+    <p class="mt-1 text-base-content/70">Send requests by email and manage your friend circle.</p>
+  </div>
+
+  <section class="card bg-base-200 shadow-sm">
+    <div class="card-body">
+      <h2 class="card-title text-lg">Add a friend by email</h2>
+      <%= form_with url: friendships_path, scope: :friendship, class: 'space-y-4' do |form| %>
+        <div class="form-control">
+          <label class="label" for="friendship_email">
+            <span class="label-text">Email</span>
+          </label>
+          <%= form.email_field :email, required: true, autofocus: true, autocomplete: 'email',
+                placeholder: 'friend@example.com', id: 'friendship_email',
+                class: 'input input-bordered w-full' %>
+        </div>
+        <%= form.submit 'Send request', class: 'btn btn-primary' %>
+      <% end %>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="mb-3 text-lg font-semibold">Active friends</h2>
+    <% if @friends.any? %>
+      <ul class="divide-y rounded-box bg-base-200 shadow-sm">
+        <% @friends.each do |friend| %>
+          <li class="flex items-center px-4 py-3">
+            <span><%= friend.email %></span>
+          </li>
+        <% end %>
+      </ul>
+    <% else %>
+      <p class="text-base-content/70">No active friends yet. Send a request or accept an incoming one.</p>
+    <% end %>
+  </section>
+
+  <section>
+    <h2 class="mb-3 text-lg font-semibold">Incoming requests</h2>
+    <% if @incoming.any? %>
+      <ul class="divide-y rounded-box bg-base-200 shadow-sm">
+        <% @incoming.each do |friendship| %>
+          <li class="flex flex-wrap items-center justify-between gap-3 px-4 py-3">
+            <span><%= friendship.requester.email %></span>
+            <div class="flex gap-2">
+              <%= button_to 'Accept', accept_friendship_path(friendship), method: :patch,
+                    class: 'btn btn-primary btn-sm' %>
+              <%= button_to 'Decline', decline_friendship_path(friendship), method: :patch,
+                    class: 'btn btn-ghost btn-sm' %>
+            </div>
+          </li>
+        <% end %>
+      </ul>
+    <% else %>
+      <p class="text-base-content/70">No incoming requests.</p>
+    <% end %>
+  </section>
+
+  <section>
+    <h2 class="mb-3 text-lg font-semibold">Outgoing requests</h2>
+    <% if @outgoing.any? %>
+      <ul class="divide-y rounded-box bg-base-200 shadow-sm">
+        <% @outgoing.each do |friendship| %>
+          <li class="flex flex-wrap items-center justify-between gap-3 px-4 py-3">
+            <span><%= friendship.addressee.email %></span>
+            <%= button_to 'Cancel', friendship_path(friendship), method: :delete,
+                  class: 'btn btn-ghost btn-sm' %>
+          </li>
+        <% end %>
+      </ul>
+    <% else %>
+      <p class="text-base-content/70">No pending outgoing requests.</p>
+    <% end %>
+  </section>
+</div>

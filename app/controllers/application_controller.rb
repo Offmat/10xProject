@@ -5,4 +5,14 @@ class ApplicationController < ActionController::Base
 
   # Changes to the importmap will invalidate the etag for HTML responses
   stale_when_importmap_changes
+
+  before_action :set_incoming_friend_request_count
+
+  private
+
+  def set_incoming_friend_request_count
+    return unless authenticated?
+
+    @incoming_friend_request_count = Friendship.incoming_to(current_user).count
+  end
 end
