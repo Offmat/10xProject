@@ -1,8 +1,8 @@
 class FriendshipsController < ApplicationController
   def index
     @friends = current_user.friends
-    @incoming = Friendship.incoming_to(current_user)
-    @outgoing = Friendship.outgoing_from(current_user)
+    @incoming = Friendship.incoming_to(current_user).includes(:requester)
+    @outgoing = Friendship.outgoing_from(current_user).includes(:addressee)
   end
 
   def create

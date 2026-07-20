@@ -288,6 +288,8 @@ Single additive migration; no existing data to backfill. `bin/rails db:migrate` 
 - **Enumeration divergence (accepted).** The add-by-email form returns a distinct "No account found with that email" message, which lets a user probe whether an email is registered — this diverges from the anti-enumeration stance in auth (`users_controller.rb:18-21`). This was an explicit product decision; revisit if abuse or privacy concerns arise (swap to a neutral "if that account exists, a request was sent").
 - **No re-request rate limit.** Decline-then-re-request has no cooldown; a determined user could re-pester. Acceptable for a small friend-circle MVP; add `rate_limit` later if needed.
 - **Assumption:** email is the only stable identifier (no usernames), so exact-email lookup is the discovery mechanism.
+- **Reciprocal concurrency residual (accepted for MVP).** Transaction + post-insert reverse re-check are in place, but under Postgres READ COMMITTED two overlapping A→B / B→A transactions can still both commit `pending` if neither sees the other's uncommitted insert — `reconcile_concurrent_reverse!` then never fires. Extremely unlikely at friend-circle scale; `pg_advisory_xact_lock` on the unordered pair was deferred. Revisit before hardening if product needs a hard auto-accept guarantee under concurrency.
+- **Naming drift (accepted).** Scopes shipped as `incoming_to` / `outgoing_from` (not `incoming_for` / `outgoing_for`); service kwarg is `addressee_email:` (not `email:`). Intentional clarity renames — behavior matches the plan.
 
 ## Progress
 

@@ -18,7 +18,8 @@
                 placeholder: 'friend@example.com', id: 'friendship_email',
                 class: 'input input-bordered w-full' %>
         </div>
-        <%= form.submit 'Send request', class: 'btn btn-primary' %>
+        <%= form.submit 'Send request', class: 'btn btn-primary',
+              data: { turbo_submits_with: 'Sending…' } %>
       <% end %>
     </div>
   </section>
