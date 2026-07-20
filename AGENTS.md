@@ -7,6 +7,7 @@ all-aBoard is a Rails 8.1 app (Ruby 3.4, PostgreSQL, Hotwire via importmap) for 
 - Never write under `context/archive/` — archived changes are immutable.
 - Do not commit `/.env*`, `vendor/bundle`, or `config/*.key`.
 - Install gems through @bin/setup (`bundle` path `vendor/bundle`); prefer `bin/` wrappers over ad-hoc commands.
+- If `bundle` resolves to a sandbox/temp path or hangs on lock: `unset BUNDLE_PATH` (and clear a stale `vendor/bundle/**/bundler.lock`) so `.bundle/config` (`vendor/bundle`) wins, then retry.
 - PostgreSQL must be running before `bin/setup` or `db:*` (setup checks `pg_isready` when available).
 
 ## Project structure
