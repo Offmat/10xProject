@@ -3,7 +3,7 @@ project: all-aBoard
 version: 1
 status: draft
 created: 2026-05-31
-updated: 2026-07-12
+updated: 2026-07-20
 prd_version: 1
 main_goal: speed
 top_blocker: time
@@ -35,7 +35,7 @@ The product wedge — the one trait that, if removed, makes this a generic score
 | F-02 | seed-game-catalog | (foundation) Wikidata import service + ~20-game MVP seed via console | F-01 | FR-009, Business Logic | done |
 | F-03 | tailwind-daisyui-setup | (foundation) Tailwind CSS + daisyUI in asset pipeline; base theme and component classes in ERB | — | — | done |
 | S-01 | email-password-auth | create an account, log in, and log out | F-01 | FR-001, US-01 | done |
-| S-02 | mutual-friend-circle | send a friend request; accept or decline; see active friends | S-01 | FR-002, US-01 | proposed |
+| S-02 | mutual-friend-circle | send a friend request; accept or decline; see active friends | S-01 | FR-002, US-01 | done |
 | S-03 | log-session-with-confirm | log a session with catalog game, registered friend, and unregistered player; co-player gets in-app notification and confirms or rejects; logger sees history immediately | S-02, F-02 | US-01, FR-003, FR-004, FR-005, FR-006, FR-009 | proposed |
 | S-04 | session-stats-filters | view statistics for sessions they participated in, with filters | S-03 | FR-007 | proposed |
 
@@ -128,7 +128,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Blockers:** —
 - **Unknowns:** —
 - **Risk:** US-01 requires at least one accepted friend; deferring this blocks the north star even if session UI were started early.
-- **Status:** proposed
+- **Status:** done
 
 ### S-03: Log session with confirm flow
 
@@ -190,3 +190,4 @@ _No cross-cutting roadmap questions. PRD `## Open Questions` were resolved 2026-
 - **F-03: (foundation) Tailwind CSS and daisyUI are integrated via `tailwindcss-rails` (standalone CLI + npm for daisyUI plugin); abyss theme; base layout shell with nav placeholder, flash partial, and page container.** — Archived 2026-06-08 → `context/archive/2026-06-07-tailwind-daisyui-setup/`. Lesson: —.
 - **F-02: (foundation) Reusable operator import service with a **Wikidata adapter** fetches board-game data (CC0) via the SPARQL Query Service, persists `Game` records locally, and accepts a parameterized batch. F-02 seeds ~20 titles for development and S-03 via Rails console; the same service supports wide-catalog operator imports later (P-03 wraps UI and auth only). No user or admin catalog editing in MVP. Switching or adding another provider (e.g. BoardGameGeek) is post-MVP (P-07).** — Archived 2026-07-11 → `context/archive/2026-06-07-seed-game-catalog/`. Lesson: —.
 - **S-01: user can create an account, log in, and log out.** — Archived 2026-07-12 → `context/archive/2026-07-12-email-password-auth/`. Lesson: —.
+- **S-02: user can send a friend request to another registered user; the other user can accept or decline; friendship is active only after mutual acceptance.** — Archived 2026-07-20 → `context/archive/2026-07-14-mutual-friend-circle/`. Lesson: —.
