@@ -8,6 +8,21 @@
 #     MovieGenre.find_or_create_by!(name: genre_name)
 #   end
 
+seed_password = 'Qwertyuiop'
+
+[
+  'alice@example.com',
+  'bob@example.com',
+  'alex@example.com'
+].each do |email|
+  User.find_or_create_by!(email: email) do |user|
+    user.password = seed_password
+    user.password_confirmation = seed_password
+  end
+end
+
+puts 'Seeded users: alice@example.com, bob@example.com'
+
 games_file = Rails.root.join('db/seeds/games.yml')
 game_entries = YAML.load_file(games_file)
 
