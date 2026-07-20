@@ -309,27 +309,27 @@ Single additive migration; no existing data to backfill. `bin/rails db:migrate` 
 
 #### Automated
 
-- [x] 2.1 Request spec passes: `bin/rspec spec/requests/friendships_spec.rb`
-- [x] 2.2 Service unit spec passes: `bin/rspec spec/services/unit/friendships/create_request_spec.rb`
-- [x] 2.3 Linting passes: `bin/rubocop`
-- [x] 2.4 Security scan clean: `bin/brakeman`
+- [x] 2.1 Request spec passes: `bin/rspec spec/requests/friendships_spec.rb` — 5aeff70
+- [x] 2.2 Service unit spec passes: `bin/rspec spec/services/unit/friendships/create_request_spec.rb` — 5aeff70
+- [x] 2.3 Linting passes: `bin/rubocop` — 5aeff70
+- [x] 2.4 Security scan clean: `bin/brakeman` — 5aeff70
 
 #### Manual
 
-- [x] 2.5 Two-account browser flow: send→accept, reciprocal auto-accept, decline→re-send, cancel
-- [x] 2.6 Accepting/declining another pair's request returns 404 (IDOR)
+- [x] 2.5 Two-account browser flow: send→accept, reciprocal auto-accept, decline→re-send, cancel — 5aeff70
+- [x] 2.6 Accepting/declining another pair's request returns 404 (IDOR) — 5aeff70
 
 ### Phase 3: Friends UI, nav badge & documentation
 
 #### Automated
 
-- [x] 3.1 Request spec asserts three sections render and badge count is correct: `bin/rspec spec/requests/friendships_spec.rb`
-- [x] 3.2 Linting passes: `bin/rubocop`
+- [x] 3.1 Request spec asserts three sections render and badge count is correct: `bin/rspec spec/requests/friendships_spec.rb` — 5aeff70
+- [x] 3.2 Linting passes: `bin/rubocop` — 5aeff70
 
 #### Manual
 
-- [x] 3.3 `/friends` renders all three sections with correct per-user data; Accept/Decline/Cancel work
-- [x] 3.4 Nav badge shows incoming count and disappears at zero
-- [x] 3.5 Each add-by-email outcome shows its distinct flash
-- [x] 3.6 Styling consistent with existing daisyUI views
-- [x] 3.7 Roadmap Parked entry for unfriend added
+- [x] 3.3 `/friends` renders all three sections with correct per-user data; Accept/Decline/Cancel work — 5aeff70
+- [x] 3.4 Nav badge shows incoming count and disappears at zero — 5aeff70
+- [x] 3.5 Each add-by-email outcome shows its distinct flash — 5aeff70
+- [x] 3.6 Styling consistent with existing daisyUI views — 5aeff70
+- [x] 3.7 Roadmap Parked entry for unfriend added — 5aeff70

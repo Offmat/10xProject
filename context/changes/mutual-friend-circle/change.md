@@ -1,9 +1,9 @@
 ---
 change_id: mutual-friend-circle
 title: Mutual friend circle
-status: implementing
+status: implemented
 created: 2026-07-14
-updated: 2026-07-15
+updated: 2026-07-20
 archived_at: null
 ---
 
