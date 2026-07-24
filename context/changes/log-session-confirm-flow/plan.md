@@ -506,10 +506,10 @@ Wire up the full user-facing feature: controllers for game session CRUD and noti
 
 #### Automated
 
-- [ ] 1.1 Migrations apply cleanly: `bin/rails db:migrate`
-- [ ] 1.2 Model specs pass: `bin/rspec spec/models/game_session_spec.rb spec/models/game_session_participant_spec.rb spec/models/notification_spec.rb`
-- [ ] 1.3 Existing specs still pass: `bin/rspec`
-- [ ] 1.4 Linting passes: `bin/rubocop`
+- [x] 1.1 Migrations apply cleanly: `bin/rails db:migrate`
+- [x] 1.2 Model specs pass: `bin/rspec spec/models/game_session_spec.rb spec/models/game_session_participant_spec.rb spec/models/notification_spec.rb`
+- [x] 1.3 Existing specs still pass: `bin/rspec`
+- [x] 1.4 Linting passes: `bin/rubocop`
 
 ### Phase 2: Business Logic Services
 

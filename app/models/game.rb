@@ -1,4 +1,6 @@
 class Game < ApplicationRecord
+  has_many :game_sessions
+
   validates :name, presence: true
   validates :wikidata_id, presence: true, uniqueness: true
   validates :source, presence: true
