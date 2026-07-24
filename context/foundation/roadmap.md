@@ -182,6 +182,8 @@ _No cross-cutting roadmap questions. PRD `## Open Questions` were resolved 2026-
 - **User-facing external game lookup** — Why parked: PRD Non-Goals; no live third-party search during session log (P-05).
 - **Game cover images** — Why parked: game picker works as text list for MVP; Wikidata P18 rarely has recognizable box art (Commons hosts component photos, not covers); hosting/thumbnailing requires Active Storage or external bucket not yet configured. Middle ground (nullable `image_url` column + Commons URL) can be added in a single migration when S-03 UI calls for it. Roadmap **P-08** (`game-catalog-images`).
 - **Catalog provider switch (e.g. BoardGameGeek)** — Why parked: MVP ships Wikidata adapter only (F-02); legal/licensing and richer metadata re-evaluation deferred until after MVP. May add a second adapter or replace Wikidata behind the same import service — not committed. Roadmap **P-07** (`catalog-provider-switch`).
+- **Win/lose-only games (non-numeric scoring)** — Why parked: S-03 uses integer scores for MVP. Some board games have no numeric score — only a winner/loser. Support for non-numeric outcomes (win/lose, ranking-only) should be revisited post-S-03 when real usage data shows how often users encounter this. Roadmap **P-09** (`flexible-scoring`).
+- **Unified notification inbox (friend requests + session confirms)** — Why parked: S-03 introduces a `Notification` model for session-confirm notifications; friend-request notifications remain as derived queries on `/friendships`. Unifying both into a single `/notifications` inbox is a natural follow-up but out of MVP scope to avoid touching the completed S-02 flow. Roadmap **P-10** (`unified-inbox`).
 - **Team workspaces / formal leagues** — Why parked: PRD Non-Goals.
 
 ## Done
