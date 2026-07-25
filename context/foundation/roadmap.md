@@ -3,7 +3,7 @@ project: all-aBoard
 version: 1
 status: draft
 created: 2026-05-31
-updated: 2026-07-20
+updated: 2026-07-25
 prd_version: 1
 main_goal: speed
 top_blocker: time
@@ -34,9 +34,10 @@ The product wedge — the one trait that, if removed, makes this a generic score
 | F-01 | minimal-auth-scaffold | (foundation) email/password auth scaffold: User model, sessions, protected routes | — | FR-001, Access Control | done |
 | F-02 | seed-game-catalog | (foundation) Wikidata import service + ~20-game MVP seed via console | F-01 | FR-009, Business Logic | done |
 | F-03 | tailwind-daisyui-setup | (foundation) Tailwind CSS + daisyUI in asset pipeline; base theme and component classes in ERB | — | — | done |
+| F-04 | rails-interactive-forms-guide | (foundation) research + playbook + short agent rules for interactive Rails forms (view ↔ Stimulus ↔ params ↔ controller/service) | — | — | proposed |
 | S-01 | email-password-auth | create an account, log in, and log out | F-01 | FR-001, US-01 | done |
 | S-02 | mutual-friend-circle | send a friend request; accept or decline; see active friends | S-01 | FR-002, US-01 | done |
-| S-03 | log-session-with-confirm | log a session with catalog game, registered friend, and unregistered player; co-player gets in-app notification and confirms or rejects; logger sees history immediately | S-02, F-02 | US-01, FR-003, FR-004, FR-005, FR-006, FR-009 | proposed |
+| S-03 | log-session-with-confirm | log a session with catalog game, registered friend, and unregistered player; co-player gets in-app notification and confirms or rejects; logger sees history immediately | S-02, F-02, F-04 | US-01, FR-003, FR-004, FR-005, FR-006, FR-009 | proposed |
 | S-04 | session-stats-filters | view statistics for sessions they participated in, with filters | S-03 | FR-007 | proposed |
 
 ## Streams
@@ -45,9 +46,10 @@ Navigation aid — groups items that share a Prerequisites chain. Canonical orde
 
 | Stream | Theme | Chain | Note |
 |---|---|---|---|
-| A | MVP path | `F-01` → `S-01` → `S-02` → `S-03` → `S-04` | Speed bias: strict must-have order through north star (`S-03`) then stats. |
+| A | MVP path | `F-01` → `S-01` → `S-02` → `F-04` → `S-03` → `S-04` | Speed bias: strict must-have order through north star (`S-03`) then stats. `F-04` gates continuing S-03 form work. |
 | B | Catalog import | `F-02` | Wikidata SPARQL adapter for MVP; provider switch deferred to P-07. Runs parallel with `S-02` after `F-01`; joins main path at `S-03`. |
 | C | UI styling | `F-03` | Independent of MVP path; no prerequisites — can land anytime to polish product UI in any slice. |
+| D | Agent form conventions | `F-04` | Research + durable guide/rules for interactive Rails forms; joins main path before finishing S-03 form work. |
 
 ## Baseline
 
@@ -103,6 +105,20 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Risk:** Additive infra; hand-written CSS removed; auth views remain unstyled until S-01.
 - **Status:** done
 
+### F-04: Rails interactive forms guide
+
+- **Outcome:** (foundation) A researched playbook plus short agent-facing rules so interactive Rails forms (Hotwire/Stimulus, dynamic fields, params, controllers/services) are implemented consistently — deep reference for agents when the short rules are not enough.
+- **Change ID:** rails-interactive-forms-guide
+- **PRD refs:** — (agent/DX foundation; unblocks reliable S-03 form completion)
+- **Unlocks:** continuing S-03 form work; later slices that add interactive forms
+- **Prerequisites:** —
+- **Parallel with:** —
+- **Blockers:** —
+- **Unknowns:** Exact topic inventory, source list, and deliverable layout are deferred to planning — provide brief/context when starting this change; do not treat any early sketch as a closed scope.
+- **Risk:** Without this, S-03 form/params work keeps failing in agent runs; with it, sequencing pauses the north star briefly for durable guidance.
+- **Delivery shape (indicative, not exhaustive):** (1) multi-source research → foundation playbook with practices and examples; (2) short rules derived from that playbook, with the playbook remaining available for deeper lookup.
+- **Status:** proposed
+
 ## Slices
 
 ### S-01: Email/password auth
@@ -135,11 +151,11 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Outcome:** user can log a played session with a game from the catalog, a registered friend, and an unregistered player (name + score only); the registered friend receives an in-app notification and can confirm or reject; the logger sees the session in their history and stats immediately after save.
 - **Change ID:** log-session-with-confirm
 - **PRD refs:** US-01, FR-003, FR-004, FR-005, FR-006, FR-009
-- **Prerequisites:** S-02, F-02
+- **Prerequisites:** S-02, F-02, F-04
 - **Parallel with:** —
 - **Blockers:** —
 - **Unknowns:** —
-- **Risk:** North star — concentrates confirm/reject business rules and mixed player types; highest integration risk, sequenced only after auth, friends, and catalog exist.
+- **Risk:** North star — concentrates confirm/reject business rules and mixed player types; highest integration risk, sequenced only after auth, friends, catalog, and the interactive-forms guide (F-04) exist. Do not continue form work until F-04 lands.
 - **Status:** proposed
 
 ### S-04: Session statistics with filters
@@ -163,9 +179,10 @@ Issue URLs and board setup: @context/foundation/backlog.md.
 | F-01 | minimal-auth-scaffold | Scaffold email/password auth (User, sessions, protection) | — | Done (archived) |
 | F-02 | seed-game-catalog | Import game catalog from Wikidata (~20-game MVP seed, console) | — | Implemented; Wikidata SPARQL adapter |
 | F-03 | tailwind-daisyui-setup | Add Tailwind CSS + daisyUI (tailwindcss-rails, base theme) | yes | No prerequisites; parallel with S-01 / S-02 / F-02 |
+| F-04 | rails-interactive-forms-guide | Research + playbook + short agent rules for interactive Rails forms | yes | No prerequisites; land before continuing S-03 form work; scope open until planning brief |
 | S-01 | email-password-auth | Sign up, log in, log out | yes | F-01 done; carry forward F-01 impl-review deferrals |
 | S-02 | mutual-friend-circle | Friend requests with mutual acceptance | no | After S-01 |
-| S-03 | log-session-with-confirm | Log session + in-app confirm/reject (US-01) | no | North star; after S-02 and F-02 |
+| S-03 | log-session-with-confirm | Log session + in-app confirm/reject (US-01) | no | North star; after S-02, F-02, and F-04 (forms guide before continuing form work) |
 | S-04 | session-stats-filters | Personal session stats with filters | no | After S-03 |
 
 ## Open Roadmap Questions
