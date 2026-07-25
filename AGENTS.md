@@ -49,3 +49,7 @@ Recent history uses short imperative subjects and occasional `lesson N:` prefixe
 - MVP flows and business rules: @context/foundation/prd.md.
 - Deploy platform and DB strategy: @context/foundation/infrastructure.md.
 - 10x course skill router (Cursor): @.cursor/rules/10x-course.mdc — do not duplicate its tables here.
+
+## Guides
+
+- Interactive Rails forms (Stimulus / Hotwire / Turbo / params): @context/foundation/interactive-forms.md.

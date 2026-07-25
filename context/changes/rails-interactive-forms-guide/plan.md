@@ -187,23 +187,23 @@ No data or runtime migration. After archive, deep links to `context/changes/rail
 
 #### Automated
 
-- [x] 1.1 Foundation playbook exists at context/foundation/interactive-forms.md (~250–350 lines, universal sections)
-- [x] 1.2 Cursor rule exists with Apply Intelligently frontmatter (no globs) and hard prohibitions + @playbook
-- [x] 1.3 Playbook has no S-03 ERB/JS centerpiece section
+- [x] 1.1 Foundation playbook exists at context/foundation/interactive-forms.md (~250–350 lines, universal sections) — 24fd50f
+- [x] 1.2 Cursor rule exists with Apply Intelligently frontmatter (no globs) and hard prohibitions + @playbook — 24fd50f
+- [x] 1.3 Playbook has no S-03 ERB/JS centerpiece section — 24fd50f
 
 #### Manual
 
-- [x] 1.4 Human skim: playbook applies beyond session logging; rule description looks correct in Rules UI
+- [x] 1.4 Human skim: playbook applies beyond session logging; rule description looks correct in Rules UI — 24fd50f
 
 ### Phase 2: Wire discovery, consumer note, close F-04
 
 #### Automated
 
-- [ ] 2.1 Root AGENTS.md Architecture pointer to @context/foundation/interactive-forms.md
-- [ ] 2.2 log-session-confirm-flow/plan.md note: F-04 playbook path + two nested-form corrections
-- [ ] 2.3 change.md and roadmap.md F-04 status updated
+- [x] 2.1 Root AGENTS.md Architecture pointer to @context/foundation/interactive-forms.md
+- [x] 2.2 log-session-confirm-flow/plan.md note: F-04 playbook path + two nested-form corrections
+- [x] 2.3 change.md and roadmap.md F-04 status updated
 - [ ] 2.4 Change archived under context/archive/ via /10x-archive
 
 #### Manual
 
-- [ ] 2.5 Human confirm artifacts before archive; smoke-check agent can discover playbook/rule
+- [x] 2.5 Human confirm artifacts before archive; smoke-check agent can discover playbook/rule

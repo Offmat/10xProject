@@ -34,7 +34,7 @@ The product wedge — the one trait that, if removed, makes this a generic score
 | F-01 | minimal-auth-scaffold | (foundation) email/password auth scaffold: User model, sessions, protected routes | — | FR-001, Access Control | done |
 | F-02 | seed-game-catalog | (foundation) Wikidata import service + ~20-game MVP seed via console | F-01 | FR-009, Business Logic | done |
 | F-03 | tailwind-daisyui-setup | (foundation) Tailwind CSS + daisyUI in asset pipeline; base theme and component classes in ERB | — | — | done |
-| F-04 | rails-interactive-forms-guide | (foundation) research + playbook + short agent rules for interactive Rails forms (view ↔ Stimulus ↔ params ↔ controller/service) | — | — | proposed |
+| F-04 | rails-interactive-forms-guide | (foundation) research + playbook + short agent rules for interactive Rails forms (view ↔ Stimulus ↔ params ↔ controller/service) | — | — | done |
 | S-01 | email-password-auth | create an account, log in, and log out | F-01 | FR-001, US-01 | done |
 | S-02 | mutual-friend-circle | send a friend request; accept or decline; see active friends | S-01 | FR-002, US-01 | done |
 | S-03 | log-session-with-confirm | log a session with catalog game, registered friend, and unregistered player; co-player gets in-app notification and confirms or rejects; logger sees history immediately | S-02, F-02, F-04 | US-01, FR-003, FR-004, FR-005, FR-006, FR-009 | proposed |
@@ -117,7 +117,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Unknowns:** Exact topic inventory, source list, and deliverable layout are deferred to planning — provide brief/context when starting this change; do not treat any early sketch as a closed scope.
 - **Risk:** Without this, S-03 form/params work keeps failing in agent runs; with it, sequencing pauses the north star briefly for durable guidance.
 - **Delivery shape (indicative, not exhaustive):** (1) multi-source research → foundation playbook with practices and examples; (2) short rules derived from that playbook, with the playbook remaining available for deeper lookup.
-- **Status:** proposed
+- **Status:** done
 
 ## Slices
 
@@ -179,7 +179,7 @@ Issue URLs and board setup: @context/foundation/backlog.md.
 | F-01 | minimal-auth-scaffold | Scaffold email/password auth (User, sessions, protection) | — | Done (archived) |
 | F-02 | seed-game-catalog | Import game catalog from Wikidata (~20-game MVP seed, console) | — | Implemented; Wikidata SPARQL adapter |
 | F-03 | tailwind-daisyui-setup | Add Tailwind CSS + daisyUI (tailwindcss-rails, base theme) | yes | No prerequisites; parallel with S-01 / S-02 / F-02 |
-| F-04 | rails-interactive-forms-guide | Research + playbook + short agent rules for interactive Rails forms | yes | No prerequisites; land before continuing S-03 form work; scope open until planning brief |
+| F-04 | rails-interactive-forms-guide | Research + playbook + short agent rules for interactive Rails forms | — | Done — playbook `@context/foundation/interactive-forms.md`; rule `.cursor/rules/hotwire-interactive-forms.mdc` |
 | S-01 | email-password-auth | Sign up, log in, log out | yes | F-01 done; carry forward F-01 impl-review deferrals |
 | S-02 | mutual-friend-circle | Friend requests with mutual acceptance | no | After S-01 |
 | S-03 | log-session-with-confirm | Log session + in-app confirm/reject (US-01) | no | North star; after S-02, F-02, and F-04 (forms guide before continuing form work) |
@@ -210,3 +210,4 @@ _No cross-cutting roadmap questions. PRD `## Open Questions` were resolved 2026-
 - **F-02: (foundation) Reusable operator import service with a **Wikidata adapter** fetches board-game data (CC0) via the SPARQL Query Service, persists `Game` records locally, and accepts a parameterized batch. F-02 seeds ~20 titles for development and S-03 via Rails console; the same service supports wide-catalog operator imports later (P-03 wraps UI and auth only). No user or admin catalog editing in MVP. Switching or adding another provider (e.g. BoardGameGeek) is post-MVP (P-07).** — Archived 2026-07-11 → `context/archive/2026-06-07-seed-game-catalog/`. Lesson: —.
 - **S-01: user can create an account, log in, and log out.** — Archived 2026-07-12 → `context/archive/2026-07-12-email-password-auth/`. Lesson: —.
 - **S-02: user can send a friend request to another registered user; the other user can accept or decline; friendship is active only after mutual acceptance.** — Archived 2026-07-20 → `context/archive/2026-07-14-mutual-friend-circle/`. Lesson: —.
+- **F-04: (foundation) A researched playbook plus short agent-facing rules so interactive Rails forms (Hotwire/Stimulus, dynamic fields, params, controllers/services) are implemented consistently — deep reference for agents when the short rules are not enough.** — Done 2026-07-25 (archive pending) → playbook `context/foundation/interactive-forms.md`. Lesson: —.

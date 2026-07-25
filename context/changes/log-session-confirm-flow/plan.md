@@ -338,6 +338,8 @@ Wire up the full user-facing feature: controllers for game session CRUD and noti
 
 #### 5. Session form with Stimulus nested-form controller
 
+> **F-04 landed.** Playbook: `@context/foundation/interactive-forms.md` (rule: `.cursor/rules/hotwire-interactive-forms.mdc`). When implementing this form, prefer the playbook + rule over the Phase 3 nested-form sketch where they conflict. Two known corrections from F-04 research: (1) row indices must be **unique and numeric** — use a monotonic counter seeded from `Date.now()`, not bare `Date.now()` alone; (2) the per-row friend/guest toggle needs its **own Stimulus controller identifier**, not the same identifier as the container.
+
 **File**: `app/views/game_sessions/_form.html.erb`
 
 **Intent**: Shared form partial for new/edit session. Game dropdown, logger score field, dynamic player rows managed by Stimulus.
