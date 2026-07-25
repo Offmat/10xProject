@@ -4,7 +4,7 @@ Living playbook for interactive forms on this stack. Use it for any form that ad
 
 **Core idea:** Stimulus is glue. Interactive forms are mostly a server-rendering problem. Prefer HTML the server already knows how to re-render (including on 422) over client-owned state and client-built markup.
 
-Evidence and longer worked notes: `context/changes/rails-interactive-forms-guide/research.md` (moves under `context/archive/` when that change is archived).
+Evidence and longer worked notes: `context/archive/2026-07-25-rails-interactive-forms-guide/research.md`.
 
 ---
 
@@ -249,5 +249,5 @@ These need judgement; encoding them as hard rules trains agents to ignore the ru
 ## Related
 
 - Cursor rule (prohibitions): `.cursor/rules/hotwire-interactive-forms.mdc`
-- Full evidence archive: research under the `rails-interactive-forms-guide` change (see pointer at top)
+- Full evidence archive: `context/archive/2026-07-25-rails-interactive-forms-guide/research.md`
 - Stack context: @context/foundation/tech-stack.md

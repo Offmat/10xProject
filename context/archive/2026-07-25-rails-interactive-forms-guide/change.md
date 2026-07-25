@@ -1,10 +1,10 @@
 ---
 change_id: rails-interactive-forms-guide
 title: Rails interactive forms guide
-status: impl_reviewed
+status: archived
 created: 2026-07-25
 updated: 2026-07-25
-archived_at: null
+archived_at: 2026-07-25T19:22:40Z
 ---
 
 ## Notes
