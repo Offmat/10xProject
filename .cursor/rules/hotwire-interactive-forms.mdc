@@ -1,0 +1,21 @@
+---
+description: Building, changing, or reviewing interactive Rails forms with Stimulus/Hotwire (nested or dynamic fields, conditional branches, params shape, Turbo form re-renders)
+alwaysApply: false
+---
+
+# Hotwire interactive forms
+
+Hard constraints for interactive Rails forms. Read @context/foundation/interactive-forms.md before inventing a new pattern.
+
+## Prohibitions
+
+1. Never use `document.querySelector`, `document.querySelectorAll`, or `getElementById` inside `app/javascript/controllers/**`. Use targets, `this.element.querySelector`, or `event.target.closest(...)`.
+2. Never build HTML from strings or JSON in a Stimulus controller. Clone a server-rendered `<template>`, or render server-side via Turbo.
+3. Never call `form.submit()`; call `form.requestSubmit()`.
+4. Never enforce a business rule only in JavaScript. The server validates and re-renders.
+5. Never keep authoritative state in a controller instance field. State lives in the DOM (attributes/values), the URL, or the server; instance fields hold only non-serialisable objects, timers, and observers — all released in `disconnect()`.
+6. Never give a repeated section the same `data-controller` identifier as its container.
+7. Never use index-less array params (`foo[][key]` / `x_attributes[][key]`) for rows with optional or conditionally-disabled fields; always render explicit numeric indices.
+8. Never hide a conditional field group without disabling it.
+9. Never add a base class, mixin, or shared abstraction for Stimulus controllers until 5+ controllers share the same boilerplate.
+10. Never use inline `<script>` for behaviour.
