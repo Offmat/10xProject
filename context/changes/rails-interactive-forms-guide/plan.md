@@ -103,7 +103,7 @@ Make the playbook discoverable, leave a note for the S-03 consumer plan, update 
 
 **Intent**: Index the playbook the same way other foundation docs are indexed.
 
-**Contract**: Under `## Architecture pointers`, add one bullet pointing at `@context/foundation/interactive-forms.md` (interactive Rails forms / Stimulus / Hotwire). Do not paste rules or playbook prose.
+**Contract**: Add one bullet pointing at `@context/foundation/interactive-forms.md` (interactive Rails forms / Stimulus / Hotwire) under a `## Guides` section in root `AGENTS.md` — separate from `## Architecture pointers` since the playbook is a how-to guide, not an architecture reference. Do not paste rules or playbook prose.
 
 #### 2. S-03 consumer note
 
@@ -199,11 +199,11 @@ No data or runtime migration. After archive, deep links to `context/changes/rail
 
 #### Automated
 
-- [x] 2.1 Root AGENTS.md Architecture pointer to @context/foundation/interactive-forms.md
-- [x] 2.2 log-session-confirm-flow/plan.md note: F-04 playbook path + two nested-form corrections
-- [x] 2.3 change.md and roadmap.md F-04 status updated
-- [ ] 2.4 Change archived under context/archive/ via /10x-archive
+- [x] 2.1 Root AGENTS.md Architecture pointer to @context/foundation/interactive-forms.md — b8ef52a
+- [x] 2.2 log-session-confirm-flow/plan.md note: F-04 playbook path + two nested-form corrections — b8ef52a
+- [x] 2.3 change.md and roadmap.md F-04 status updated — b8ef52a
+- [x] 2.4 Change archived under context/archive/ via /10x-archive
 
 #### Manual
 
-- [x] 2.5 Human confirm artifacts before archive; smoke-check agent can discover playbook/rule
+- [x] 2.5 Human confirm artifacts before archive; smoke-check agent can discover playbook/rule — b8ef52a
