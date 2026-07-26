@@ -109,6 +109,24 @@ RSpec.describe GameSessions::Update, type: :service do
 
         expect(Notification.where(recipient: friend).count).to eq(1)
       end
+
+      it 'applies submitted score and guest changes in the same submit' do
+        guest = create(:game_session_participant, :guest, :confirmed,
+                       game_session: game_session, guest_name: 'Bob', score: 15)
+
+        described_class.call(
+          game_session: game_session,
+          game_id: new_game.id,
+          creator_score: 10,
+          players: [
+            { id: friend_participant.id, type: 'friend', user_id: friend.id, score: 55 },
+            { id: guest.id, type: 'guest', guest_name: 'Bobby', score: 40 }
+          ]
+        )
+
+        expect(friend_participant.reload).to have_attributes(score: 55, status: 'pending')
+        expect(guest.reload).to have_attributes(guest_name: 'Bobby', score: 40, status: 'confirmed')
+      end
     end
 
     context 'when adding a new participant' do

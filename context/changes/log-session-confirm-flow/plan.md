@@ -487,8 +487,12 @@ Wire up the full user-facing feature: controllers for game session CRUD and noti
 ## Migration Notes
 
 - No existing data to migrate — all three tables are new
-- `played_at` defaults to `Time.current` at creation; no date picker in UI, but the column exists for future use and S-04 stat filtering
 - The `notifications` table is designed to be generic (polymorphic) but initially only serves `GameSessionParticipant` notifications
+
+## Implementation Addendum (impl-review 2026-07-26)
+
+- **`played_at` deferred to S-04.** This slice ships without a `played_at` column. Session history, show, and notification inbox display `created_at` instead. Earlier plan contracts that mention `played_at` (schema, model validation, Create service, factory, views) are superseded by this deferral — S-04 should introduce `played_at` (or equivalent) when played-date filtering / picker lands.
+- **`notifications.reason` retained.** Unplanned in the original Notification contract; kept after impl-review. Column is string NOT NULL default `'invitation'`; model validates inclusion in `%w[invitation update update_after_rejection]`. Create uses default `invitation`. Update re-notify sets `update` (or `update_after_rejection` when the participant was rejected). Inbox copy branches on reason.
 
 ## References
 
@@ -541,3 +545,5 @@ Wire up the full user-facing feature: controllers for game session CRUD and noti
 - [x] 3.10 Solo session (logger only); verify it works — 995d779
 - [x] 3.11 Notification badge in nav shows correct count — 995d779
 - [x] 3.12 IDOR: attempt to edit another user's session → 404 — 995d779
+
+> **Impl-review note (2026-07-26):** Guest-on-edit was not reliably exercised when 3.5/3.8 were stamped (form omitted guests → wipe on update). Gap closed by NULL-safe `@player_rows` loading plus request specs (`includes guest participants in the edit form`, `keeps guests when updating other session fields`).

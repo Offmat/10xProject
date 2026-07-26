@@ -16,7 +16,7 @@
     <input type="number"
            name="game_session[creator_score]"
            id="game_session_creator_score"
-           value="<%= local_assigns[:creator_score] || @game_session.persisted? && @game_session.game_session_participants.find_by(user: current_user)&.score %>"
+           value="<%= @creator_score %>"
            required
            class="input input-bordered w-full">
   </div>
@@ -25,17 +25,8 @@
     <h3 class="text-lg font-semibold">Players</h3>
 
     <div data-nested-form-target="container" class="space-y-4">
-      <% if @game_session.persisted? %>
-        <% @game_session.game_session_participants.where.not(user: current_user).each_with_index do |participant, i| %>
-          <% player = {
-            id: participant.id,
-            type: participant.registered? ? 'friend' : 'guest',
-            user_id: participant.user_id,
-            guest_name: participant.guest_name,
-            score: participant.score
-          } %>
-          <%= render 'player_fields', index: i, player: player %>
-        <% end %>
+      <% @player_rows.each_with_index do |player, i| %>
+        <%= render 'player_fields', index: i, player: player %>
       <% end %>
     </div>
 

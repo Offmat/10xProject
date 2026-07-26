@@ -154,6 +154,17 @@ RSpec.describe 'GameSessions', type: :request do
       expect(response.body).to include('Edit Session')
     end
 
+    it 'includes guest participants in the edit form' do
+      session = create(:game_session, creator: alice, game: game)
+      create(:game_session_participant, :confirmed, game_session: session, user: alice, score: 10)
+      create(:game_session_participant, :guest, :confirmed, game_session: session, guest_name: 'Carol', score: 12)
+
+      get edit_game_session_path(session)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include('Carol')
+    end
+
     it 'returns 404 for non-creator' do
       session = create(:game_session, creator: bob, game: game)
       create(:game_session_participant, :confirmed, game_session: session, user: bob, score: 10)
@@ -186,6 +197,30 @@ RSpec.describe 'GameSessions', type: :request do
       expect(response).to redirect_to(game_session_path(session))
       follow_redirect!
       expect(response.body).to include('Session updated successfully.')
+    end
+
+    it 'keeps guests when updating other session fields' do
+      guest = create(:game_session_participant, :guest, :confirmed,
+                     game_session: session, guest_name: 'Carol', score: 12)
+
+      patch game_session_path(session), params: {
+        game_session: {
+          game_id: game.id,
+          creator_score: 42,
+          players: {
+            '0' => {
+              id: guest.id,
+              type: 'guest',
+              guest_name: 'Carol',
+              score: 12
+            }
+          }
+        }
+      }
+
+      expect(response).to redirect_to(game_session_path(session))
+      expect(guest.reload).to have_attributes(guest_name: 'Carol', score: 12)
+      expect(session.game_session_participants.find_by(user: alice).score).to eq(42)
     end
 
     it 'returns 404 for non-creator' do

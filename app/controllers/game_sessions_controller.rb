@@ -83,6 +83,23 @@ class GameSessionsController < ApplicationController
   def load_form_data
     @games = Game.order(:name)
     @friends = current_user.friends.order(:email)
+    @creator_score = nil
+    @player_rows = []
+    return unless @game_session&.persisted?
+
+    participants = @game_session.game_session_participants
+    @creator_score = participants.find_by(user: current_user)&.score
+    @player_rows = participants
+      .where('user_id != ? OR user_id IS NULL', current_user.id)
+      .map do |participant|
+        {
+          id: participant.id,
+          type: participant.registered? ? 'friend' : 'guest',
+          user_id: participant.user_id,
+          guest_name: participant.guest_name,
+          score: participant.score
+        }
+      end
   end
 
   def session_params

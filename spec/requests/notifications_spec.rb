@@ -68,6 +68,17 @@ RSpec.describe 'Notifications', type: :request do
 
       expect(response).to have_http_status(:not_found)
     end
+
+    it 'returns 404 when the notification is already read and leaves status unchanged' do
+      session = create(:game_session, creator: bob, game: game)
+      participant = create(:game_session_participant, :confirmed, game_session: session, user: alice, score: 30)
+      notification = create(:notification, recipient: alice, notifiable: participant, read_at: Time.current)
+
+      patch confirm_notification_path(notification)
+
+      expect(response).to have_http_status(:not_found)
+      expect(participant.reload).to be_confirmed
+    end
   end
 
   describe 'PATCH /notifications/:id/reject' do
@@ -96,6 +107,17 @@ RSpec.describe 'Notifications', type: :request do
       patch reject_notification_path(notification)
 
       expect(response).to have_http_status(:not_found)
+    end
+
+    it 'returns 404 when the notification is already read and leaves status unchanged' do
+      session = create(:game_session, creator: bob, game: game)
+      participant = create(:game_session_participant, :confirmed, game_session: session, user: alice, score: 30)
+      notification = create(:notification, recipient: alice, notifiable: participant, read_at: Time.current)
+
+      patch reject_notification_path(notification)
+
+      expect(response).to have_http_status(:not_found)
+      expect(participant.reload).to be_confirmed
     end
   end
 

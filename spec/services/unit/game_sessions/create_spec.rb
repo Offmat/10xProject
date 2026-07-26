@@ -163,5 +163,23 @@ RSpec.describe GameSessions::Create, type: :service do
         expect(result.game_session.game_session_participants.count).to eq(1)
       end
     end
+
+    context 'when participant data is invalid' do
+      it 'returns :invalid and creates no session' do
+        result = nil
+
+        expect {
+          result = described_class.call(
+            creator: creator,
+            game_id: game.id,
+            creator_score: nil,
+            players: []
+          )
+        }.not_to change(GameSession, :count)
+
+        expect(result.status).to eq(:invalid)
+        expect(result.game_session).to be_nil
+      end
+    end
   end
 end

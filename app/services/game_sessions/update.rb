@@ -57,9 +57,10 @@ module GameSessions
       remove_missing_participants(existing, submitted_ids)
 
       if game_changed
+        apply_submitted_fields(existing)
         reset_all_registered_participants
       else
-        update_existing_participants(existing, submitted_ids)
+        update_existing_participants(existing)
       end
 
       add_new_participants
@@ -74,6 +75,22 @@ module GameSessions
         .where('user_id != ? OR user_id IS NULL', game_session.creator_id)
     end
 
+    def apply_submitted_fields(existing)
+      players.select { |p| p[:id].present? }.each do |player_data|
+        participant = existing.find_by(id: player_data[:id])
+        next unless participant
+
+        if participant.registered?
+          participant.update!(score: player_data[:score])
+        elsif participant.guest?
+          participant.update!(
+            guest_name: player_data[:guest_name] || participant.guest_name,
+            score: player_data[:score]
+          )
+        end
+      end
+    end
+
     def reset_all_registered_participants
       non_logger_participants.where.not(user_id: nil).find_each do |participant|
         reason = participant.rejected? ? 'update_after_rejection' : 'update'
@@ -83,7 +100,7 @@ module GameSessions
       end
     end
 
-    def update_existing_participants(existing, submitted_ids)
+    def update_existing_participants(existing)
       players.select { |p| p[:id].present? }.each do |player_data|
         participant = existing.find_by(id: player_data[:id])
         next unless participant
