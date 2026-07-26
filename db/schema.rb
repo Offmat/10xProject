@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_07_24_164214) do
+ActiveRecord::Schema[8.1].define(version: 2026_07_26_184117) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -71,6 +71,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_24_164214) do
     t.bigint "notifiable_id", null: false
     t.string "notifiable_type", null: false
     t.datetime "read_at"
+    t.string "reason", default: "invitation", null: false
     t.bigint "recipient_id", null: false
     t.datetime "updated_at", null: false
     t.index ["notifiable_type", "notifiable_id"], name: "index_notifications_on_notifiable_type_and_notifiable_id"

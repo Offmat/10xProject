@@ -1,0 +1,58 @@
+<%= form_with model: @game_session, class: 'space-y-6' do |form| %>
+  <div class="form-control">
+    <label class="label" for="game_session_game_id">
+      <span class="label-text">Game</span>
+    </label>
+    <%= form.select :game_id,
+          options_from_collection_for_select(@games, :id, :name, @game_session.game_id),
+          { prompt: 'Select a game' },
+          { required: true, class: 'select select-bordered w-full', id: 'game_session_game_id' } %>
+  </div>
+
+  <div class="form-control">
+    <label class="label" for="game_session_creator_score">
+      <span class="label-text">Your score</span>
+    </label>
+    <input type="number"
+           name="game_session[creator_score]"
+           id="game_session_creator_score"
+           value="<%= local_assigns[:creator_score] || @game_session.persisted? && @game_session.game_session_participants.find_by(user: current_user)&.score %>"
+           required
+           class="input input-bordered w-full">
+  </div>
+
+  <div data-controller="nested-form" class="space-y-4">
+    <h3 class="text-lg font-semibold">Players</h3>
+
+    <div data-nested-form-target="container" class="space-y-4">
+      <% if @game_session.persisted? %>
+        <% @game_session.game_session_participants.where.not(user: current_user).each_with_index do |participant, i| %>
+          <% player = {
+            id: participant.id,
+            type: participant.registered? ? 'friend' : 'guest',
+            user_id: participant.user_id,
+            guest_name: participant.guest_name,
+            score: participant.score
+          } %>
+          <%= render 'player_fields', index: i, player: player %>
+        <% end %>
+      <% end %>
+    </div>
+
+    <template data-nested-form-target="template">
+      <%= render 'player_fields' %>
+    </template>
+
+    <button type="button"
+            class="btn btn-outline btn-sm"
+            data-action="click->nested-form#add">
+      + Add player
+    </button>
+  </div>
+
+  <div class="form-control mt-6">
+    <%= form.submit @game_session.persisted? ? 'Update Session' : 'Log Session',
+          class: 'btn btn-primary',
+          data: { turbo_submits_with: 'Saving…' } %>
+  </div>
+<% end %>

@@ -76,9 +76,10 @@ module GameSessions
 
     def reset_all_registered_participants
       non_logger_participants.where.not(user_id: nil).find_each do |participant|
+        reason = participant.rejected? ? 'update_after_rejection' : 'update'
         participant.notifications.destroy_all
         participant.update!(status: :pending)
-        Notification.create!(recipient: participant.user, notifiable: participant)
+        Notification.create!(recipient: participant.user, notifiable: participant, reason: reason)
       end
     end
 
@@ -88,9 +89,10 @@ module GameSessions
         next unless participant
 
         if participant.registered? && participant.score != player_data[:score].to_i
+          reason = participant.rejected? ? 'update_after_rejection' : 'update'
           participant.notifications.destroy_all
           participant.update!(score: player_data[:score], status: :pending)
-          Notification.create!(recipient: participant.user, notifiable: participant)
+          Notification.create!(recipient: participant.user, notifiable: participant, reason: reason)
         elsif participant.guest?
           participant.update!(
             guest_name: player_data[:guest_name] || participant.guest_name,

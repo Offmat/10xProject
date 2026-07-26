@@ -1,0 +1,66 @@
+<div data-nested-form-row data-controller="player-fields" class="card bg-base-200 p-4 space-y-3">
+  <% index = local_assigns[:index] || 'NEW_RECORD' %>
+  <% player = local_assigns[:player] || {} %>
+  <% player_type = player[:type] || 'friend' %>
+
+  <% if player[:id].present? %>
+    <input type="hidden" name="game_session[players][<%= index %>][id]" value="<%= player[:id] %>">
+  <% end %>
+
+  <div class="flex items-center gap-4">
+    <label class="label cursor-pointer gap-2">
+      <input type="radio"
+             name="game_session[players][<%= index %>][type]"
+             value="friend"
+             class="radio radio-sm"
+             data-action="change->player-fields#toggle"
+             <%= 'checked' if player_type == 'friend' %>>
+      <span class="label-text">Friend</span>
+    </label>
+    <label class="label cursor-pointer gap-2">
+      <input type="radio"
+             name="game_session[players][<%= index %>][type]"
+             value="guest"
+             class="radio radio-sm"
+             data-action="change->player-fields#toggle"
+             <%= 'checked' if player_type == 'guest' %>>
+      <span class="label-text">Guest</span>
+    </label>
+  </div>
+
+  <fieldset data-player-fields-target="friendGroup" <%= 'disabled' if player_type == 'guest' %>>
+    <select name="game_session[players][<%= index %>][user_id]" class="select select-bordered w-full">
+      <option value="">Select a friend</option>
+      <% @friends.each do |friend| %>
+        <option value="<%= friend.id %>" <%= 'selected' if player[:user_id].to_s == friend.id.to_s %>>
+          <%= friend.email %>
+        </option>
+      <% end %>
+    </select>
+  </fieldset>
+
+  <fieldset data-player-fields-target="guestGroup" <%= 'disabled' if player_type != 'guest' %>>
+    <input type="text"
+           name="game_session[players][<%= index %>][guest_name]"
+           value="<%= player[:guest_name] %>"
+           placeholder="Guest name"
+           class="input input-bordered w-full">
+  </fieldset>
+
+  <div class="form-control">
+    <label class="label">
+      <span class="label-text">Score</span>
+    </label>
+    <input type="number"
+           name="game_session[players][<%= index %>][score]"
+           value="<%= player[:score] %>"
+           required
+           class="input input-bordered w-full">
+  </div>
+
+  <button type="button"
+          class="btn btn-ghost btn-sm text-error self-end"
+          data-action="click->nested-form#remove">
+    Remove
+  </button>
+</div>

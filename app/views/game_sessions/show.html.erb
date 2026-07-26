@@ -1,0 +1,44 @@
+<% content_for :title, @game_session.game.name %>
+
+<div class="mx-auto max-w-2xl space-y-6">
+  <div class="flex items-center justify-between">
+    <div>
+      <h1 class="text-2xl font-bold"><%= @game_session.game.name %></h1>
+      <p class="text-sm text-base-content/70">
+        Played on <%= @game_session.created_at.strftime('%b %d, %Y at %H:%M') %>
+      </p>
+    </div>
+    <% if @game_session.creator == current_user %>
+      <%= link_to 'Edit', edit_game_session_path(@game_session), class: 'btn btn-ghost btn-sm' %>
+    <% end %>
+  </div>
+
+  <div class="card bg-base-200 shadow-sm">
+    <div class="card-body">
+      <h2 class="card-title text-lg">Players</h2>
+      <ul class="space-y-2 mt-2">
+        <% @game_session.game_session_participants.each do |participant| %>
+          <li class="flex items-center gap-2">
+            <span class="<%= 'font-semibold' if participant.user == current_user %>">
+              <%= participant.display_name %>
+              <%= '(you)' if participant.user == current_user %>
+            </span>
+            <span class="text-base-content/70">— <%= participant.score %> pts</span>
+            <% if participant.registered? && participant.user != @game_session.creator %>
+              <% case participant.status %>
+              <% when 'confirmed' %>
+                <span class="badge badge-success badge-sm">confirmed</span>
+              <% when 'pending' %>
+                <span class="badge badge-warning badge-sm">pending</span>
+              <% when 'rejected' %>
+                <span class="badge badge-error badge-sm">rejected</span>
+              <% end %>
+            <% end %>
+          </li>
+        <% end %>
+      </ul>
+    </div>
+  </div>
+
+  <%= link_to '← Back to sessions', game_sessions_path, class: 'link' %>
+</div>

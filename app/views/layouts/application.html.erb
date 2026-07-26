@@ -29,10 +29,17 @@
       </div>
       <div class="navbar-end gap-2">
         <% if authenticated? %>
+          <%= link_to 'Sessions', game_sessions_path, class: 'btn btn-ghost btn-sm' %>
           <div class="indicator">
             <%= link_to 'Friends', friendships_path, class: 'btn btn-ghost btn-sm' %>
             <% if @incoming_friend_request_count&.positive? %>
               <span class="indicator-item badge badge-primary badge-sm"><%= @incoming_friend_request_count %></span>
+            <% end %>
+          </div>
+          <div class="indicator">
+            <%= link_to 'Notifications', notifications_path, class: 'btn btn-ghost btn-sm' %>
+            <% if @unread_notification_count&.positive? %>
+              <span class="indicator-item badge badge-primary badge-sm"><%= @unread_notification_count %></span>
             <% end %>
           </div>
           <span class="max-w-[12rem] truncate text-sm sm:max-w-none"><%= current_user.email %></span>

@@ -1,0 +1,47 @@
+<% content_for :title, 'Notifications' %>
+
+<div class="mx-auto max-w-2xl space-y-6">
+  <div>
+    <h1 class="text-2xl font-bold">Notifications</h1>
+    <p class="mt-1 text-base-content/70">Confirm or reject your participation in game sessions.</p>
+  </div>
+
+  <% if @notifications.any? %>
+    <div class="space-y-4">
+      <% @notifications.each do |notification| %>
+        <% participant = notification.notifiable %>
+        <% game_session = participant.game_session %>
+        <div class="card bg-base-200 shadow-sm">
+          <div class="card-body">
+            <p class="text-sm text-base-content/70">
+              <% if notification.reason == 'update_after_rejection' %>
+                <strong><%= game_session.creator.email %></strong> updated a session of
+                <strong><%= game_session.game.name %></strong> you previously rejected
+              <% elsif notification.reason == 'update' %>
+                <strong><%= game_session.creator.email %></strong> updated a session of
+                <strong><%= game_session.game.name %></strong> you previously participated in
+              <% else %>
+                <strong><%= game_session.creator.email %></strong> logged a session of
+                <strong><%= game_session.game.name %></strong> and tagged you
+              <% end %>
+            </p>
+            <p class="text-sm">
+              Your score: <strong><%= participant.score %></strong> pts
+              &middot; Played <%= game_session.created_at.strftime('%b %d, %Y') %>
+            </p>
+            <div class="card-actions mt-3">
+              <%= button_to 'Confirm', confirm_notification_path(notification),
+                    method: :patch, class: 'btn btn-primary btn-sm' %>
+              <%= button_to 'Reject', reject_notification_path(notification),
+                    method: :patch, class: 'btn btn-ghost btn-sm' %>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  <% else %>
+    <div class="text-center py-12">
+      <p class="text-base-content/70">No new notifications. You're all caught up!</p>
+    </div>
+  <% end %>
+</div>

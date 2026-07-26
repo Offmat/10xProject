@@ -7,6 +7,7 @@ class ApplicationController < ActionController::Base
   stale_when_importmap_changes
 
   before_action :set_incoming_friend_request_count
+  before_action :set_unread_notification_count
 
   private
 
@@ -14,5 +15,11 @@ class ApplicationController < ActionController::Base
     return unless authenticated?
 
     @incoming_friend_request_count = Friendship.incoming_to(current_user).count
+  end
+
+  def set_unread_notification_count
+    return unless authenticated?
+
+    @unread_notification_count = Notification.unread.for_user(current_user).count
   end
 end

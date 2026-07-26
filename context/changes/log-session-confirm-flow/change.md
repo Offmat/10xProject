@@ -3,7 +3,7 @@ change_id: log-session-confirm-flow
 title: Log session with confirm flow
 status: implementing
 created: 2026-07-20
-updated: 2026-07-24
+updated: 2026-07-25
 archived_at: null
 ---
 

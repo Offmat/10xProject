@@ -1,0 +1,61 @@
+<% content_for :title, 'My Sessions' %>
+
+<div class="mx-auto max-w-2xl space-y-6">
+  <div class="flex items-center justify-between">
+    <h1 class="text-2xl font-bold">My Sessions</h1>
+    <%= link_to 'Log a Session', new_game_session_path, class: 'btn btn-primary btn-sm' %>
+  </div>
+
+  <% if @game_sessions.any? %>
+    <div class="space-y-4">
+      <% @game_sessions.each do |game_session| %>
+        <div class="card bg-base-200 shadow-sm">
+          <div class="card-body">
+            <div class="flex items-start justify-between">
+              <div>
+                <h2 class="card-title text-lg">
+                  <%= link_to game_session.game.name, game_session_path(game_session), class: 'link link-hover' %>
+                </h2>
+                <p class="text-sm text-base-content/70">
+                  <%= game_session.created_at.strftime('%b %d, %Y at %H:%M') %>
+                </p>
+              </div>
+              <% if game_session.creator == current_user %>
+                <%= link_to 'Edit', edit_game_session_path(game_session), class: 'btn btn-ghost btn-xs' %>
+              <% end %>
+            </div>
+
+            <div class="mt-3">
+              <h3 class="text-sm font-medium mb-1">Players:</h3>
+              <ul class="space-y-1">
+                <% game_session.game_session_participants.each do |participant| %>
+                  <li class="flex items-center gap-2 text-sm">
+                    <span class="<%= 'font-semibold' if participant.user == current_user %>">
+                      <%= participant.display_name %>
+                      <%= '(you)' if participant.user == current_user %>
+                    </span>
+                    <span class="text-base-content/70">— <%= participant.score %> pts</span>
+                    <% if participant.registered? && participant.user != game_session.creator %>
+                      <% case participant.status %>
+                      <% when 'confirmed' %>
+                        <span class="badge badge-success badge-xs">confirmed</span>
+                      <% when 'pending' %>
+                        <span class="badge badge-warning badge-xs">pending</span>
+                      <% when 'rejected' %>
+                        <span class="badge badge-error badge-xs">rejected</span>
+                      <% end %>
+                    <% end %>
+                  </li>
+                <% end %>
+              </ul>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  <% else %>
+    <div class="text-center py-12">
+      <p class="text-base-content/70">No sessions yet. Log your first board game session!</p>
+    </div>
+  <% end %>
+</div>
