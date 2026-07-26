@@ -526,18 +526,18 @@ Wire up the full user-facing feature: controllers for game session CRUD and noti
 
 #### Automated
 
-- [x] 3.1 Request specs pass: `bin/rspec spec/requests/game_sessions_spec.rb spec/requests/notifications_spec.rb`
-- [x] 3.2 All specs pass: `bin/rspec`
-- [x] 3.3 Linting passes: `bin/rubocop`
-- [x] 3.4 CI passes: `bin/ci`
+- [x] 3.1 Request specs pass: `bin/rspec spec/requests/game_sessions_spec.rb spec/requests/notifications_spec.rb` — 995d779
+- [x] 3.2 All specs pass: `bin/rspec` — 995d779
+- [x] 3.3 Linting passes: `bin/rubocop` — 995d779
+- [x] 3.4 CI passes: `bin/ci` — 995d779
 
 #### Manual
 
-- [x] 3.5 Log a session with 1 friend + 1 guest; verify history
-- [x] 3.6 Confirm as friend; verify session in friend's history
-- [x] 3.7 Reject as friend; verify session excluded from friend's history
-- [x] 3.8 Edit session (score change); verify selective re-notification
-- [x] 3.9 Edit session (game change); verify bulk re-notification
-- [x] 3.10 Solo session (logger only); verify it works
-- [x] 3.11 Notification badge in nav shows correct count
-- [x] 3.12 IDOR: attempt to edit another user's session → 404
+- [x] 3.5 Log a session with 1 friend + 1 guest; verify history — 995d779
+- [x] 3.6 Confirm as friend; verify session in friend's history — 995d779
+- [x] 3.7 Reject as friend; verify session excluded from friend's history — 995d779
+- [x] 3.8 Edit session (score change); verify selective re-notification — 995d779
+- [x] 3.9 Edit session (game change); verify bulk re-notification — 995d779
+- [x] 3.10 Solo session (logger only); verify it works — 995d779
+- [x] 3.11 Notification badge in nav shows correct count — 995d779
+- [x] 3.12 IDOR: attempt to edit another user's session → 404 — 995d779
