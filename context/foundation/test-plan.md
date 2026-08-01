@@ -6,7 +6,7 @@
 >
 > Refresh: re-run `/10x-test-plan --refresh` when stale (see §8).
 >
-> Last updated: 2026-07-14
+> Last updated: 2026-08-01
 
 ## 1. Strategy
 
@@ -16,9 +16,9 @@ Tests follow three non-negotiable principles for this project:
    risk wins. Do not promote to e2e because e2e "feels safer." Do not put a
    vision model on top of a deterministic visual diff that already catches
    the regression.
-2. **User concerns are first-class evidence.** Risks anchored in "the team
-   is worried about X, and the failure would surface somewhere in session
-   or stats flows" carry the same weight as PRD lines or hot-spot data.
+2. **User concerns are first-class evidence.** Risks anchored in "<the
+   team is worried about X, and the failure would surface somewhere in
+   <area>>" carry the same weight as PRD lines or hot-spot data.
 3. **Risks are scenarios, not code locations.** This plan documents *what
    could fail* and *why we believe it's likely* — drawn from documents,
    interview, and codebase *signal* (churn, structure, test base). It does
@@ -27,8 +27,7 @@ Tests follow three non-negotiable principles for this project:
    research disagree about where the failure lives, research is the
    ground truth.
 
-Hot-spot scope used for likelihood weighting: `app/`, `config/`, `lib/`,
-`spec/` (180-day window; 30-day window had insufficient history).
+Hot-spot scope used for likelihood weighting: `app/`, `lib/`, `config/`.
 
 ## 2. Risk Map
 
@@ -39,26 +38,24 @@ this risk* — never a specific file as "where the failure lives" (that is
 research's job, see §1 principle #3).
 
 | # | Risk (failure scenario) | Impact | Likelihood | Source (evidence — not anchor) |
-|---|-------------------------|--------|------------|--------------------------------|
-| 1 | User views session statistics for games or sessions they did not participate in (as logger or confirmed co-player) | High | High | interview Q1; PRD guardrails (Privacy); roadmap S-04 |
-| 2 | Co-player stats are wrong: session counts before they confirm, stays after they reject, or remains pending with no resolution path | High | High | interview Q3, Q4; PRD Business Logic; roadmap S-03 (north star) |
-| 3 | Logger saves a session but it is missing from their own history or stats immediately after submit | High | Medium | PRD Success Criteria step 3; FR-003 guardrail |
-| 4 | User confirms, rejects, or reads session details for a session they were not invited to (IDOR — logged in but not a participant) | High | Medium | abuse lens (authorization); interview Q1; PRD FR-006 |
-| 5 | Unregistered guest player incorrectly gets an account, login path, or stats view; or a registered player is stored as name-only guest data | Medium | High | PRD US-01 wedge; PRD Non-Functional (unregistered players) |
-| 6 | User tags a registered co-player who is not an accepted friend and the session incorrectly succeeds (or wrongly fails when the friend is accepted) | Medium | Medium | interview correction; PRD FR-002 + FR-003; user rule: friends-only for registered tags; NPC-only sessions allowed |
-| 7 | Registered co-player included in a logged session receives no in-app notification to confirm or reject | Medium | Medium | PRD FR-005; PRD Success Criteria step 4 |
+|---|---|---|---|---|
+| 1 | Logger submits multiple players; session saves with a subset; UI still looks successful so the loss is missed | High | High | interview Q1; hot-spot dir `app/views/game_sessions` (7 commits/30d); PRD US-01 / FR-003–004 |
+| 2 | Stimulus nested player rows post a different param shape than request-spec fakes; suite stays green while real submits drop fields | High | High | interview Q2, Q4; hot-spot dirs `app/views/game_sessions`, `app/javascript/controllers`; roadmap S-03 |
+| 3 | Confirm/reject wrong: co-player stats include a rejected/pending session, or confirmed session never counts | High | Medium | PRD Business Logic / US-01; roadmap S-03 north star |
+| 4 | Abuse: non-owner confirm/reject/edit (IDOR) mutates another user's session or notification | High | Medium | abuse lens (auth product); archive mutual-friend-circle IDOR pattern; S-03 ownership concerns |
+| 5 | Edit after log: selective vs bulk re-notify wrong → co-players act on stale scores/game | Medium | Medium | PRD FR-005–006; hot-spot dir `app/services/game_sessions` (4 commits/30d) |
+| 6 | Non-friend / invalid registered player accepted on the log (friend-circle gate bypassed) | Medium | Low | PRD US-01 given; user interview edit — deprioritized |
 
 ### Risk Response Guidance
 
 | Risk | What would prove protection | Must challenge | Context `/10x-research` must ground | Likely cheapest layer | Anti-pattern to avoid |
 |------|-----------------------------|----------------|--------------------------------------|-----------------------|-----------------------|
-| #1 | A user querying stats sees only sessions they logged or confirmed; another user's sessions never appear in their filtered results | "Authenticated user can query stats" implies scoping is correct | Stats query entry point, participation predicate (logger vs confirmed co-player), filter parameters, negative case user pair | integration request spec | Asserting total row count from fixture setup without verifying the requesting user's scope |
-| #2 | After co-player rejects, their stats exclude the session; after confirm, stats include it; before response, their stats do not count it; logger stats always include it | "Session saved" implies all participants' stat views are immediately correct | Confirm/reject state machine, stat aggregation queries, logger vs co-player visibility rules, pending state | model scope spec + integration spec | Oracle copied from the same aggregation method under test |
-| #3 | Logger submits a valid session (NPC-only or with registered friend) and their history/stats list includes it on the next read without waiting for co-player action | "Create returns 200" implies read-your-writes for the logger | Session create endpoint, immediate visibility query, transaction boundaries | integration request spec | Testing only the create response body without a follow-up history/stats read |
-| #4 | Non-participant authenticated user receives 404 or 403 on confirm, reject, and show — not the session payload | "User is logged in" equals "user may act on this session" | Notification/inbox routing, session participant membership check, HTTP status for unauthorized actor | integration request spec | Testing only the happy-path participant; skipping cross-user negative examples |
-| #5 | Guest rows persist as name + score only with no user foreign key; registered tags resolve to real users and are distinguishable from guests | "Name field present" means the player is a guest | Player join model, guest vs registered discriminator, validation on create | model spec + integration spec | Factory that always creates users, masking guest path |
-| #6 | Session with only NPC players saves without friend check; session tagging a registered user succeeds only when mutual friendship is active; non-friend tag is rejected | "Registered player selected" does not require friendship (user correction: friends-only for registered tags) | Friend-circle active state, session player validation, NPC-only path vs registered-tag path | integration request spec | Requiring accepted friend even when all players are guests |
-| #7 | After session save including a registered friend, that friend's inbox contains a notification referencing the session | "Notification model exists" implies delivery on create | Notification creation trigger, inbox listing endpoint, idempotency on re-save | integration spec | Asserting only DB row exists without inbox read by the recipient user |
+| #1 | After multi-player submit, persisted participant set matches every submitted player (registered + guest) | "HTTP success / session exists ⇒ all players saved" | create/update entry, participant persistence rule, how partial failure surfaces to the user | request + system (browser submit) | Assert only session count or flash success |
+| #2 | Real form DOM (add/remove rows) → POST body the controller accepts; round-trip survivors match what the UI showed | "Request-spec hash equals what Stimulus posts" | field names, nested keys, disabled/hidden fields, Turbo submit path | system (Capybara) | Snapshot HTML only; mirror strong-params as the oracle |
+| #3 | Confirm → session in co-player history; reject/pending → excluded; logger's record unchanged | "Notification opened ⇒ stats already updated" | confirm/reject state machine; stats inclusion rule | request / service integration | Happy-path confirm only |
+| #4 | Non-participant gets 404/forbidden; target resource unchanged | "Logged-in is enough" | ownership checks on session + notification actions | request | Auth-only smoke without a foreign id |
+| #5 | Score-only edit re-notifies selectively; game change bulk; no silent stale inbox | "Any edit ⇒ same notify path" | edit classification; notify fan-out rules | service integration + request | Assert notify count without who/why |
+| #6 | Non-accepted friend cannot be tagged as registered co-player | "Any user id in params is fine" | friend-circle gate on create (only if already on the path) | request / unit — opportunistic only | Do not open a dedicated phase for this risk |
 
 ## 3. Phased Rollout
 
@@ -67,10 +64,11 @@ via `/10x-new`. Status moves left-to-right through the values below; the
 orchestrator updates Status as artifacts appear on disk.
 
 | # | Phase name | Goal (one line) | Risks covered | Test types | Status | Change folder |
-|---|------------|-----------------|---------------|------------|--------|---------------|
-| 1 | Session log + confirm/reject critical path | Prove north-star session rules: logger visibility, guest handling, friend-only registered tags, confirm/reject stat gating, notification delivery | #2, #3, #5, #6, #7 | model + integration (request/service) | change opened | context/changes/testing-session-log-confirm-critical-path/ |
-| 2 | Authorization + stats privacy boundaries | Prove IDOR protection on session actions and stats scoping so users never see another person's data | #1, #4 | integration request specs | not started | — |
-| 3 | Quality-gates + cookbook wiring | Lock test patterns in CI and fill §6 cookbook so future tests follow one convention | cross-cutting | gates + docs | not started | — |
+|---|---|---|---|---|---|---|
+| 1 | Session-form player fidelity | Prove multi-player submit persists all players via real form POST | #1, #2 | system (+ tighten request oracles) | not started | — |
+| 2 | Confirm path & ownership | Defend confirm/reject semantics and IDOR on session/notification actions | #3, #4 | request + service integration | not started | — |
+| 3 | Edit re-notify coverage | Cover edit notify matrix (selective vs bulk); #6 only if cheap on create path | #5 | request + service integration | not started | — |
+| 4 | System-spec CI floor | Wire Capybara/system runner into CI; fill cookbook §6 for system specs | cross-cutting | gates | not started | — |
 
 ## 4. Stack
 
@@ -80,96 +78,83 @@ Recommendations in this section must be grounded in local manifests/configs
 plus the MCP/tools actually exposed in the current session.
 
 | Layer | Tool | Version | Notes |
-|-------|------|---------|-------|
-| unit + integration | RSpec + rspec-rails | ~8.0 | Primary runner; `bin/rspec`; request specs preferred for HTTP (per `spec/AGENTS.md`) |
-| factories | FactoryBot Rails | ~6.5 | `create(:user)` etc.; mirror `app/` layout under `spec/` |
-| API mocking | WebMock | ~3.26 | External HTTP only (Wikidata); never mock internal domain modules |
-| e2e / system | none yet | — | Capybara not configured; see §7 — not prioritized for MVP |
-| accessibility | none | — | — |
-| (optional) AI-native | none | n/a | No AI-native test layer in rollout; cost × signal favors deterministic specs |
+|------|------|---------|-------|
+| unit + integration | RSpec + rspec-rails | ~> 8.0 | Models, service unit/integration, request specs; `bin/rspec`; FactoryBot |
+| HTTP edge mocking | WebMock | ~> 3.26 | Used for Wikidata/catalog import; keep at network edge |
+| e2e / browser | Capybara system specs | none yet — see §3 Phase 1 + 4 | rspec-rails recommends system specs for browser flows; no Capybara in Gemfile today |
+| accessibility | none yet | — | Not in MVP test budget |
+| AI-native | none | n/a | No Playwright/browser MCP in session; do not layer vision on deterministic system asserts |
+
+**Test-base profile:** meaningful — RSpec configured; 22 spec files across models, requests, and services; CI already runs `bin/rspec`. Gap: no browser-driven system specs (interview Q4).
 
 **Stack grounding tools (current session):**
-- Docs: Context7 (`/rspec/rspec-rails`) — request vs system spec guidance; checked: 2026-07-14
-- Search: Exa.ai — available, not used for this write; checked: 2026-07-14
-- Runtime/browser: none — system specs possible via Capybara but not configured; not used; checked: 2026-07-14
-- Provider/platform: Railway MCP — deploy/log gates possible in Phase 3; not used yet; checked: 2026-07-14
-
-Test-base profile: **sparse** — RSpec configured, 11 spec files clustered in
-auth and game-catalog areas; friends, sessions, and stats domains untested.
+- Docs: Context7 (`/rspec/rspec-rails`) — request specs preferred over controller specs; system specs for browser e2e; checked: 2026-08-01
+- Search: Exa available — not used (docs MCP sufficient); checked: 2026-08-01
+- Runtime/browser: none (no Playwright MCP); checked: 2026-08-01
+- Provider/platform: Railway MCP — deploy/status only, not a test gate; checked: 2026-08-01
 
 ## 5. Quality Gates
 
 The full set of gates that must pass before a change reaches production.
-"Required for §3 Phase N" means the gate is enforced once that rollout
+"Required for §3 Phase \<N\>" means the gate is enforced once that rollout
 phase lands; before that, the gate is `planned`.
 
 | Gate | Where | Required? | Catches |
 |------|-------|-----------|---------|
-| RuboCop | local + CI (`bin/ci`) | required | style / omakase drift |
-| Brakeman + bundler-audit + importmap audit | local + CI | required | security regressions |
-| RSpec (unit + integration) | local + CI | required (baseline); patterns extended after §3 Phase 1 | logic regressions in auth + catalog; session domain after Phase 1 |
-| e2e on critical flows | CI on PR | planned — not in rollout | — |
-| post-edit hook | local (agent loop) | planned — not in rollout | — |
-| visual diff (deterministic) | CI on PR | excluded per §7 | — |
-| pre-prod smoke | between merge + prod | optional | environment-specific failures |
+| RuboCop + Brakeman + bundler-audit + importmap audit | local `bin/ci` + GHA | required (already wired) | lint / security drift |
+| unit + request + service specs | local + CI (`bin/rspec`) | required (already wired) | logic regressions |
+| system specs on session-form critical path | local + CI | required after §3 Phase 4 (specs land in Phase 1) | FE param shape vs controller digest; silent player drop |
+| full auth e2e / Wikidata browser flows | — | deliberately out | see §7 |
+| post-edit AI hook / multimodal visual review | — | not planned | cost × signal not justified for MVP |
 
 ## 6. Cookbook Patterns
 
 How to add new tests in this project. Each sub-section is filled in once
 the relevant rollout phase ships; before that, the sub-section reads
-"TBD — see §3 Phase N."
+"TBD — see §3 Phase \<N\>."
 
-### 6.1 Adding a model spec
+### 6.1 Adding a unit / model / service unit test
 
-- TBD — see §3 Phase 1 (session participant and confirm/reject scopes).
+- TBD — see §3 Phase 2 (confirm/ownership patterns) and existing `spec/models/`, `spec/services/unit/` as interim references.
+- **Run locally:** `bin/rspec`.
 
-### 6.2 Adding a request spec
+### 6.2 Adding a request or service integration test
 
-- **Location**: `spec/requests/` (mirrors HTTP surface).
-- **Naming**: `<feature>_spec.rb`.
-- **Reference test**: `spec/requests/authentication_spec.rb`.
-- **Run locally**: `bin/rspec spec/requests/<file>_spec.rb`.
-- **Auth helpers**: `spec/support/authentication_helpers.rb` (`sign_in_as`, `register_user`).
+- TBD — see §3 Phase 2–3 for confirm/reject, IDOR, and edit re-notify oracles.
+- Interim: follow `spec/AGENTS.md` and existing `spec/requests/`, `spec/services/integration/`.
+- **Run locally:** `bin/rspec`.
 
-### 6.3 Adding a service unit spec
+### 6.3 Adding a system (browser) test
 
-- **Location**: `spec/services/unit/<domain>/`.
-- **Reference test**: `spec/services/unit/game_catalog/import_service_spec.rb`.
-- **Run locally**: `bin/rspec spec/services/unit/<path>_spec.rb`.
+- TBD — see §3 Phase 1 for session-form player-fidelity pattern; Phase 4 for CI runner wiring.
+- Goal pattern: drive add/remove player rows in the real form; assert persisted participants match UI — not hand-built param hashes alone.
 
-### 6.4 Adding a service integration spec
+### 6.4 Adding a test for session create/update player persistence
 
-- TBD — see §3 Phase 1 (session log + confirm/reject flow pattern).
+- TBD — see §3 Phase 1 (Risks #1–#2): prove every submitted registered + guest player survives save.
 
-### 6.5 Adding a test for session privacy / IDOR
+### 6.5 Adding a test for confirm/reject or notification ownership
 
-- TBD — see §3 Phase 2 (cross-user negative request spec pattern).
+- TBD — see §3 Phase 2 (Risks #3–#4).
 
 ### 6.6 Per-rollout-phase notes
 
-(Optional — filled as phases ship.)
+(Filled as phases ship.)
 
 ## 7. What We Deliberately Don't Test
 
 Exclusions agreed during the rollout (Phase 2 interview, Q5). Future
 contributors should respect these unless the underlying assumption changes.
 
-- **View/CSS styling** — daisyUI classes, layout polish, and snapshot tests
-  break often and do not catch session/stat regressions. Re-evaluate if
-  visual regressions become user-visible production incidents. (Source:
-  Phase 2 interview Q5.)
-- **Full browser E2E for every slice** — request + integration specs give
-  cheaper signal for this MVP; system specs not configured. (Source: cost ×
-  signal principle + sparse solo timeline.)
-- **Wikidata mapper/client internals beyond existing coverage** — catalog
-  import already has unit + integration specs; session work is higher risk.
-  (Source: test-base profile + roadmap priority.)
+- **Wikidata SPARQL / catalog import depth** — operator-only; existing unit + WebMock integration is enough. Re-evaluate if end users ever hit live import. (Source: Phase 2 interview Q5.)
+- **Full e2e coverage of auth / password-reset paths** — request specs already guard the HTTP surface; do not spend system-spec budget here. Re-evaluate if auth UX becomes Stimulus-heavy like the session form. (Source: Phase 2 interview Q5.)
+- **Friend-circle gate as a dedicated phase** — Risk #6 kept on the map at Medium × Low; cover only opportunistically on the create path. Re-evaluate if tagging non-friends becomes a recurring incident. (Source: user edit on seed brief.)
 
 ## 8. Freshness Ledger
 
-- Strategy (§1–§5) last reviewed: 2026-07-14
-- Stack versions last verified: 2026-07-14
-- AI-native tool references last verified: 2026-07-14
+- Strategy (§1–§5) last reviewed: 2026-08-01
+- Stack versions last verified: 2026-08-01
+- AI-native tool references last verified: 2026-08-01
 
 Refresh (`/10x-test-plan --refresh`) when:
 
