@@ -19,7 +19,7 @@ class UsersController < ApplicationController
         @registration_error = 'Unable to create account. Check your details and try again.'
         @user.errors.clear
       end
-      render :new, status: :unprocessable_entity
+      render :new, status: :unprocessable_content
     end
   end
 

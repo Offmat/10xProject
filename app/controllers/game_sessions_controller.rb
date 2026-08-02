@@ -31,17 +31,17 @@ class GameSessionsController < ApplicationController
       flash.now[:alert] = 'Selected game not found.'
       @game_session = GameSession.new
       load_form_data
-      render :new, status: :unprocessable_entity
+      render :new, status: :unprocessable_content
     when :not_friends
       flash.now[:alert] = 'One or more tagged players are not your friends.'
       @game_session = GameSession.new
       load_form_data
-      render :new, status: :unprocessable_entity
+      render :new, status: :unprocessable_content
     when :invalid
       flash.now[:alert] = 'Could not log session. Please check your input.'
       @game_session = GameSession.new
       load_form_data
-      render :new, status: :unprocessable_entity
+      render :new, status: :unprocessable_content
     end
   end
 
@@ -66,15 +66,15 @@ class GameSessionsController < ApplicationController
     when :game_not_found
       flash.now[:alert] = 'Selected game not found.'
       load_form_data
-      render :edit, status: :unprocessable_entity
+      render :edit, status: :unprocessable_content
     when :not_friends
       flash.now[:alert] = 'One or more tagged players are not your friends.'
       load_form_data
-      render :edit, status: :unprocessable_entity
+      render :edit, status: :unprocessable_content
     when :invalid
       flash.now[:alert] = 'Could not update session. Please check your input.'
       load_form_data
-      render :edit, status: :unprocessable_entity
+      render :edit, status: :unprocessable_content
     end
   end
 

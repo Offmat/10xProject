@@ -108,7 +108,7 @@ RSpec.describe 'GameSessions', type: :request do
         }
       }
 
-      expect(response).to have_http_status(:unprocessable_entity)
+      expect(response).to have_http_status(:unprocessable_content)
       expect(response.body).to include('Selected game not found')
     end
 
@@ -123,7 +123,7 @@ RSpec.describe 'GameSessions', type: :request do
         }
       }
 
-      expect(response).to have_http_status(:unprocessable_entity)
+      expect(response).to have_http_status(:unprocessable_content)
       expect(response.body).to include('not your friends')
     end
   end

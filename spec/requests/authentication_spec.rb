@@ -140,7 +140,7 @@ RSpec.describe 'Authentication', type: :request do
         }
       }
 
-      expect(response).to have_http_status(:unprocessable_entity)
+      expect(response).to have_http_status(:unprocessable_content)
       expect(response.body).to include('Unable to create account')
       expect(response.body).not_to include('already been taken')
     end
