@@ -33,3 +33,4 @@ Application conventions: @app/AGENTS.md. Repo commands and CI: @AGENTS.md.
 - Prefer FactoryBot (`create`, `build`) over YAML fixtures. Copy `describe`/`context`/`it` naming and matcher style from the nearest `_spec.rb` in the same folder. Run `bin/rubocop` on touched spec files.
 - **Message expectations:** when verifying that code calls a collaborator, prefer setting the expectation before the action — `expect(Collaborator).to receive(:method).with(...)` then run the code under test. Use `allow` + `have_received` only when setup must run first (e.g. sign-in before asserting sign-out) or when one action needs several post-hoc assertions on the same mock.
 - Service integration specs: assert DB side effects and authorization boundaries, not only return values.
+- IDOR / ownership request examples: assert HTTP failure **and** that the target resource is unchanged after the attempt — see `context/foundation/test-plan.md` §6.5.

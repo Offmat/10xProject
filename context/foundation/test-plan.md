@@ -6,7 +6,7 @@
 >
 > Refresh: re-run `/10x-test-plan --refresh` when stale (see §8).
 >
-> Last updated: 2026-08-01
+> Last updated: 2026-08-02
 
 ## 1. Strategy
 
@@ -66,7 +66,7 @@ orchestrator updates Status as artifacts appear on disk.
 | # | Phase name | Goal (one line) | Risks covered | Test types | Status | Change folder |
 |---|---|---|---|---|---|---|
 | 1 | Session-form player fidelity | Prove multi-player submit persists all players via real form POST | #1, #2 | system (+ tighten request oracles) | not started | — |
-| 2 | Confirm path & ownership | Defend confirm/reject semantics and IDOR on session/notification actions | #3, #4 | request + service integration | not started | — |
+| 2 | Confirm path & ownership | Defend confirm/reject semantics and IDOR on session/notification actions | #3, #4 | request + service integration | done | `confirm-path-ownership` |
 | 3 | Edit re-notify coverage | Cover edit notify matrix (selective vs bulk); #6 only if cheap on create path | #5 | request + service integration | not started | — |
 | 4 | System-spec CI floor | Wire Capybara/system runner into CI; fill cookbook §6 for system specs | cross-cutting | gates | not started | — |
 
@@ -115,13 +115,23 @@ the relevant rollout phase ships; before that, the sub-section reads
 
 ### 6.1 Adding a unit / model / service unit test
 
-- TBD — see §3 Phase 2 (confirm/ownership patterns) and existing `spec/models/`, `spec/services/unit/` as interim references.
+- Prefer `spec/models/` for scopes/enums (e.g. `GameSession.visible_to`,
+  participant status) and `spec/services/unit/` for single-service branches.
+- For confirm/ownership: model specs backup the inclusion rule; they do
+  **not** replace HTTP oracles in §6.5.
+- Follow naming/matchers from the nearest sibling `_spec.rb`. See also
+  `spec/AGENTS.md`.
 - **Run locally:** `bin/rspec`.
 
 ### 6.2 Adding a request or service integration test
 
-- TBD — see §3 Phase 2–3 for confirm/reject, IDOR, and edit re-notify oracles.
-- Interim: follow `spec/AGENTS.md` and existing `spec/requests/`, `spec/services/integration/`.
+- Prefer request specs for HTTP surfaces (`spec/requests/`); use
+  `spec/services/integration/` for multi-model lifecycles without asserting
+  the full browser path.
+- Confirm/reject + IDOR oracles: follow §6.5. Edit re-notify matrix: TBD —
+  see §3 Phase 3.
+- Auth in request specs: `sign_in_as` / `sign_out` from
+  `spec/support/authentication_helpers.rb`.
 - **Run locally:** `bin/rspec`.
 
 ### 6.3 Adding a system (browser) test
@@ -135,11 +145,49 @@ the relevant rollout phase ships; before that, the sub-section reads
 
 ### 6.5 Adding a test for confirm/reject or notification ownership
 
-- TBD — see §3 Phase 2 (Risks #3–#4).
+Covers Risks #3–#4. Layer: **request** (cheapest that hits the user-visible
+surface). Inclusion rule in production is `GameSession.visible_to` — logger
+via `creator`, co-player only when `GameSessionParticipant` is `confirmed`.
+Until S-04 stats exist, treat `GET /game_sessions` as the history/stats
+oracle. Future stats **must reuse `visible_to`** (or equivalent); do not
+aggregate `user.game_session_participations` without `.confirmed` plus the
+creator OR.
+
+**Risk #3 — confirm/reject ↔ history**
+
+1. Setup: logger’s session, tagged friend pending, unread notification.
+2. `PATCH` confirm or reject as the friend.
+3. As the friend (and logger where relevant), `GET /game_sessions` and
+   assert body include/exclude by game name.
+4. Also cover: pending friend never listed; logger still listed after friend
+   rejects.
+
+Canonical examples: `spec/requests/notifications_spec.rb` (confirm/reject →
+index), `spec/requests/game_sessions_spec.rb` (pending exclusion).
+
+**Risk #4 — IDOR / ownership**
+
+1. Sign in as a user who does **not** own the resource.
+2. Act on a foreign id (`PATCH` confirm/reject, `PATCH` session update,
+   friendship accept/decline/cancel).
+3. Expect **404** (scoped find → `RecordNotFound`; not 403).
+4. Reload and assert the target is **unchanged** (status, `read_at`,
+   scores/`game_id`, friendship parties — as applicable).
+
+Canonical examples: `spec/requests/notifications_spec.rb`,
+`spec/requests/game_sessions_spec.rb`, `spec/requests/friendships_spec.rb`
+(foreign-id examples titled “…and leaves … unchanged”).
+
+Anti-patterns: happy-path confirm only; auth smoke without a foreign id;
+asserting 404 without “resource unchanged.”
+
+- **Run locally:** `bin/rspec`.
 
 ### 6.6 Per-rollout-phase notes
 
-(Filled as phases ship.)
+- **§3 Phase 2 (`confirm-path-ownership`, 2026-08-02):** Request oracles for
+  Risks #3–#4. Friendship IDOR examples were aligned in the same change to
+  the shared “404 + target unchanged” contract (not deferred to a follow-up).
 
 ## 7. What We Deliberately Don't Test
 

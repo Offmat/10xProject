@@ -219,18 +219,18 @@ None.
 
 #### Automated
 
-- [x] 2.1 Touched request specs pass: `bin/rspec spec/requests/notifications_spec.rb spec/requests/game_sessions_spec.rb spec/requests/friendships_spec.rb`
-- [x] 2.2 RuboCop clean on those files: `bin/rubocop spec/requests/notifications_spec.rb spec/requests/game_sessions_spec.rb spec/requests/friendships_spec.rb`
-- [x] 2.3 If any new oracle fails on current main: minimal `app/` fix + specs green (pause and note in Progress); do not weaken oracles
+- [x] 2.1 Touched request specs pass: `bin/rspec spec/requests/notifications_spec.rb spec/requests/game_sessions_spec.rb spec/requests/friendships_spec.rb` — b0a163b
+- [x] 2.2 RuboCop clean on those files: `bin/rubocop spec/requests/notifications_spec.rb spec/requests/game_sessions_spec.rb spec/requests/friendships_spec.rb` — b0a163b
+- [x] 2.3 If any new oracle fails on current main: minimal `app/` fix + specs green (pause and note in Progress); do not weaken oracles — b0a163b
 
 ### Phase 3: Cookbook + foundation notes
 
 #### Automated
 
-- [ ] 3.1 Cookbook sections exist and no longer read TBD for §6.5: inspect `context/foundation/test-plan.md`
-- [ ] 3.2 Full relevant suite still green: `bin/rspec spec/requests/notifications_spec.rb spec/requests/game_sessions_spec.rb spec/requests/friendships_spec.rb`
+- [x] 3.1 Cookbook sections exist and no longer read TBD for §6.5: inspect `context/foundation/test-plan.md`
+- [x] 3.2 Full relevant suite still green: `bin/rspec spec/requests/notifications_spec.rb spec/requests/game_sessions_spec.rb spec/requests/friendships_spec.rb`
 
 #### Manual
 
-- [ ] 3.3 Skim §6.5: a new contributor could copy the confirm↔history and IDOR unchanged pattern without reading the research doc
-- [ ] 3.4 Confirm §3 Phase 2 row points at `confirm-path-ownership` once implementation finishes
+- [x] 3.3 Skim §6.5: a new contributor could copy the confirm↔history and IDOR unchanged pattern without reading the research doc
+- [x] 3.4 Confirm §3 Phase 2 row points at `confirm-path-ownership` once implementation finishes
