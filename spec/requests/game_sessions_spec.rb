@@ -207,6 +207,8 @@ RSpec.describe 'GameSessions', type: :request do
       }
 
       expect(response).to redirect_to(game_session_path(session))
+      expect(session.reload.game_id).to eq(new_game.id)
+      expect(session.game_session_participants.find_by!(user: alice).score).to eq(99)
       follow_redirect!
       expect(response.body).to include('Session updated successfully.')
     end

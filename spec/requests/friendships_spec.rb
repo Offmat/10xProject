@@ -128,22 +128,28 @@ RSpec.describe 'Friendships', type: :request do
     before { sign_in_as(alice) }
 
     it 'renders active friends, incoming, and outgoing sections for the current user' do
-      accepted = create(:friendship, :accepted, requester: alice, addressee: bob)
-      incoming = create(:friendship, requester: carol, addressee: alice)
-      outgoing = create(:friendship, requester: alice, addressee: carol)
+      dave = create(:user, email: 'dave@example.com')
+      create(:friendship, :accepted, requester: alice, addressee: bob)
+      create(:friendship, requester: carol, addressee: alice)
+      create(:friendship, requester: alice, addressee: dave)
 
       get friendships_path
 
       expect(response).to have_http_status(:ok)
-      expect(response.body).to include('Active friends')
-      expect(response.body).to include('Incoming requests')
-      expect(response.body).to include('Outgoing requests')
-      expect(response.body).to include(bob.email)
-      expect(response.body).to include(carol.email)
-      expect(response.body).to include('Accept')
-      expect(response.body).to include('Decline')
-      expect(response.body).to include('Cancel')
-      expect(accepted).to be_accepted
+
+      sections = Nokogiri::HTML(response.body).css('section').each_with_object({}) do |section, memo|
+        heading = section.at_css('h2')&.text
+        memo[heading] = section.text if heading
+      end
+
+      expect(sections['Active friends']).to include(bob.email)
+      expect(sections['Active friends']).not_to include(carol.email, dave.email)
+
+      expect(sections['Incoming requests']).to include(carol.email, 'Accept', 'Decline')
+      expect(sections['Incoming requests']).not_to include(bob.email, dave.email)
+
+      expect(sections['Outgoing requests']).to include(dave.email, 'Cancel')
+      expect(sections['Outgoing requests']).not_to include(bob.email, carol.email)
     end
 
     it 'shows empty-state copy when lists are empty' do
