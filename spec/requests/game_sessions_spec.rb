@@ -235,15 +235,21 @@ RSpec.describe 'GameSessions', type: :request do
       expect(session.game_session_participants.find_by(user: alice).score).to eq(42)
     end
 
-    it 'returns 404 for non-creator' do
+    it 'returns 404 for non-creator and leaves the session unchanged' do
       sign_out
       sign_in_as(bob)
 
+      original_game_id = session.game_id
+      original_score = session.game_session_participants.find_by!(user: alice).score
+      other_game = create(:game, name: 'Ticket to Ride')
+
       patch game_session_path(session), params: {
-        game_session: { game_id: game.id, creator_score: 50 }
+        game_session: { game_id: other_game.id, creator_score: 50 }
       }
 
       expect(response).to have_http_status(:not_found)
+      expect(session.reload.game_id).to eq(original_game_id)
+      expect(session.game_session_participants.find_by!(user: alice).score).to eq(original_score)
     end
   end
 

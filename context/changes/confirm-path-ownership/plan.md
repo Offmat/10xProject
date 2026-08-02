@@ -212,16 +212,16 @@ None.
 
 #### Automated
 
-- [x] 1.1 New history-oracle examples pass: `bin/rspec spec/requests/notifications_spec.rb spec/requests/game_sessions_spec.rb`
-- [x] 1.2 RuboCop clean on touched specs: `bin/rubocop spec/requests/notifications_spec.rb spec/requests/game_sessions_spec.rb`
+- [x] 1.1 New history-oracle examples pass: `bin/rspec spec/requests/notifications_spec.rb spec/requests/game_sessions_spec.rb` — b9fc0ad
+- [x] 1.2 RuboCop clean on touched specs: `bin/rubocop spec/requests/notifications_spec.rb spec/requests/game_sessions_spec.rb` — b9fc0ad
 
 ### Phase 2: Risk #4 unchanged oracles (sessions, notifications, friendships)
 
 #### Automated
 
-- [ ] 2.1 Touched request specs pass: `bin/rspec spec/requests/notifications_spec.rb spec/requests/game_sessions_spec.rb spec/requests/friendships_spec.rb`
-- [ ] 2.2 RuboCop clean on those files: `bin/rubocop spec/requests/notifications_spec.rb spec/requests/game_sessions_spec.rb spec/requests/friendships_spec.rb`
-- [ ] 2.3 If any new oracle fails on current main: minimal `app/` fix + specs green (pause and note in Progress); do not weaken oracles
+- [x] 2.1 Touched request specs pass: `bin/rspec spec/requests/notifications_spec.rb spec/requests/game_sessions_spec.rb spec/requests/friendships_spec.rb`
+- [x] 2.2 RuboCop clean on those files: `bin/rubocop spec/requests/notifications_spec.rb spec/requests/game_sessions_spec.rb spec/requests/friendships_spec.rb`
+- [x] 2.3 If any new oracle fails on current main: minimal `app/` fix + specs green (pause and note in Progress); do not weaken oracles
 
 ### Phase 3: Cookbook + foundation notes
 

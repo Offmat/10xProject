@@ -73,7 +73,7 @@ RSpec.describe 'Notifications', type: :request do
       expect(response.body).to include('Catan')
     end
 
-    it 'returns 404 when acting on another user notification' do
+    it 'returns 404 when acting on another user notification and leaves it unchanged' do
       session = create(:game_session, creator: alice, game: game)
       participant = create(:game_session_participant, game_session: session, user: bob, score: 15)
       notification = create(:notification, recipient: bob, notifiable: participant)
@@ -81,6 +81,8 @@ RSpec.describe 'Notifications', type: :request do
       patch confirm_notification_path(notification)
 
       expect(response).to have_http_status(:not_found)
+      expect(participant.reload).to be_pending
+      expect(notification.reload.read_at).to be_nil
     end
 
     it 'returns 404 when the notification is already read and leaves status unchanged' do
@@ -143,7 +145,7 @@ RSpec.describe 'Notifications', type: :request do
       expect(response.body).to include('Catan')
     end
 
-    it 'returns 404 when acting on another user notification' do
+    it 'returns 404 when acting on another user notification and leaves it unchanged' do
       session = create(:game_session, creator: alice, game: game)
       participant = create(:game_session_participant, game_session: session, user: bob, score: 15)
       notification = create(:notification, recipient: bob, notifiable: participant)
@@ -151,6 +153,8 @@ RSpec.describe 'Notifications', type: :request do
       patch reject_notification_path(notification)
 
       expect(response).to have_http_status(:not_found)
+      expect(participant.reload).to be_pending
+      expect(notification.reload.read_at).to be_nil
     end
 
     it 'returns 404 when the notification is already read and leaves status unchanged' do

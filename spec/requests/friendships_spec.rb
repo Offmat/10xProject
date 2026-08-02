@@ -63,7 +63,7 @@ RSpec.describe 'Friendships', type: :request do
       expect(alice.friends).to contain_exactly(bob)
     end
 
-    it 'returns 404 when a non-addressee tries to accept' do
+    it 'returns 404 when a non-addressee tries to accept and leaves the request unchanged' do
       sign_out
       sign_in_as(carol)
 
@@ -71,6 +71,7 @@ RSpec.describe 'Friendships', type: :request do
 
       expect(response).to have_http_status(:not_found)
       expect(friendship.reload).to be_pending
+      expect(friendship).to have_attributes(requester_id: bob.id, addressee_id: alice.id)
     end
   end
 
@@ -86,7 +87,7 @@ RSpec.describe 'Friendships', type: :request do
       expect(friendship.reload).to be_declined
     end
 
-    it 'returns 404 when a non-addressee tries to decline' do
+    it 'returns 404 when a non-addressee tries to decline and leaves the request unchanged' do
       sign_out
       sign_in_as(carol)
 
@@ -94,6 +95,7 @@ RSpec.describe 'Friendships', type: :request do
 
       expect(response).to have_http_status(:not_found)
       expect(friendship.reload).to be_pending
+      expect(friendship).to have_attributes(requester_id: bob.id, addressee_id: alice.id)
     end
   end
 
@@ -109,7 +111,7 @@ RSpec.describe 'Friendships', type: :request do
       expect(Friendship.exists?(friendship.id)).to be(false)
     end
 
-    it 'returns 404 when a non-requester tries to cancel' do
+    it 'returns 404 when a non-requester tries to cancel and leaves the request unchanged' do
       sign_out
       sign_in_as(bob)
 
@@ -117,6 +119,8 @@ RSpec.describe 'Friendships', type: :request do
 
       expect(response).to have_http_status(:not_found)
       expect(Friendship.exists?(friendship.id)).to be(true)
+      expect(friendship.reload).to be_pending
+      expect(friendship).to have_attributes(requester_id: alice.id, addressee_id: bob.id)
     end
   end
 
