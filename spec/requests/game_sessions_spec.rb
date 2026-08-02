@@ -33,6 +33,18 @@ RSpec.describe 'GameSessions', type: :request do
       expect(response.body).not_to include('Catan')
     end
 
+    it 'does not list a session while the tagged friend is still pending' do
+      pending_game = create(:game, name: 'Azul')
+      session = create(:game_session, creator: bob, game: pending_game)
+      create(:game_session_participant, :confirmed, game_session: session, user: bob, score: 10)
+      create(:game_session_participant, game_session: session, user: alice, score: 8)
+
+      get game_sessions_path
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).not_to include('Azul')
+    end
+
     it 'shows empty state when no sessions exist' do
       get game_sessions_path
 

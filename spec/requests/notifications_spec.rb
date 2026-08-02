@@ -59,6 +59,20 @@ RSpec.describe 'Notifications', type: :request do
       expect(notification.reload.read_at).not_to be_nil
     end
 
+    it 'includes the session on the friend history index after confirm' do
+      session = create(:game_session, creator: bob, game: game)
+      participant = create(:game_session_participant, game_session: session, user: alice, score: 30)
+      notification = create(:notification, recipient: alice, notifiable: participant)
+
+      patch confirm_notification_path(notification)
+      expect(response).to redirect_to(notifications_path)
+
+      get game_sessions_path
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include('Catan')
+    end
+
     it 'returns 404 when acting on another user notification' do
       session = create(:game_session, creator: alice, game: game)
       participant = create(:game_session_participant, game_session: session, user: bob, score: 15)
@@ -97,6 +111,36 @@ RSpec.describe 'Notifications', type: :request do
 
       expect(participant.reload).to be_rejected
       expect(notification.reload.read_at).not_to be_nil
+    end
+
+    it 'excludes the session from the friend history index after reject' do
+      rejected_session = create(:game_session, creator: bob, game: game)
+      participant = create(:game_session_participant, game_session: rejected_session, user: alice, score: 30)
+      notification = create(:notification, recipient: alice, notifiable: participant)
+
+      patch reject_notification_path(notification)
+      expect(response).to redirect_to(notifications_path)
+
+      get game_sessions_path
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).not_to include('Catan')
+    end
+
+    it 'keeps the session on the logger history index after the friend rejects' do
+      rejected_session = create(:game_session, creator: bob, game: game)
+      participant = create(:game_session_participant, game_session: rejected_session, user: alice, score: 30)
+      notification = create(:notification, recipient: alice, notifiable: participant)
+
+      patch reject_notification_path(notification)
+      expect(response).to redirect_to(notifications_path)
+
+      sign_out
+      sign_in_as(bob)
+      get game_sessions_path
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include('Catan')
     end
 
     it 'returns 404 when acting on another user notification' do
