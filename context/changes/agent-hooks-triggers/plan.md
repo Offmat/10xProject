@@ -2,7 +2,7 @@
 
 ## Overview
 
-Add M3L3-style local quality layers: Cursor `afterFileEdit` safe RuboCop on edited Ruby files, and Lefthook pre-commit running staged RuboCop plus Zeitwerk. Soft-install Lefthook from `bin/setup`, document for clones, and leave a foundation reminder that agent-visible lint via `postToolUse` / `additional_context` is deferred.
+Add M3L3-style local quality layers: Cursor `afterFileEdit` safe RuboCop on edited Ruby files, and Lefthook pre-commit running staged RuboCop plus Zeitwerk. Ship Lefthook via the Gemfile and wire hooks from `bin/setup`, document for clones, and leave a foundation reminder that agent-visible lint via `postToolUse` / `additional_context` is deferred.
 
 ## Current State Analysis
 
@@ -16,7 +16,7 @@ Add M3L3-style local quality layers: Cursor `afterFileEdit` safe RuboCop on edit
 
 - Agent edits to `*.rb` trigger safe RuboCop autocorrect (`-a`) via Cursor `afterFileEdit`.
 - `git commit` runs Lefthook: RuboCop on staged Ruby + `bin/rails zeitwerk:check`.
-- Fresh clones: `bin/setup` installs Lefthook hooks when the binary is present; README/AGENTS explain the manual brew/gem path.
+- Fresh clones: `lefthook` comes from the Gemfile (`:development`); `bin/setup` runs `bundle exec lefthook install` after `bundle install`.
 - Foundation docs record that agent-visible leftover lint feedback (`postToolUse`) is an intentional future item — not forgotten.
 
 ### Key Discoveries:
@@ -33,8 +33,7 @@ Add M3L3-style local quality layers: Cursor `afterFileEdit` safe RuboCop on edit
 - Zeitwerk on every `afterFileEdit` (pre-commit only).
 - Full RSpec, Brakeman, bundler-audit, importmap audit, or Tailwind on per-edit or pre-commit.
 - Related/scoped RSpec after edit.
-- Hard-failing `bin/setup` when Lefthook is missing.
-- Adding Lefthook as a Gemfile dependency (brew/gem binary is enough).
+- Hard-failing `bin/setup` when `lefthook install` fails (warn and continue).
 - Changing GHA / `config/ci.rb` gate set (optional Zeitwerk-in-CI deferred).
 - Configuring Claude Code / Codex / Copilot hook files.
 
@@ -48,7 +47,9 @@ Three incremental phases: Cursor hook first (course-required per-edit lint), the
 
 **Working directory:** Project hook commands run from the repo root; scripts must `cd` to the git root (or rely on Cursor’s cwd) before calling `bin/rubocop`.
 
-**Lefthook + CI:** `bin/ci` runs `bin/setup --skip-server`. Soft Lefthook install must not fail setup when `lefthook` is absent on CI runners.
+**Lefthook + CI:** `bin/ci` runs `bin/setup --skip-server`. Lefthook is a Gemfile `:development` gem; setup runs `bundle exec lefthook install` and warns (does not exit) if that command fails.
+
+**Adaptation (Phase 2):** Switched from brew/PATH soft-install to **Gemfile `lefthook`** so clones notice it in dependencies and get hooks via `bin/setup` after `bundle install`, with no separate brew step.
 
 ---
 
@@ -98,7 +99,7 @@ Register a project Cursor hook that, after an agent file edit, runs safe RuboCop
 
 ### Overview
 
-Add Lefthook as the git pre-commit manager: RuboCop on staged Ruby files and Zeitwerk check; soft-install from `bin/setup`; ignore local overrides.
+Add Lefthook as the git pre-commit manager: RuboCop on staged Ruby files and Zeitwerk check; install via Gemfile + `bin/setup`; ignore local overrides.
 
 ### Changes Required:
 
@@ -108,7 +109,7 @@ Add Lefthook as the git pre-commit manager: RuboCop on staged Ruby files and Zei
 
 **Intent**: Define a fast pre-commit gate scoped to staged Ruby, plus Zeitwerk as the typecheck analog.
 
-**Contract**: `pre-commit` with `parallel: true` where safe. RuboCop job: glob staged `*.rb` (and optionally `*.rake` / `Gemfile` if desired), run `bin/rubocop --force-exclusion -- {staged_files}` (check or safe fix — prefer check-only on commit so the developer re-stages intentionally; if autofix is used, re-stage must be explicit in the command). Zeitwerk job: `bin/rails zeitwerk:check` (no file glob). No RSpec/Brakeman/audits here.
+**Contract**: Set `lefthook: bundle exec lefthook` so git hooks use the Gemfile binary. `pre-commit` with `parallel: true` where safe. RuboCop job: glob staged `*.rb` (and optionally `*.rake` / `Gemfile` if desired), run `bin/rubocop --force-exclusion -- {staged_files}` (check or safe fix — prefer check-only on commit so the developer re-stages intentionally; if autofix is used, re-stage must be explicit in the command). Zeitwerk job: `bin/rails zeitwerk:check` (no file glob). No RSpec/Brakeman/audits here.
 
 #### 2. Gitignore local overrides
 
@@ -118,26 +119,26 @@ Add Lefthook as the git pre-commit manager: RuboCop on staged Ruby files and Zei
 
 **Contract**: Add `lefthook-local.yml` (repo-root).
 
-#### 3. Soft install in setup
+#### 3. Gemfile + setup install
 
-**File**: `bin/setup`
+**File**: `Gemfile`, `bin/setup`
 
-**Intent**: When Lefthook is installed, wire git hooks; otherwise warn and continue (same spirit as optional audit / missing `pg_isready`).
+**Intent**: Ship Lefthook as a visible `:development` dependency; wire git hooks from setup after `bundle install`.
 
-**Contract**: After dependency install (near other soft checks), if `command -v lefthook` succeeds, run `lefthook install`; else `warn` with install hint (`brew install lefthook` or gem). Never `exit 1` solely for missing Lefthook. Must remain safe under `bin/setup --skip-server` used by `bin/ci`.
+**Contract**: `gem 'lefthook', require: false` in the `:development` group. After dependency install (near other soft checks), run `bundle exec lefthook install`; on failure `warn` and continue (never `exit 1` solely for Lefthook). Must remain safe under `bin/setup --skip-server` used by `bin/ci`.
 
 ### Success Criteria:
 
 #### Automated Verification:
 
-- `lefthook.yml` present; `lefthook validate` succeeds when Lefthook is installed
+- `lefthook.yml` present; `bundle exec lefthook validate` succeeds
 - `lefthook-local.yml` listed in `.gitignore`
-- `bin/setup --skip-server` completes when Lefthook is absent (warn only) and when present (installs hooks)
+- `lefthook` listed in Gemfile / Gemfile.lock; `bin/setup --skip-server` runs `bundle exec lefthook install` (warns on failure, does not abort)
 - With hooks installed: staging a Ruby offense fails `git commit` (or Lefthook rubocop step); `bin/rails zeitwerk:check` is part of the pre-commit config
 
 #### Manual Verification:
 
-- After `lefthook install`, `git commit` on a staged dirty-style `.rb` is blocked by RuboCop
+- After `bundle exec lefthook install` (or `bin/setup`), `git commit` on a staged dirty-style `.rb` is blocked by RuboCop
 - Clean staged Ruby + passing Zeitwerk allows commit (or skip with `LEFTHOOK=0` documented for emergencies)
 
 **Implementation Note**: After completing this phase and all automated verification passes, pause here for manual confirmation from the human before proceeding to the next phase.
@@ -158,7 +159,7 @@ Document hooks for humans and agents; record deferred `postToolUse` agent-visibl
 
 **Intent**: Tell clones how local quality layers work and how to install Lefthook.
 
-**Contract**: Short subsection near “How to run the test suite” / system dependencies: Cursor project hooks (committed under `.cursor/`); Lefthook pre-commit (`brew install lefthook` / gem, then `lefthook install` or rely on `bin/setup`); note `LEFTHOOK=0` to skip; point to `bin/ci` for full gates.
+**Contract**: Short subsection near “How to run the test suite” / system dependencies: Cursor project hooks (committed under `.cursor/`); Lefthook pre-commit (Gemfile `:development` gem; `bin/setup` / `bundle exec lefthook install`); note `LEFTHOOK=0` to skip; point to `bin/ci` for full gates.
 
 #### 2. AGENTS.md thin pointers
 
@@ -223,7 +224,7 @@ Document hooks for humans and agents; record deferred `postToolUse` agent-visibl
 1. Agent-edit a Ruby file with a safe style offense → file autocorrected.
 2. Agent-edit a Markdown file → hook skips RuboCop.
 3. Stage a RuboCop-failing `.rb` → commit blocked by Lefthook.
-4. Run `bin/setup --skip-server` without Lefthook on PATH → warning, setup succeeds.
+4. Run `bin/setup --skip-server` → Lefthook hooks sync via `bundle exec lefthook install`.
 5. Skim foundation notes for deferred `postToolUse`.
 
 ## Performance Considerations
@@ -234,8 +235,8 @@ Document hooks for humans and agents; record deferred `postToolUse` agent-visibl
 
 ## Migration Notes
 
-- Existing clones need `brew install lefthook` (or gem) once, then `bin/setup` or `lefthook install`.
-- No data migration. No Gemfile change required.
+- Existing clones: `bundle install` (pulls `lefthook`), then `bin/setup` or `bundle exec lefthook install`.
+- No data migration. Gemfile gains `lefthook` in `:development`.
 - Cursor may need Hooks enabled / reload after adding `hooks.json`.
 
 ## References
@@ -255,28 +256,28 @@ Document hooks for humans and agents; record deferred `postToolUse` agent-visibl
 
 #### Automated
 
-- [x] 1.1 hooks.json valid and references executable script
-- [x] 1.2 Script executable; dry-run skip vs Ruby path
-- [x] 1.3 bin/rubocop still clean on baseline
+- [x] 1.1 hooks.json valid and references executable script — cbfdebe
+- [x] 1.2 Script executable; dry-run skip vs Ruby path — cbfdebe
+- [x] 1.3 bin/rubocop still clean on baseline — cbfdebe
 
 #### Manual
 
-- [x] 1.4 Cursor afterFileEdit fires in Hooks channel
-- [x] 1.5 Safe autocorrectable offense fixed on disk after agent edit
+- [x] 1.4 Cursor afterFileEdit fires in Hooks channel — cbfdebe
+- [x] 1.5 Safe autocorrectable offense fixed on disk after agent edit — cbfdebe
 
 ### Phase 2: Lefthook pre-commit
 
 #### Automated
 
-- [ ] 2.1 lefthook.yml present; validate when installed
-- [ ] 2.2 lefthook-local.yml in .gitignore
-- [ ] 2.3 bin/setup --skip-server soft-install behavior
-- [ ] 2.4 Pre-commit config includes RuboCop staged + Zeitwerk
+- [x] 2.1 lefthook.yml present; validate when installed
+- [x] 2.2 lefthook-local.yml in .gitignore
+- [x] 2.3 bin/setup --skip-server soft-install behavior
+- [x] 2.4 Pre-commit config includes RuboCop staged + Zeitwerk
 
 #### Manual
 
-- [ ] 2.5 Dirty staged Ruby blocks commit
-- [ ] 2.6 Clean commit path (or LEFTHOOK=0) verified
+- [x] 2.5 Dirty staged Ruby blocks commit
+- [x] 2.6 Clean commit path (or LEFTHOOK=0) verified
 
 ### Phase 3: Docs & foundation reminder
 

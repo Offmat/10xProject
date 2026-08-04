@@ -39,5 +39,8 @@
 
 /node_modules
 
+# Personal Lefthook overrides (https://github.com/evilmartians/lefthook)
+/lefthook-local.yml
+
 /app/assets/builds/*
 !/app/assets/builds/.keep

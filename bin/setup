@@ -32,6 +32,11 @@ FileUtils.chdir APP_ROOT do
     warn "bundler-audit reported issues (setup continues). Review output above."
   end
 
+  puts "\n== Installing Lefthook git hooks =="
+  unless system("bundle exec lefthook install")
+    warn "lefthook install failed (setup continues). After `bundle install`, run `bundle exec lefthook install`."
+  end
+
   puts "\n== Checking PostgreSQL =="
   if system("command -v pg_isready > /dev/null 2>&1")
     unless system("pg_isready -q")

@@ -66,6 +66,8 @@ group :development do
   gem 'web-console'
   # Process manager for bin/dev (Procfile.dev)
   gem 'foreman'
+  # Git hooks manager [https://github.com/evilmartians/lefthook]
+  gem 'lefthook', require: false
 end
 
 gem 'shoulda-matchers', '~> 7.0', groups: %i[development test]

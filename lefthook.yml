@@ -1,0 +1,14 @@
+# Git hooks via Lefthook — https://github.com/evilmartians/lefthook
+# Installed via Gemfile (:development); bin/setup runs `bundle exec lefthook install`
+# Skip in emergencies: LEFTHOOK=0 git commit ...
+
+lefthook: bundle exec lefthook
+
+pre-commit:
+  parallel: true
+  commands:
+    rubocop:
+      glob: "*.rb"
+      run: bin/rubocop --force-exclusion -- {staged_files}
+    zeitwerk:
+      run: bin/rails zeitwerk:check
