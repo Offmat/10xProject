@@ -283,9 +283,9 @@ Document hooks for humans and agents; record deferred `postToolUse` agent-visibl
 
 #### Automated
 
-- [x] 3.1 README / AGENTS / test-plan / lessons contain agreed notes
-- [x] 3.2 Course rule no longer forbids hook config
+- [x] 3.1 README / AGENTS / test-plan / lessons contain agreed notes — d371438
+- [x] 3.2 Course rule no longer forbids hook config — d371438
 
 #### Manual
 
-- [x] 3.3 Docs readable for fresh clone; deferred postToolUse note clear in test-plan
+- [x] 3.3 Docs readable for fresh clone; deferred postToolUse note clear in test-plan — d371438
