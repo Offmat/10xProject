@@ -61,6 +61,15 @@ Run the full local CI pipeline (RuboCop, security audits, RSpec):
 bin/ci
 ```
 
+## Local quality layers
+
+Two thin gates run before full CI:
+
+- **Cursor `afterFileEdit` hooks** (committed under `.cursor/`) — after an agent edits a Ruby file, safe RuboCop autocorrect (`-a`) runs on that path.
+- **Lefthook pre-commit** — Gemfile `:development` gem. `bin/setup` runs `bundle exec lefthook install` so `.git/hooks` call Lefthook. On commit: RuboCop on staged `*.rb` + `bin/rails zeitwerk:check`. Skip in emergencies with `LEFTHOOK=0 git commit ...`.
+
+These do not replace `bin/ci` or GitHub Actions.
+
 ## Services
 
 Background infrastructure runs on PostgreSQL via Rails 8 Solid adapters (no Redis):

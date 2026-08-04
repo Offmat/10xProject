@@ -269,23 +269,23 @@ Document hooks for humans and agents; record deferred `postToolUse` agent-visibl
 
 #### Automated
 
-- [x] 2.1 lefthook.yml present; validate when installed
-- [x] 2.2 lefthook-local.yml in .gitignore
-- [x] 2.3 bin/setup --skip-server soft-install behavior
-- [x] 2.4 Pre-commit config includes RuboCop staged + Zeitwerk
+- [x] 2.1 lefthook.yml present; validate when installed — cbba200
+- [x] 2.2 lefthook-local.yml in .gitignore — cbba200
+- [x] 2.3 bin/setup --skip-server soft-install behavior — cbba200
+- [x] 2.4 Pre-commit config includes RuboCop staged + Zeitwerk — cbba200
 
 #### Manual
 
-- [x] 2.5 Dirty staged Ruby blocks commit
-- [x] 2.6 Clean commit path (or LEFTHOOK=0) verified
+- [x] 2.5 Dirty staged Ruby blocks commit — cbba200
+- [x] 2.6 Clean commit path (or LEFTHOOK=0) verified — cbba200
 
 ### Phase 3: Docs & foundation reminder
 
 #### Automated
 
-- [ ] 3.1 README / AGENTS / test-plan / lessons contain agreed notes
-- [ ] 3.2 Course rule no longer forbids hook config
+- [x] 3.1 README / AGENTS / test-plan / lessons contain agreed notes
+- [x] 3.2 Course rule no longer forbids hook config
 
 #### Manual
 
-- [ ] 3.3 Docs readable for fresh clone; deferred postToolUse note clear in test-plan
+- [x] 3.3 Docs readable for fresh clone; deferred postToolUse note clear in test-plan

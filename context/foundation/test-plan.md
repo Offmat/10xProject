@@ -6,7 +6,7 @@
 >
 > Refresh: re-run `/10x-test-plan --refresh` when stale (see §8).
 >
-> Last updated: 2026-08-02
+> Last updated: 2026-08-04
 
 ## 1. Strategy
 
@@ -104,8 +104,10 @@ phase lands; before that, the gate is `planned`.
 | RuboCop + Brakeman + bundler-audit + importmap audit | local `bin/ci` + GHA | required (already wired) | lint / security drift |
 | unit + request + service specs | local + CI (`bin/rspec`) | required (already wired) | logic regressions |
 | system specs on session-form critical path | local + CI | required after §3 Phase 4 (specs land in Phase 1) | FE param shape vs controller digest; silent player drop |
+| RuboCop `afterFileEdit` (safe `-a`) + Lefthook pre-commit (staged RuboCop + Zeitwerk) | local Cursor hooks + git pre-commit | local course/dev gate (not a CI substitute) | style drift on edit; staged lint / Zeitwerk before commit |
 | full auth e2e / Wikidata browser flows | — | deliberately out | see §7 |
 | post-edit AI hook / multimodal visual review | — | not planned | cost × signal not justified for MVP |
+| Cursor `postToolUse` + `additional_context` for leftover RuboCop offenses | — | deferred (`agent-hooks-triggers`) | agent-visible lint when autofix is insufficient; `afterFileEdit` has no agent context injection |
 
 ## 6. Cookbook Patterns
 
@@ -200,7 +202,7 @@ contributors should respect these unless the underlying assumption changes.
 
 ## 8. Freshness Ledger
 
-- Strategy (§1–§5) last reviewed: 2026-08-01
+- Strategy (§1–§5) last reviewed: 2026-08-04
 - Stack versions last verified: 2026-08-01
 - AI-native tool references last verified: 2026-08-01
 

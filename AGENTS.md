@@ -21,11 +21,13 @@ all-aBoard is a Rails 8.1 app (Ruby 3.4, PostgreSQL, Hotwire via importmap) for 
 
 ## Build, test, and development
 
-- First-time / refresh: `bin/setup` — bundle, `npm install`, Tailwind build, optional audit warning, `bin/rails db:prepare`, clears logs/tmp.
+- First-time / refresh: `bin/setup` — bundle, `npm install`, Tailwind build, optional audit warning, Lefthook hook install, `bin/rails db:prepare`, clears logs/tmp.
 - DB reset: `bin/setup --reset`.
 - Dev server: `bin/dev` or `bin/setup --run-server` (Foreman runs Rails server + Tailwind CSS watcher).
 - Frontend stack: Tailwind CSS 4 + daisyUI 5 via `tailwindcss-rails`; npm install required for daisyUI plugin resolution (`package.json`).
-- Local CI: `bin/ci` runs @config/ci.rb (setup with npm/Tailwind build, RuboCop, bundler-audit, importmap audit, Brakeman).
+- Cursor `afterFileEdit`: safe RuboCop autocorrect (`-a`) on edited `*.rb` via `.cursor/hooks.json`.
+- Lefthook pre-commit: staged RuboCop + `bin/rails zeitwerk:check` (`lefthook.yml`; Gemfile `:development`; skip with `LEFTHOOK=0`).
+- Local CI: `bin/ci` runs @config/ci.rb (setup with npm/Tailwind build, RuboCop, bundler-audit, importmap audit, Brakeman) — full suite stays here, not on per-edit/pre-commit.
 - Lint: `bin/rubocop` (Omakase: @.rubocop.yml).
 - Tests: **RSpec** under `spec/` — `bin/rspec` or `bundle exec rspec` (see @spec/AGENTS.md). Prepare DB: `bin/rails db:test:prepare`. `rails/test_unit` remains disabled in @config/application.rb; do not use `bin/rails test`.
 
