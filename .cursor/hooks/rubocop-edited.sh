@@ -17,14 +17,15 @@ fi
 
 [[ -z "$FILE_PATH" ]] && exit 0
 
-# Only lint files inside this repo (skip agent-tools temps, other workspaces, etc.)
-case "$FILE_PATH" in
+# Canonicalize (follows .. and symlinks); only lint files inside this repo.
+RESOLVED="$(realpath "$FILE_PATH" 2>/dev/null)" || exit 0
+case "$RESOLVED" in
   "$ROOT"/*) ;;
   *) exit 0 ;;
 esac
 
-[[ "$FILE_PATH" == *.rb ]] || exit 0
-[[ -f "$FILE_PATH" ]] || exit 0
+[[ "$RESOLVED" == *.rb ]] || exit 0
+[[ -f "$RESOLVED" ]] || exit 0
 
-bin/rubocop -a --force-exclusion -- "$FILE_PATH" >/dev/null 2>&1 || true
+bin/rubocop -a --force-exclusion -- "$RESOLVED" >/dev/null 2>&1 || true
 exit 0
