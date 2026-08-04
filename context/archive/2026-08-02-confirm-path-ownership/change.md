@@ -1,10 +1,10 @@
 ---
 change_id: confirm-path-ownership
 title: Defend confirm/reject semantics and IDOR on session actions
-status: impl_reviewed
+status: archived
 created: 2026-08-02
-updated: 2026-08-02
-archived_at: null
+updated: 2026-08-04
+archived_at: 2026-08-04T19:09:33Z
 ---
 
 ## Notes
