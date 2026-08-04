@@ -1,10 +1,10 @@
 ---
 change_id: agent-hooks-triggers
 title: Agent hooks triggers
-status: impl_reviewed
+status: archived
 created: 2026-08-02
 updated: 2026-08-04
-archived_at: null
+archived_at: 2026-08-04T19:09:08Z
 ---
 
 ## Notes
