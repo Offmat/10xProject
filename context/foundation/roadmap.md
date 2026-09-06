@@ -3,7 +3,7 @@ project: all-aBoard
 version: 1
 status: draft
 created: 2026-05-31
-updated: 2026-07-25
+updated: 2026-09-06
 prd_version: 1
 main_goal: speed
 top_blocker: time
@@ -35,9 +35,10 @@ The product wedge — the one trait that, if removed, makes this a generic score
 | F-02 | seed-game-catalog | (foundation) Wikidata import service + ~20-game MVP seed via console | F-01 | FR-009, Business Logic | done |
 | F-03 | tailwind-daisyui-setup | (foundation) Tailwind CSS + daisyUI in asset pipeline; base theme and component classes in ERB | — | — | done |
 | F-04 | rails-interactive-forms-guide | (foundation) research + playbook + short agent rules for interactive Rails forms (view ↔ Stimulus ↔ params ↔ controller/service) | — | — | done |
+| F-05 | capybara-e2e-prep | (foundation) Capybara + Cuprite system-spec floor, fidelity seed for session-form player risks, CI Chrome gate, `/10x-e2e-capybara` skill | F-04 | — (test-plan Phase 1 + 4) | planning |
 | S-01 | email-password-auth | create an account, log in, and log out | F-01 | FR-001, US-01 | done |
 | S-02 | mutual-friend-circle | send a friend request; accept or decline; see active friends | S-01 | FR-002, US-01 | done |
-| S-03 | log-session-with-confirm | log a session with catalog game, registered friend, and unregistered player; co-player gets in-app notification and confirms or rejects; logger sees history immediately | S-02, F-02, F-04 | US-01, FR-003, FR-004, FR-005, FR-006, FR-009 | proposed |
+| S-03 | log-session-confirm-flow | log a session with catalog game, registered friend, and unregistered player; co-player gets in-app notification and confirms or rejects; logger sees history immediately | S-02, F-02, F-04, F-05 | US-01, FR-003, FR-004, FR-005, FR-006, FR-009 | proposed |
 | S-04 | session-stats-filters | view statistics for sessions they participated in, with filters | S-03 | FR-007 | proposed |
 
 ## Streams
@@ -46,10 +47,11 @@ Navigation aid — groups items that share a Prerequisites chain. Canonical orde
 
 | Stream | Theme | Chain | Note |
 |---|---|---|---|
-| A | MVP path | `F-01` → `S-01` → `S-02` → `F-04` → `S-03` → `S-04` | Speed bias: strict must-have order through north star (`S-03`) then stats. `F-04` gates continuing S-03 form work. |
+| A | MVP path | `F-01` → `S-01` → `S-02` → `F-04` → `F-05` → `S-03` → `S-04` | Speed bias: strict must-have order through north star (`S-03`) then stats. `F-04` gates continuing S-03 form work; `F-05` adds browser-level protection for session-form risks before treating S-03 form work as done. |
 | B | Catalog import | `F-02` | Wikidata SPARQL adapter for MVP; provider switch deferred to P-07. Runs parallel with `S-02` after `F-01`; joins main path at `S-03`. |
 | C | UI styling | `F-03` | Independent of MVP path; no prerequisites — can land anytime to polish product UI in any slice. |
 | D | Agent form conventions | `F-04` | Research + durable guide/rules for interactive Rails forms; joins main path before finishing S-03 form work. |
+| E | System-spec / E2E floor | `F-05` | Capybara + Cuprite, fidelity seed, CI Chrome, project skill `/10x-e2e-capybara`; joins main path after F-04. |
 
 ## Baseline
 
@@ -119,6 +121,20 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Delivery shape (indicative, not exhaustive):** (1) multi-source research → foundation playbook with practices and examples; (2) short rules derived from that playbook, with the playbook remaining available for deeper lookup.
 - **Status:** done
 
+### F-05: Capybara system-spec / E2E prep
+
+- **Outcome:** (foundation) Capybara + Cuprite system specs are runnable locally and in CI; a fidelity seed protects session-form multi-player submit risks (test-plan #1–#2); agents use `/10x-e2e-capybara` (fork of course `/10x-e2e`) without drifting the lesson Playwright skill.
+- **Change ID:** capybara-e2e-prep
+- **PRD refs:** — (quality foundation; grounded in `context/foundation/test-plan.md` Phase 1 + 4 and archive `e2e-tooling-choice`)
+- **Unlocks:** safer completion of S-03 form work; future system specs for Stimulus flows; test-plan Phase 4 CI floor
+- **Prerequisites:** F-04
+- **Parallel with:** S-03 (can land while product confirm-flow continues; preferred before calling form work “done”)
+- **Blockers:** —
+- **Unknowns:** —
+- **Risk:** Without a browser floor, Stimulus nested-player param bugs stay invisible to request specs; dual Playwright+Capybara suites were rejected — keep one Ruby runner (Cuprite).
+- **Change folder:** [capybara-e2e-prep](../changes/capybara-e2e-prep/change.md)
+- **Status:** planning
+
 ## Slices
 
 ### S-01: Email/password auth
@@ -149,13 +165,13 @@ Foundations below assume these are present and do NOT re-scaffold them.
 ### S-03: Log session with confirm flow
 
 - **Outcome:** user can log a played session with a game from the catalog, a registered friend, and an unregistered player (name + score only); the registered friend receives an in-app notification and can confirm or reject; the logger sees the session in their history and stats immediately after save.
-- **Change ID:** log-session-with-confirm
+- **Change ID:** log-session-confirm-flow
 - **PRD refs:** US-01, FR-003, FR-004, FR-005, FR-006, FR-009
-- **Prerequisites:** S-02, F-02, F-04
-- **Parallel with:** —
+- **Prerequisites:** S-02, F-02, F-04, F-05
+- **Parallel with:** F-05 (system-spec floor can ship alongside remaining S-03 work)
 - **Blockers:** —
 - **Unknowns:** —
-- **Risk:** North star — concentrates confirm/reject business rules and mixed player types; highest integration risk, sequenced only after auth, friends, catalog, and the interactive-forms guide (F-04) exist. Do not continue form work until F-04 lands.
+- **Risk:** North star — concentrates confirm/reject business rules and mixed player types; highest integration risk, sequenced only after auth, friends, catalog, the interactive-forms guide (F-04), and preferably the Capybara floor (F-05) exist. Do not continue form work until F-04 lands; treat F-05 as the browser gate for form fidelity.
 - **Status:** proposed
 
 ### S-04: Session statistics with filters
@@ -180,9 +196,10 @@ Issue URLs and board setup: @context/foundation/backlog.md.
 | F-02 | seed-game-catalog | Import game catalog from Wikidata (~20-game MVP seed, console) | — | Implemented; Wikidata SPARQL adapter |
 | F-03 | tailwind-daisyui-setup | Add Tailwind CSS + daisyUI (tailwindcss-rails, base theme) | yes | No prerequisites; parallel with S-01 / S-02 / F-02 |
 | F-04 | rails-interactive-forms-guide | Research + playbook + short agent rules for interactive Rails forms | — | Done — playbook `@context/foundation/interactive-forms.md`; rule `.cursor/rules/hotwire-interactive-forms.mdc` |
+| F-05 | capybara-e2e-prep | Capybara + Cuprite system-spec floor, fidelity seed, CI, `/10x-e2e-capybara` | — | Planning — plan at `@context/changes/capybara-e2e-prep/plan.md`; next `/10x-implement capybara-e2e-prep phase 1` |
 | S-01 | email-password-auth | Sign up, log in, log out | yes | F-01 done; carry forward F-01 impl-review deferrals |
 | S-02 | mutual-friend-circle | Friend requests with mutual acceptance | no | After S-01 |
-| S-03 | log-session-with-confirm | Log session + in-app confirm/reject (US-01) | no | North star; after S-02, F-02, and F-04 (forms guide before continuing form work) |
+| S-03 | log-session-confirm-flow | Log session + in-app confirm/reject (US-01) | no | North star; after S-02, F-02, F-04; F-05 preferred before calling form fidelity done |
 | S-04 | session-stats-filters | Personal session stats with filters | no | After S-03 |
 
 ## Open Roadmap Questions
