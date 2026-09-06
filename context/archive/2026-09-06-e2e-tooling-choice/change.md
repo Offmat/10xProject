@@ -1,10 +1,10 @@
 ---
 change_id: e2e-tooling-choice
 title: Choose browser E2E tooling for all-aBoard
-status: researching
+status: archived
 created: 2026-09-06
 updated: 2026-09-06
-archived_at: null
+archived_at: 2026-09-06T19:49:24Z
 ---
 
 ## Notes
