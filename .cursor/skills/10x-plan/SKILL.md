@@ -82,14 +82,14 @@ Before any reading, identify what kinds of upstream artifacts the user passed in
    - Related implementation plans
    - Any JSON/data files mentioned
    - `context/foundation/lessons.md` if present — treat its rules as priors when probing scope, edge cases, and architecture choices; rules already accepted by the team narrow which design pitfalls still need fresh questioning.
-   - **IMPORTANT**: Read files WITHOUT limit/offset parameters to read entire files
+   - **IMPORTANT**: Read the entire contents of files
    - **CRITICAL**: DO NOT spawn sub-tasks before reading these files yourself in the main context
    - **NEVER** read files partially - if a file is mentioned, read it completely
 
 2. **Spawn initial research tasks to gather context** (skip or narrow based on Step 1.0):
-   Before asking the user any questions, use the Task tool with parallel sub-agents to research:
-   - **Explore agent** (`subagent_type: "Explore"`) — find all files related to the task, search for patterns, trace code paths. Use for file discovery and codebase structure questions.
-   - **general-purpose agent** (`subagent_type: "general-purpose"`) — for deeper analysis that may require reading many files and synthesizing findings. Use for understanding complex systems.
+   Before asking the user any questions, use your AI coding assistant to create parallel sub-tasks to research:
+   - **Explore agent** (specify `subagent_type: "Explore"`) — find all files related to the task, search for patterns, trace code paths. Use for file discovery and codebase structure questions.
+   - **general-purpose agent** (specify `subagent_type: "general-purpose"`) — for deeper analysis that may require reading many files and synthesizing findings. Use for understanding complex systems.
 
    Example: spawn 2-3 Explore agents in parallel for different search dimensions (e.g., "find all files related to X", "find similar implementations of Y", "find prior decisions about Z in `context/changes/**/` and `context/archive/**/`").
 
@@ -108,6 +108,7 @@ Before any reading, identify what kinds of upstream artifacts the user passed in
    - Identify any discrepancies or misunderstandings
    - Note assumptions that need verification
    - Determine true scope based on codebase reality
+   - **Run a smallest-counterexample pass before choosing interview questions.** For ordered selections, place equal comparison values across the cutoff; for counted sets, vary the identity/equivalence rule; for state thresholds, vary inclusivity and governing clock. Ask every case that yields different user-visible outcomes in the first round. Existing behaviour supplies one option, not the answer.
 
 5. **Present informed understanding and assess complexity**:
 
@@ -137,7 +138,8 @@ Before any reading, identify what kinds of upstream artifacts the user passed in
    Does this feel right, or would you adjust the complexity level?
    ```
 
-   Ask the user: "Does this complexity assessment match your expectations?" with options:
+   Ask the user: "Does this complexity assessment match your expectations?"
+   Provide options:
    - "Agree — proceed with [N] questions" (description: "The assessment is accurate, let's dig into the details.")
    - "Higher — ask more questions" (description: "There's more complexity than identified. I'll explain what's missing.")
    - "Lower — fewer questions needed" (description: "This is simpler than it looks. Let's keep it focused.")
@@ -158,8 +160,8 @@ Before any reading, identify what kinds of upstream artifacts the user passed in
 
    **Rules for structuring questions:**
    - Each question should have 2-4 concrete options
-   - Use `multiSelect: true` only when choices aren't mutually exclusive
-   - Keep `header` short (max 12 chars): "Scope", "Edge cases", "Priority"
+   - Indicate if multiple choices are allowed
+   - Keep headers short (max 12 chars): "Scope", "Edge cases", "Priority"
    - The user can always choose "Other" for free-form input
 
    **Every option MUST include a recommendation signal and tradeoff analysis:**
@@ -170,17 +172,27 @@ Before any reading, identify what kinds of upstream artifacts the user passed in
 
    **Example question with recommendations (software):** `Conflicts` is `[S]` — solution architecture; always asked even when a frame defined the problem.
 
-   Ask the user: "How should the system handle conflicts when two users edit simultaneously?" with options:
-   - "Last write wins" (description: "Later save silently overwrites earlier one. · Strength: Zero added complexity, no UI changes needed. · Tradeoff: Users can lose work without warning — acceptable only if edits are rare or low-stakes.")
-   - "⭐ Recommended: Notify and merge" (description: "Show conflict to user, let them choose which version to keep. · Strength: Prevents data loss while keeping UX simple — matches the pattern in existing EditPanel component. · Tradeoff: Adds a conflict resolution modal and WebSocket subscription for real-time detection.")
-   - "Lock-based" (description: "First editor locks the resource; others see read-only until released. · Strength: Prevents conflicts entirely — simplest mental model for users. · Tradeoff: Stale locks require TTL + cleanup logic; blocks legitimate concurrent work.")
+   Ask the user: "How should the system handle conflicts when two users edit simultaneously?"
+   Header: "Conflicts"
+   Options:
+   - Label: "Last write wins"
+     Description: "Later save silently overwrites earlier one. · Strength: Zero added complexity, no UI changes needed. · Tradeoff: Users can lose work without warning — acceptable only if edits are rare or low-stakes."
+   - Label: "⭐ Recommended: Notify and merge"
+     Description: "Show conflict to user, let them choose which version to keep. · Strength: Prevents data loss while keeping UX simple — matches the pattern in existing EditPanel component. · Tradeoff: Adds a conflict resolution modal and WebSocket subscription for real-time detection."
+   - Label: "Lock-based"
+     Description: "First editor locks the resource; others see read-only until released. · Strength: Prevents conflicts entirely — simplest mental model for users. · Tradeoff: Stale locks require TTL + cleanup logic; blocks legitimate concurrent work."
 
    **Example question with recommendations (non-software — content/strategy):** `Depth` is `[D]` — diagnostic about audience/scope; skip if a frame brief already settled who this is for.
 
-   Ask the user: "What depth of technical detail should the course module target?" with options:
-   - "Conceptual overview" (description: "High-level principles, no code. · Strength: Accessible to all skill levels, faster to produce. · Tradeoff: Advanced learners may find it too shallow — risks losing engagement.")
-   - "⭐ Recommended: Hands-on with guided examples" (description: "Concepts paired with step-by-step exercises. · Strength: Balances understanding and practice — matches the format that got highest completion rates in 10xDevs2. · Tradeoff: 2-3x more prep time per lesson; requires working example repos.")
-   - "Deep dive with open challenges" (description: "Minimal scaffolding, real-world problems. · Strength: Forces genuine problem-solving, highest learning retention. · Tradeoff: High dropout risk for less experienced learners; harder to support at scale.")
+   Ask the user: "What depth of technical detail should the course module target?"
+   Header: "Depth"
+   Options:
+   - Label: "Conceptual overview"
+     Description: "High-level principles, no code. · Strength: Accessible to all skill levels, faster to produce. · Tradeoff: Advanced learners may find it too shallow — risks losing engagement."
+   - Label: "⭐ Recommended: Hands-on with guided examples"
+     Description: "Concepts paired with step-by-step exercises. · Strength: Balances understanding and practice — matches the format that got highest completion rates in 10xDevs2. · Tradeoff: 2-3x more prep time per lesson; requires working example repos."
+   - Label: "Deep dive with open challenges"
+     Description: "Minimal scaffolding, real-world problems. · Strength: Forces genuine problem-solving, highest learning retention. · Tradeoff: High dropout risk for less experienced learners; harder to support at scale."
 
    **What to ask about** — adapt categories to the domain of the task:
 
@@ -272,15 +284,15 @@ After getting initial clarifications from the user, NOW is when you address the 
    - Read the specific files/directories they mention
    - Only proceed once you've verified the facts yourself
 
-3. **Create research tasks** using TaskCreate to track exploration (these appear in the user's status bar). Update them via TaskUpdate as research completes.
+3. **Create research tasks** using your AI coding assistant's task creation feature to track exploration (these appear in the user's status bar). Update them via your AI coding assistant's task update feature as research completes.
 
 4. **Spawn parallel sub-tasks for comprehensive research**:
-   - Create multiple Task agents to research different aspects concurrently
+   - Create multiple task agents to research different aspects concurrently
    - Use the right agent type for each research need:
 
    **For codebase investigation:**
-   - **Explore** (`subagent_type: "Explore"`) — Fast file/pattern search, code structure analysis
-   - **general-purpose** (`subagent_type: "general-purpose"`) — Deep analysis requiring multi-step reasoning
+   - **Explore** (specify `subagent_type: "Explore"`) — Fast file/pattern search, code structure analysis
+   - **general-purpose** (specify `subagent_type: "general-purpose"`) — Deep analysis requiring multi-step reasoning
 
    **For historical context:**
    - **Explore** — Search `context/changes/**/research.md` and `context/changes/**/plan.md` (and the same paths under `context/archive/`) for related documents
@@ -308,9 +320,13 @@ After getting initial clarifications from the user, NOW is when you address the 
 
    Then, if there are multiple valid approaches, present them as structured choices:
 
-   Ask the user: "Which implementation approach should we use?" with options:
-   - "[Option A name]" (description: "[Key tradeoffs: simpler but X, or faster but Y]")
-   - "[Option B name]" (description: "[Key tradeoffs]")
+   Ask the user: "Which implementation approach should we use?"
+   Header: "Approach"
+   Options:
+   - Label: "[Option A name]"
+     Description: "[Key tradeoffs: simpler but X, or faster but Y]"
+   - Label: "[Option B name]"
+     Description: "[Key tradeoffs]"
 
    If there's clearly one best approach, skip asking the user and explain why you chose it.
    Only ask when the choice genuinely matters and you can't determine the answer from codebase patterns.
@@ -335,11 +351,17 @@ Once aligned on approach:
    3. [Phase name] - [what it accomplishes]
    ```
 
-   Then ask the user: "Does this phase breakdown look right?" with options:
-   - "Looks good, proceed" (description: "Write the detailed plan with these phases.")
-   - "Needs adjustment" (description: "I'll explain what to change before you write the detailed plan.")
-   - "Too granular" (description: "Combine some phases — this is simpler than it looks.")
-   - "Too coarse" (description: "Split some phases — there are hidden complexities.")
+   Then ask the user: "Does this phase breakdown look right?"
+   Header: "Phases"
+   Options:
+   - Label: "Looks good, proceed"
+     Description: "Write the detailed plan with these phases."
+   - Label: "Needs adjustment"
+     Description: "I'll explain what to change before you write the detailed plan."
+   - Label: "Too granular"
+     Description: "Combine some phases — this is simpler than it looks."
+   - Label: "Too coarse"
+     Description: "Split some phases — there are hidden complexities."
 
 ### Step 4: Detailed Plan Writing
 
@@ -350,6 +372,7 @@ After structure approval:
    - Otherwise derive a kebab-case `<change-id>` from the topic and create the folder + `change.md` (mirroring `/10x-new` semantics) before writing.
    - Refuse if the resolved path starts with `context/archive/` — print: "This change is archived. Open a new change with `/10x-new` instead." and STOP.
    - Update `change.md`: set `status: planned` and `updated: <today>`.
+   - **Sync the roadmap** (best effort): if `context/foundation/roadmap.md` carries an item whose `Change ID` equals `<change-id>`, flip that item to `Status: planning`. See "## Roadmap status sync" below. Never blocks; most changes won't trace to a roadmap.
 2. **Use this template structure** (Phase blocks contain plain bullets — `- ` not `- [ ]` — and a single canonical `## Progress` section at the bottom owns the checkbox state, see `references/progress-format.md` for the contract):
 
 ````markdown
@@ -616,6 +639,25 @@ For non-software: structure, workflow, key dependencies.]
 
 5. **Continue refining** until the user is satisfied
 
+## Roadmap status sync
+
+`context/foundation/roadmap.md` (produced by `/10x-roadmap`) indexes each Foundation/Slice by a stable **Change ID**. As planning turns a roadmap item into a concrete change folder + plan, mark that item **`planning`** so the roadmap reflects that the item has left the backlog and entered active work. `/10x-implement` later advances the same item to `in-progress`, and `/10x-archive` closes it to `done`.
+
+Do this in Step 4 (right after the `change.md` → `planned` stamp). The lookup is **mandatory**; "best effort" scopes only the *edits* — a missing roadmap or a not-found target is skipped silently and never blocks, prompts, or aborts the run. Do not skip the check on the assumption there's no roadmap.
+
+1. Check if `context/foundation/roadmap.md` exists. If absent, skip this step silently.
+2. Read the file. Look for `<change-id>` used as a `Change ID`:
+   - in the `## At a glance` table — the row whose **Change ID** column cell equals `<change-id>` exactly;
+   - and in the `## Foundations` / `## Slices` bodies — the `### <ID>: …` block that contains a `- **Change ID:** <change-id>` line.
+
+   Match is exact-string only. **No match** → print `ℹ context/foundation/roadmap.md has no item with Change ID "<change-id>" — roadmap left untouched.` and stop here.
+3. **Match found** → if the item's `- **Status:**` is already `planning`, `in-progress`, or `done`, leave it untouched (**forward-only**: never regress a more-advanced status) and stop. Otherwise apply both edits to the file — each independent and best effort; skip a sub-edit whose target isn't where the `/10x-roadmap` template puts it, and note the skip. Touch only the `Status` field:
+   1. **`## At a glance`** — set the matched row's **Status** cell to `planning`.
+   2. **Item body** — rewrite the item's `- **Status:**` line to `- **Status:** planning`.
+
+   Then bump the roadmap frontmatter `updated:` to `<today>` (skip if there is no frontmatter).
+4. `/10x-plan` does not commit its own artifacts; leave the flip in the working tree. It is committed later alongside the change's first `/10x-implement` phase (which re-flips the same item to `in-progress`).
+
 ## Important Guidelines
 
 1. **Be Skeptical**:
@@ -643,7 +685,7 @@ For non-software: structure, workflow, key dependencies.]
    - Include "what we're NOT doing"
 
 5. **Track Progress**:
-   - Use TaskCreate to create planning tasks and TaskUpdate to mark them completed as you progress
+   - Use your AI coding assistant's task creation feature to create planning tasks and its task update feature to mark them completed as you progress
    - Tasks appear in the user's status bar for visibility
    - Mark tasks completed as you finish research areas
 
@@ -708,48 +750,66 @@ Planning can be context-heavy due to research + iteration. Keep context efficien
   ```
   This lets `/10x-plan` reload the draft and continue iterating with full context available.
 
-## Example Question Probing by Feature Type
+## Example Probing by Feature Type
 
 ### Example 1: Software / UI Feature — MEDIUM complexity (e.g., Pagination)
 
 Mixed: `Loading UX` is `[S]` (UI behavior — solution detail); `Scale` is `[D]` (problem boundary — how big is the dataset). With a frame brief, ask only `Loading UX`; the scale should already be in the Reframed (or Confirmed) Problem Statement.
 
-Ask the user: "What should the user see while new items load?" with options:
-
-- "Inline spinner" (description: "Small spinner below existing content. · Strength: User keeps seeing current items, minimal UI work. · Tradeoff: Feels slower than skeleton — users see a generic spinner instead of content shape.")
-- "⭐ Recommended: Skeleton screens" (description: "Placeholder shapes matching item layout. · Strength: Perceived performance is 30-40% better — matches existing LoadingSkeleton component pattern. · Tradeoff: Requires a skeleton variant per item type; breaks if layout changes.")
-- "Full-page spinner" (description: "Replace content with spinner. · Strength: Simplest to implement — one component, no layout concerns. · Tradeoff: Blocks all interaction; feels broken on slow connections.")
-
-Ask the user: "How many items should this handle gracefully?" with options:
-
-- "⭐ Recommended: Hundreds" (description: "Standard offset pagination. · Strength: Simple, well-understood, works with existing SQL queries. · Tradeoff: Breaks down past ~5k items — acceptable given current data volumes.")
-- "Thousands" (description: "Cursor-based pagination + virtual scrolling. · Strength: Handles growth without performance cliff. · Tradeoff: 2-3x more implementation work; changes API contract.")
-- "Tens of thousands" (description: "Server-side filtering + virtual list + search. · Strength: Scales indefinitely. · Tradeoff: Significant complexity; requires search index and new API design.")
+Ask the user: "What should the user see while new items load?"
+Header: "Loading UX"
+Options:
+- Label: "Inline spinner"
+  Description: "Small spinner below existing content. · Strength: User keeps seeing current items, minimal UI work. · Tradeoff: Feels slower than skeleton — users see a generic spinner instead of content shape."
+- Label: "⭐ Recommended: Skeleton screens"
+  Description: "Placeholder shapes matching item layout. · Strength: Perceived performance is 30-40% better — matches existing LoadingSkeleton component pattern. · Tradeoff: Requires a skeleton variant per item type; breaks if layout changes."
+- Label: "Full-page spinner"
+  Description: "Replace content with spinner. · Strength: Simplest to implement — one component, no layout concerns. · Tradeoff: Blocks all interaction; feels broken on slow connections."
+Ask the user: "How many items should this handle gracefully?"
+Header: "Scale"
+Options:
+- Label: "⭐ Recommended: Hundreds"
+  Description: "Standard offset pagination. · Strength: Simple, well-understood, works with existing SQL queries. · Tradeoff: Breaks down past ~5k items — acceptable given current data volumes."
+- Label: "Thousands"
+  Description: "Cursor-based pagination + virtual scrolling. · Strength: Handles growth without performance cliff. · Tradeoff: 2-3x more implementation work; changes API contract."
+- Label: "Tens of thousands"
+  Description: "Server-side filtering + virtual list + search. · Strength: Scales indefinitely. · Tradeoff: Significant complexity; requires search index and new API design."
 
 ### Example 2: Content / Education — HIGH complexity (e.g., Course Module Design)
 
 Mixed: `Outcome` is `[D]` (defines what success looks like — pure problem framing); `Levels` is `[S]` (audience-handling strategy — how to structure delivery). With a frame brief, ask only `Levels`; the outcome should be settled.
 
-Ask the user: "What should the learner be able to DO after this module — not just know?" with options:
-
-- "⭐ Recommended: Build a working prototype" (description: "Learner produces a functional artifact using the techniques taught. · Strength: Forces genuine skill transfer — the artifact proves competence. Matches the 'Innovate' lesson format from 10xDevs3. · Tradeoff: Requires well-designed starter templates and clear acceptance criteria; takes 2-3x longer to prep.")
-- "Complete a guided exercise" (description: "Step-by-step walkthrough with expected output. · Strength: Low barrier — everyone finishes, builds confidence. · Tradeoff: May produce 'tutorial zombies' who can follow but not apply independently.")
-- "Pass a knowledge check" (description: "Quiz or code review proving conceptual understanding. · Strength: Fast to create, easy to grade at scale. · Tradeoff: Tests recognition not production — learner may understand but not be able to execute.")
-
-Ask the user: "How should this module handle different skill levels in the audience?" with options:
-
-- "Single track, advanced" (description: "One path targeting experienced devs. · Strength: Deep content, no hand-holding, respects expert time. · Tradeoff: Alienates beginners — they'll drop off or flood support channels.")
-- "⭐ Recommended: Layered depth" (description: "Core path everyone follows + optional deep-dive sections. · Strength: Everyone gets value; advanced learners self-select into harder material. · Tradeoff: More content to maintain; risk of 'optional' sections being ignored.")
-- "Separate beginner/advanced tracks" (description: "Two parallel paths diverging early. · Strength: Each audience gets perfectly targeted content. · Tradeoff: 2x production cost; splitting a small cohort may hurt community dynamics.")
+Ask the user: "What should the learner be able to DO after this module — not just know?"
+Header: "Outcome"
+Options:
+- Label: "⭐ Recommended: Build a working prototype"
+  Description: "Learner produces a functional artifact using the techniques taught. · Strength: Forces genuine skill transfer — the artifact proves competence. Matches the 'Innovate' lesson format from 10xDevs3. · Tradeoff: Requires well-designed starter templates and clear acceptance criteria; takes 2-3x longer to prep."
+- Label: "Complete a guided exercise"
+  Description: "Step-by-step walkthrough with expected output. · Strength: Low barrier — everyone finishes, builds confidence. · Tradeoff: May produce 'tutorial zombies' who can follow but not apply independently."
+- Label: "Pass a knowledge check"
+  Description: "Quiz or code review proving conceptual understanding. · Strength: Fast to create, easy to grade at scale. · Tradeoff: Tests recognition not production — learner may understand but not be able to execute."
+Ask the user: "How should this module handle different skill levels in the audience?"
+Header: "Levels"
+Options:
+- Label: "Single track, advanced"
+  Description: "One path targeting experienced devs. · Strength: Deep content, no hand-holding, respects expert time. · Tradeoff: Alienates beginners — they'll drop off or flood support channels."
+- Label: "⭐ Recommended: Layered depth"
+  Description: "Core path everyone follows + optional deep-dive sections. · Strength: Everyone gets value; advanced learners self-select into harder material. · Tradeoff: More content to maintain; risk of 'optional' sections being ignored."
+- Label: "Separate beginner/advanced tracks"
+  Description: "Two parallel paths diverging early. · Strength: Each audience gets perfectly targeted content. · Tradeoff: 2x production cost; splitting a small cohort may hurt community dynamics."
 
 ### Example 3: Strategy / Process — MEDIUM complexity (e.g., Newsletter Workflow)
 
 `Bottleneck` is `[D]` — pure problem framing (which problem to solve). This is exactly the kind of question a frame exists to settle. With a frame brief, skip this entirely; the leading hypothesis is the bottleneck.
 
-Ask the user: "What's the primary bottleneck in the current newsletter pipeline?" with options:
-
-- "⭐ Recommended: Curation takes too long" (description: "Finding and evaluating links is the slow step. · Strength: Directly targets time-to-publish — automating curation yields the biggest time savings based on current pipeline timings. · Tradeoff: Automated curation risks losing the personal editorial voice that subscribers value.")
-- "Writing the commentary" (description: "Links are ready but writing around them is slow. · Strength: AI-assisted drafting can cut this in half. · Tradeoff: Heavy AI drafting can make the newsletter feel generic — needs careful voice calibration.")
-- "Distribution and scheduling" (description: "Content is ready but publishing is manual. · Strength: Easiest to automate — clear inputs and outputs. · Tradeoff: Lowest impact if curation or writing is still the bottleneck.")
+Ask the user: "What's the primary bottleneck in the current newsletter pipeline?"
+Header: "Bottleneck"
+Options:
+- Label: "⭐ Recommended: Curation takes too long"
+  Description: "Finding and evaluating links is the slow step. · Strength: Directly targets time-to-publish — automating curation yields the biggest time savings based on current pipeline timings. · Tradeoff: Automated curation risks losing the personal editorial voice that subscribers value."
+- Label: "Writing the commentary"
+  Description: "Links are ready but writing around them is slow. · Strength: AI-assisted drafting can cut this in half. · Tradeoff: Heavy AI drafting can make the newsletter feel generic — needs careful voice calibration."
+- Label: "Distribution and scheduling"
+  Description: "Content is ready but publishing is manual. · Strength: Easiest to automate — clear inputs and outputs. · Tradeoff: Lowest impact if curation or writing is still the bottleneck."
 
 **Note**: Questions focus on **WHAT should happen** (requirements, behavior, outcomes) — NOT **HOW to implement it** (code patterns, specific tools). The `⭐ Recommended` pick is grounded in research and context — the user always has the final say.
