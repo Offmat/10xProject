@@ -38,7 +38,7 @@ The product wedge — the one trait that, if removed, makes this a generic score
 | F-05 | capybara-e2e-prep | (foundation) Capybara + Cuprite system-spec floor, fidelity seed for session-form player risks, CI Chrome gate, `/10x-e2e-capybara` skill | F-04 | — (test-plan Phase 1 + 4) | planning |
 | S-01 | email-password-auth | create an account, log in, and log out | F-01 | FR-001, US-01 | done |
 | S-02 | mutual-friend-circle | send a friend request; accept or decline; see active friends | S-01 | FR-002, US-01 | done |
-| S-03 | log-session-confirm-flow | log a session with catalog game, registered friend, and unregistered player; co-player gets in-app notification and confirms or rejects; logger sees history immediately | S-02, F-02, F-04, F-05 | US-01, FR-003, FR-004, FR-005, FR-006, FR-009 | proposed |
+| S-03 | log-session-confirm-flow | log a session with catalog game, registered friend, and unregistered player; co-player gets in-app notification and confirms or rejects; logger sees history immediately | S-02, F-02, F-04, F-05 | US-01, FR-003, FR-004, FR-005, FR-006, FR-009 | done |
 | S-04 | session-stats-filters | view statistics for sessions they participated in, with filters | S-03 | FR-007 | proposed |
 
 ## Streams
@@ -172,7 +172,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Blockers:** —
 - **Unknowns:** —
 - **Risk:** North star — concentrates confirm/reject business rules and mixed player types; highest integration risk, sequenced only after auth, friends, catalog, the interactive-forms guide (F-04), and preferably the Capybara floor (F-05) exist. Do not continue form work until F-04 lands; treat F-05 as the browser gate for form fidelity.
-- **Status:** proposed
+- **Status:** done
 
 ### S-04: Session statistics with filters
 
@@ -199,7 +199,7 @@ Issue URLs and board setup: @context/foundation/backlog.md.
 | F-05 | capybara-e2e-prep | Capybara + Cuprite system-spec floor, fidelity seed, CI, `/10x-e2e-capybara` | — | Planning — plan at `@context/changes/capybara-e2e-prep/plan.md`; next `/10x-implement capybara-e2e-prep phase 1` |
 | S-01 | email-password-auth | Sign up, log in, log out | yes | F-01 done; carry forward F-01 impl-review deferrals |
 | S-02 | mutual-friend-circle | Friend requests with mutual acceptance | no | After S-01 |
-| S-03 | log-session-confirm-flow | Log session + in-app confirm/reject (US-01) | no | North star; after S-02, F-02, F-04; F-05 preferred before calling form fidelity done |
+| S-03 | log-session-confirm-flow | Log session + in-app confirm/reject (US-01) | — | Done — archived `context/archive/2026-07-20-log-session-confirm-flow/` |
 | S-04 | session-stats-filters | Personal session stats with filters | no | After S-03 |
 
 ## Open Roadmap Questions
@@ -228,3 +228,4 @@ _No cross-cutting roadmap questions. PRD `## Open Questions` were resolved 2026-
 - **S-01: user can create an account, log in, and log out.** — Archived 2026-07-12 → `context/archive/2026-07-12-email-password-auth/`. Lesson: —.
 - **S-02: user can send a friend request to another registered user; the other user can accept or decline; friendship is active only after mutual acceptance.** — Archived 2026-07-20 → `context/archive/2026-07-14-mutual-friend-circle/`. Lesson: —.
 - **F-04: (foundation) A researched playbook plus short agent-facing rules so interactive Rails forms (Hotwire/Stimulus, dynamic fields, params, controllers/services) are implemented consistently — deep reference for agents when the short rules are not enough.** — Archived 2026-07-25 → `context/archive/2026-07-25-rails-interactive-forms-guide/`. Lesson: —.
+- **S-03: user can log a played session with a game from the catalog, a registered friend, and an unregistered player (name + score only); the registered friend receives an in-app notification and can confirm or reject; the logger sees the session in their history and stats immediately after save.** — Archived 2026-09-06 → `context/archive/2026-07-20-log-session-confirm-flow/`. Lesson: —.
