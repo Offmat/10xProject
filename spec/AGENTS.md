@@ -15,6 +15,7 @@ Application conventions: @app/AGENTS.md. Repo commands and CI: @AGENTS.md.
 |------|---------|
 | `spec/models/` | ActiveRecord models, validations, scopes |
 | `spec/requests/` | HTTP endpoints (preferred over controller specs for MVP) |
+| `spec/system/` | Browser/system specs via Cuprite (explicit `type: :system`; require `rails_helper`) |
 | `spec/services/unit/` | Single-class service behavior with stubs |
 | `spec/services/integration/` | Multi-model flows (session log + confirm, etc.) |
 | `spec/factories/` | FactoryBot definitions (`create(:user)`, etc.) |
@@ -24,6 +25,7 @@ Application conventions: @app/AGENTS.md. Repo commands and CI: @AGENTS.md.
 
 - Request specs are the primary auth integration surface (`spec/requests/authentication_spec.rb`).
 - Use helpers from @spec/support/authentication_helpers.rb: `sign_in_as`, `sign_out`, `register_user` (default password `'password'`).
+- System specs: declare `type: :system` explicitly (file location does not infer type). `sign_in_as` injects the signed `session_id` cookie via Cuprite after a same-origin visit — do not fill the login form for auth setup.
 - Rate-limit request specs only: stub `ActionController::Base.cache_store#increment` with a `MemoryStore` in that example group's `before` block (`config.cache_store` is `:null_store` in test). Do not stub globally.
 - Assert externally visible behavior (redirects, flash, guards) — not cookie/session record internals unless testing the model layer.
 - Auth audit expectations: prefer `expect(AuthAuditLogger).to receive(:log).with(hash_including(...))` before the request; service unit coverage lives in `spec/services/auth_audit_logger_spec.rb`.

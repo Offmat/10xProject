@@ -75,4 +75,6 @@ gem 'factory_bot_rails', '~> 6.5', groups: %i[development test]
 
 group :test do
   gem 'webmock', '~> 3.26'
+  gem 'capybara'
+  gem 'cuprite'
 end

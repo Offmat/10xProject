@@ -3,7 +3,7 @@ project: all-aBoard
 version: 1
 status: draft
 created: 2026-05-31
-updated: 2026-09-06
+updated: 2026-09-09
 prd_version: 1
 main_goal: speed
 top_blocker: time
@@ -35,7 +35,7 @@ The product wedge — the one trait that, if removed, makes this a generic score
 | F-02 | seed-game-catalog | (foundation) Wikidata import service + ~20-game MVP seed via console | F-01 | FR-009, Business Logic | done |
 | F-03 | tailwind-daisyui-setup | (foundation) Tailwind CSS + daisyUI in asset pipeline; base theme and component classes in ERB | — | — | done |
 | F-04 | rails-interactive-forms-guide | (foundation) research + playbook + short agent rules for interactive Rails forms (view ↔ Stimulus ↔ params ↔ controller/service) | — | — | done |
-| F-05 | capybara-e2e-prep | (foundation) Capybara + Cuprite system-spec floor, fidelity seed for session-form player risks, CI Chrome gate, `/10x-e2e-capybara` skill | F-04, S-03 | — (test-plan Phase 1 + 4) | planning |
+| F-05 | capybara-e2e-prep | (foundation) Capybara + Cuprite system-spec floor, fidelity seed for session-form player risks, CI Chrome gate, `/10x-e2e-capybara` skill | F-04, S-03 | — (test-plan Phase 1 + 4) | in-progress |
 | S-01 | email-password-auth | create an account, log in, and log out | F-01 | FR-001, US-01 | done |
 | S-02 | mutual-friend-circle | send a friend request; accept or decline; see active friends | S-01 | FR-002, US-01 | done |
 | S-03 | log-session-confirm-flow | log a session with catalog game, registered friend, and unregistered player; co-player gets in-app notification and confirms or rejects; logger sees history immediately | S-02, F-02, F-04 | US-01, FR-003, FR-004, FR-005, FR-006, FR-009 | done |
@@ -133,7 +133,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Unknowns:** —
 - **Risk:** Without a browser floor, Stimulus nested-player param bugs stay invisible to request specs; dual Playwright+Capybara suites were rejected — keep one Ruby runner (Cuprite). Depends on S-03 already shipping the form under test.
 - **Change folder:** [capybara-e2e-prep](../changes/capybara-e2e-prep/change.md)
-- **Status:** planning
+- **Status:** in-progress
 
 ## Slices
 
