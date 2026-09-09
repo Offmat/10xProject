@@ -403,29 +403,29 @@ No data migration. Developers need Chrome/Chromium locally for system specs. Fir
 
 #### Automated
 
-- [x] 2.1 Seed system spec green under bin/rspec spec/system
-- [x] 2.2 Deliberate-break confirms red then revert (not committed)
-- [x] 2.3 Non-system suite still green
-- [x] 2.6 Multi-player request example asserts participant set, not count
+- [x] 2.1 Seed system spec green under bin/rspec spec/system — 4ef1c4b
+- [x] 2.2 Deliberate-break confirms red then revert (not committed) — 4ef1c4b
+- [x] 2.3 Non-system suite still green — 4ef1c4b
+- [x] 2.6 Multi-player request example asserts participant set, not count — 4ef1c4b
 
 #### Manual
 
-- [x] 2.4 Seed assertion would fail if a submitted player were dropped
-- [x] 2.5 Optional headed Stimulus add-row validation
+- [x] 2.4 Seed assertion would fail if a submitted player were dropped — 4ef1c4b
+- [x] 2.5 Optional headed Stimulus add-row validation — 4ef1c4b
 
 ### Phase 3: CI browser floor
 
 #### Automated
 
-- [ ] 3.1 CI workflow includes browser availability for Cuprite
-- [ ] 3.2 CI=true bin/rspec spec/system green locally
-- [ ] 3.3 System specs are required (not allow_failure)
-- [ ] 3.5 Lefthook/zeitwerk unchanged and still pass on commit
-- [ ] 3.6 Failure artifact upload (tmp/screenshots + Ferrum stderr) wired with if: failure()
+- [x] 3.1 CI workflow includes browser availability for Cuprite
+- [x] 3.2 CI=true bin/rspec spec/system green locally
+- [x] 3.3 System specs are required (not allow_failure)
+- [x] 3.5 Lefthook/zeitwerk unchanged and still pass on commit
+- [x] 3.6 Failure artifact upload (tmp/screenshots + Ferrum stderr) wired with if: failure()
 
 #### Manual
 
-- [ ] 3.4 GHA test job runs seed green after push
+- [x] 3.4 GHA test job runs seed green after push
 
 ### Phase 4: Skill 10x-e2e-capybara
 

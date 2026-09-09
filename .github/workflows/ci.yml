@@ -110,6 +110,32 @@ jobs:
       - name: Prepare test database
         run: bin/rails db:test:prepare
 
+      - name: Install Chrome for Cuprite
+        run: |
+          if command -v google-chrome >/dev/null 2>&1; then
+            google-chrome --version
+          elif command -v chromium-browser >/dev/null 2>&1; then
+            chromium-browser --version
+          elif command -v chromium >/dev/null 2>&1; then
+            chromium --version
+          else
+            sudo apt-get update
+            sudo apt-get install -y google-chrome-stable
+            google-chrome --version
+          fi
+
       - name: Run RSpec
         run: bin/rspec spec/
+        env:
+          CI: true
+
+      - name: Upload Cuprite failure artifacts
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cuprite-failures
+          path: |
+            tmp/screenshots
+            tmp/ferrum-stderr.log
+          if-no-files-found: ignore
 

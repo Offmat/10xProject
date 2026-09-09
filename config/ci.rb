@@ -9,6 +9,7 @@ CI.run do
   step 'Security: Importmap vulnerability audit', 'bin/importmap audit'
   step 'Security: Brakeman code analysis', 'bin/brakeman --quiet --no-pager --exit-on-warn --exit-on-error'
 
+  # Includes system specs (Cuprite); no separate optional browser job.
   step 'Tests: RSpec', 'bin/rspec'
 
   # Optional: set a green GitHub commit status to unblock PR merge.
