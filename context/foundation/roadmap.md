@@ -35,7 +35,7 @@ The product wedge — the one trait that, if removed, makes this a generic score
 | F-02 | seed-game-catalog | (foundation) Wikidata import service + ~20-game MVP seed via console | F-01 | FR-009, Business Logic | done |
 | F-03 | tailwind-daisyui-setup | (foundation) Tailwind CSS + daisyUI in asset pipeline; base theme and component classes in ERB | — | — | done |
 | F-04 | rails-interactive-forms-guide | (foundation) research + playbook + short agent rules for interactive Rails forms (view ↔ Stimulus ↔ params ↔ controller/service) | — | — | done |
-| F-05 | capybara-e2e-prep | (foundation) Capybara + Cuprite system-spec floor, fidelity seed for session-form player risks, CI Chrome gate, `/10x-e2e-capybara` skill | F-04, S-03 | — (test-plan Phase 1 + 4) | in-progress |
+| F-05 | capybara-e2e-prep | (foundation) Capybara + Cuprite system-spec floor, fidelity seed for session-form player risks, CI Chrome gate, `/10x-e2e-capybara` skill | F-04, S-03 | — (test-plan Phase 1 + 4) | done |
 | S-01 | email-password-auth | create an account, log in, and log out | F-01 | FR-001, US-01 | done |
 | S-02 | mutual-friend-circle | send a friend request; accept or decline; see active friends | S-01 | FR-002, US-01 | done |
 | S-03 | log-session-confirm-flow | log a session with catalog game, registered friend, and unregistered player; co-player gets in-app notification and confirms or rejects; logger sees history immediately | S-02, F-02, F-04 | US-01, FR-003, FR-004, FR-005, FR-006, FR-009 | done |
@@ -132,8 +132,8 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Blockers:** —
 - **Unknowns:** —
 - **Risk:** Without a browser floor, Stimulus nested-player param bugs stay invisible to request specs; dual Playwright+Capybara suites were rejected — keep one Ruby runner (Cuprite). Depends on S-03 already shipping the form under test.
-- **Change folder:** [capybara-e2e-prep](../changes/capybara-e2e-prep/change.md)
-- **Status:** in-progress
+- **Change folder:** [capybara-e2e-prep](../archive/2026-09-06-capybara-e2e-prep/change.md)
+- **Status:** done
 
 ## Slices
 
@@ -196,7 +196,7 @@ Issue URLs and board setup: @context/foundation/backlog.md.
 | F-02 | seed-game-catalog | Import game catalog from Wikidata (~20-game MVP seed, console) | — | Implemented; Wikidata SPARQL adapter |
 | F-03 | tailwind-daisyui-setup | Add Tailwind CSS + daisyUI (tailwindcss-rails, base theme) | yes | No prerequisites; parallel with S-01 / S-02 / F-02 |
 | F-04 | rails-interactive-forms-guide | Research + playbook + short agent rules for interactive Rails forms | — | Done — playbook `@context/foundation/interactive-forms.md`; rule `.cursor/rules/hotwire-interactive-forms.mdc` |
-| F-05 | capybara-e2e-prep | Capybara + Cuprite system-spec floor, fidelity seed, CI, `/10x-e2e-capybara` | — | Planning — after S-03; plan at `@context/changes/capybara-e2e-prep/plan.md`; next `/10x-implement capybara-e2e-prep phase 1` |
+| F-05 | capybara-e2e-prep | Capybara + Cuprite system-spec floor, fidelity seed, CI, `/10x-e2e-capybara` | — | Done — archived `context/archive/2026-09-06-capybara-e2e-prep/` |
 | S-01 | email-password-auth | Sign up, log in, log out | yes | F-01 done; carry forward F-01 impl-review deferrals |
 | S-02 | mutual-friend-circle | Friend requests with mutual acceptance | no | After S-01 |
 | S-03 | log-session-confirm-flow | Log session + in-app confirm/reject (US-01) | — | Done — archived `context/archive/2026-07-20-log-session-confirm-flow/` |
@@ -229,3 +229,4 @@ _No cross-cutting roadmap questions. PRD `## Open Questions` were resolved 2026-
 - **S-02: user can send a friend request to another registered user; the other user can accept or decline; friendship is active only after mutual acceptance.** — Archived 2026-07-20 → `context/archive/2026-07-14-mutual-friend-circle/`. Lesson: —.
 - **F-04: (foundation) A researched playbook plus short agent-facing rules so interactive Rails forms (Hotwire/Stimulus, dynamic fields, params, controllers/services) are implemented consistently — deep reference for agents when the short rules are not enough.** — Archived 2026-07-25 → `context/archive/2026-07-25-rails-interactive-forms-guide/`. Lesson: —.
 - **S-03: user can log a played session with a game from the catalog, a registered friend, and an unregistered player (name + score only); the registered friend receives an in-app notification and can confirm or reject; the logger sees the session in their history and stats immediately after save.** — Archived 2026-09-06 → `context/archive/2026-07-20-log-session-confirm-flow/`. Lesson: —.
+- **F-05: (foundation) Capybara + Cuprite system specs are runnable locally and in CI; a fidelity seed protects session-form multi-player submit risks (test-plan #1–#2); agents use `/10x-e2e-capybara` (fork of course `/10x-e2e`) without drifting the lesson Playwright skill.** — Archived 2026-09-09 → `context/archive/2026-09-06-capybara-e2e-prep/`. Lesson: —.

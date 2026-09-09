@@ -1,10 +1,10 @@
 ---
 change_id: capybara-e2e-prep
 title: Prepare Capybara system specs and E2E quality levers
-status: impl_reviewed
+status: archived
 created: 2026-09-06
 updated: 2026-09-09
-archived_at: null
+archived_at: 2026-09-09T20:07:11Z
 ---
 
 ## Notes
