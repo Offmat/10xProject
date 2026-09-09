@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 require 'rails_helper'
 
 # Fidelity seed for test-plan.md risks #1–#2 (multi-player form POST / Stimulus rows).
@@ -25,7 +23,12 @@ RSpec.describe 'Game session player fidelity', type: :system do
     click_button '+ Add player'
     expect(page).to have_css('[data-nested-form-row]', count: 1)
 
+    # Toggle out to Guest and back so the Friend branch of player-fields#toggle
+    # actually fires: the radio ships pre-checked, so choosing it directly is a
+    # no-op. The abandoned guest name must not survive the switch back.
     within(all('[data-nested-form-row]').last) do
+      choose 'Guest'
+      fill_in 'Guest name', with: 'Abandoned guest'
       choose 'Friend'
       find('select[name$="[user_id]"]').select(friend.email)
       find('[name$="[score]"]').fill_in(with: friend_score)
@@ -47,7 +50,7 @@ RSpec.describe 'Game session player fidelity', type: :system do
     expect(page).to have_content(friend.email)
     expect(page).to have_content(guest_name)
 
-    game_session = GameSession.order(:id).last
+    game_session = GameSession.where(creator: logger).order(:id).last!
     participants = game_session.game_session_participants
 
     expect(participants.size).to eq(3)

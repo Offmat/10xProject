@@ -5,6 +5,14 @@ Capybara.ignore_hidden_elements = true
 Capybara.server = :puma, { Silent: true }
 Capybara.save_path = Rails.root.join('tmp/screenshots').to_s
 
+# CI failure artifacts: GHA uploads tmp/screenshots + this Ferrum/CDP log.
+# Opened once (not per example): the browser and its logger outlive individual
+# examples, so a per-example handle would leak descriptors and go unused.
+CUPRITE_CI_LOGGER = if ENV['CI']
+  FileUtils.mkdir_p(Rails.root.join('tmp'))
+  File.open(Rails.root.join('tmp/ferrum-stderr.log'), 'a').tap { |f| f.sync = true }
+end
+
 RSpec.configure do |config|
   config.before(:each, type: :system) do
     # Options MUST go through driven_by(... options:). Rails' SystemTestCase
@@ -19,15 +27,10 @@ RSpec.configure do |config|
 
     options = {
       headless: true,
-      js_errors: false,
+      js_errors: true,
       browser_options: browser_options
     }
-
-    # CI failure artifacts: GHA uploads tmp/screenshots + this Ferrum/CDP log.
-    if ENV['CI']
-      FileUtils.mkdir_p(Rails.root.join('tmp'))
-      options[:logger] = File.open(Rails.root.join('tmp/ferrum-stderr.log'), 'a')
-    end
+    options[:logger] = CUPRITE_CI_LOGGER if CUPRITE_CI_LOGGER
 
     driven_by :cuprite, screen_size: [1400, 900], options: options
   end

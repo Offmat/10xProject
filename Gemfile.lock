@@ -432,8 +432,8 @@ DEPENDENCIES
   bootsnap
   brakeman
   bundler-audit
-  capybara
-  cuprite
+  capybara (~> 3.40)
+  cuprite (~> 0.18)
   debug
   factory_bot_rails (~> 6.5)
   foreman

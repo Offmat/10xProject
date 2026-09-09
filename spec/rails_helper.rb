@@ -63,6 +63,13 @@ RSpec.configure do |config|
   # To enable this behaviour uncomment the line below.
   # config.infer_spec_type_from_file_location!
 
+  # Scoped instead of global: a file under spec/system/ without `type: :system`
+  # would silently lose driven_by, the pinned connection, and the system branch
+  # of sign_in_as.
+  config.define_derived_metadata(file_path: %r{/spec/system/}) do |metadata|
+    metadata[:type] ||= :system
+  end
+
   # Filter lines from Rails gems in backtraces.
   config.filter_rails_from_backtrace!
   # arbitrary gems may also be filtered via:

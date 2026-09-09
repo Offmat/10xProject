@@ -10,8 +10,5 @@ RSpec.describe 'System auth smoke', type: :system do
     expect(page).to have_button('Sign out')
     expect(page).to have_content(user.email)
     expect(page).to have_no_link('Sign in')
-
-    FileUtils.mkdir_p(Rails.root.join('tmp/screenshots'))
-    page.save_screenshot(Rails.root.join('tmp/screenshots/smoke_auth.png'))
   end
 end

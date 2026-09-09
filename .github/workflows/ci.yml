@@ -111,23 +111,16 @@ jobs:
         run: bin/rails db:test:prepare
 
       - name: Install Chrome for Cuprite
-        run: |
-          if command -v google-chrome >/dev/null 2>&1; then
-            google-chrome --version
-          elif command -v chromium-browser >/dev/null 2>&1; then
-            chromium-browser --version
-          elif command -v chromium >/dev/null 2>&1; then
-            chromium --version
-          else
-            sudo apt-get update
-            sudo apt-get install -y google-chrome-stable
-            google-chrome --version
-          fi
+        id: setup_chrome
+        uses: browser-actions/setup-chrome@v2
+        with:
+          install-dependencies: true
 
       - name: Run RSpec
         run: bin/rspec spec/
         env:
           CI: true
+          BROWSER_PATH: ${{ steps.setup_chrome.outputs.chrome-path }}
 
       - name: Upload Cuprite failure artifacts
         if: failure()

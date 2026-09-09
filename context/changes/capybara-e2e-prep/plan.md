@@ -118,7 +118,7 @@ Add browser-test gems and configure system specs to run headless Cuprite with a 
 
 #### Manual Verification
 
-- With `HEADLESS=0` (or Cuprite headed flag), confirm cookie sign-in lands on an authenticated page without typing email/password
+- Confirm cookie sign-in lands on an authenticated page without typing email/password. **Amended during implementation:** headed mode is not available on this toolchain (Chrome 152 + Ferrum 0.18 fail with "Failed to find browser context" on page attach, and Cursor's process coalition aborts headed NSApplication — see `spec/support/capybara.rb`). Verified instead headless, via `spec/system/smoke_auth_spec.rb` asserting authenticated chrome plus the saved `tmp/screenshots/smoke_auth.png`. Phase 2's optional row 2.5 is covered the same way.
 
 **Implementation Note**: After automated verification passes, pause for manual confirmation before Phase 2.
 
