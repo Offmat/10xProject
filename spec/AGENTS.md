@@ -30,6 +30,22 @@ Application conventions: @app/AGENTS.md. Repo commands and CI: @AGENTS.md.
 - Assert externally visible behavior (redirects, flash, guards) — not cookie/session record internals unless testing the model layer.
 - Auth audit expectations: prefer `expect(AuthAuditLogger).to receive(:log).with(hash_including(...))` before the request; service unit coverage lives in `spec/services/auth_audit_logger_spec.rb`.
 
+## System / browser specs
+
+- Driver: Cuprite via `spec/support/capybara.rb`. Declare `type: :system` and
+  `require 'rails_helper'` (inference is off).
+- Auth: `sign_in_as` injects the signed session cookie — never fill the login
+  form for setup.
+- Finders: prefer labels/buttons/text (`click_button`, `fill_in`, `select`,
+  `choose`, `have_*` matchers). Never `sleep`. When a control has no usable
+  label (e.g. repeated player rows), use attribute finders inside `within` —
+  see the seed.
+- Budget: one system example per named browser risk. Cookbook:
+  `context/foundation/test-plan.md` §6.3–6.4. Seed exemplar:
+  `spec/system/game_sessions/player_fidelity_spec.rb`. Agent workflow:
+  `/10x-e2e-capybara`.
+- Local Chrome/Chromium required; run `bin/rspec spec/system/`.
+
 ## Conventions
 
 - Prefer FactoryBot (`create`, `build`) over YAML fixtures. Copy `describe`/`context`/`it` naming and matcher style from the nearest `_spec.rb` in the same folder. Run `bin/rubocop` on touched spec files.

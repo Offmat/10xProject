@@ -6,7 +6,7 @@
 >
 > Refresh: re-run `/10x-test-plan --refresh` when stale (see §8).
 >
-> Last updated: 2026-08-04
+> Last updated: 2026-09-09
 
 ## 1. Strategy
 
@@ -65,10 +65,10 @@ orchestrator updates Status as artifacts appear on disk.
 
 | # | Phase name | Goal (one line) | Risks covered | Test types | Status | Change folder |
 |---|---|---|---|---|---|---|
-| 1 | Session-form player fidelity | Prove multi-player submit persists all players via real form POST | #1, #2 | system (+ tighten request oracles) | not started | — |
+| 1 | Session-form player fidelity | Prove multi-player submit persists all players via real form POST | #1, #2 | system (+ tighten request oracles) | partial — system seed + multi-player request set oracle shipped; other request-oracle tightening still optional | `capybara-e2e-prep` |
 | 2 | Confirm path & ownership | Defend confirm/reject semantics and IDOR on session/notification actions | #3, #4 | request + service integration | done | `confirm-path-ownership` |
 | 3 | Edit re-notify coverage | Cover edit notify matrix (selective vs bulk); #6 only if cheap on create path | #5 | request + service integration | not started | — |
-| 4 | System-spec CI floor | Wire Capybara/system runner into CI; fill cookbook §6 for system specs | cross-cutting | gates | not started | — |
+| 4 | System-spec CI floor | Wire Capybara/system runner into CI; fill cookbook §6 for system specs | cross-cutting | gates | done | `capybara-e2e-prep` |
 
 ## 4. Stack
 
@@ -81,16 +81,16 @@ plus the MCP/tools actually exposed in the current session.
 |------|------|---------|-------|
 | unit + integration | RSpec + rspec-rails | ~> 8.0 | Models, service unit/integration, request specs; `bin/rspec`; FactoryBot |
 | HTTP edge mocking | WebMock | ~> 3.26 | Used for Wikidata/catalog import; keep at network edge |
-| e2e / browser | Capybara system specs | none yet — see §3 Phase 1 + 4 | rspec-rails recommends system specs for browser flows; no Capybara in Gemfile today |
+| e2e / browser | Capybara + Cuprite | 3.40 / 0.18 | RSpec `type: :system` under `spec/system/`; driver in `spec/support/capybara.rb`; seed `spec/system/game_sessions/player_fidelity_spec.rb`; CI installs Chrome and uploads `tmp/screenshots` + Ferrum log on failure; checked: 2026-09-09 |
 | accessibility | none yet | — | Not in MVP test budget |
-| AI-native | none | n/a | No Playwright/browser MCP in session; do not layer vision on deterministic system asserts |
+| AI-native | none | n/a | Not required for MVP; do not layer vision on deterministic system asserts. Project skill `/10x-e2e-capybara` (course `/10x-e2e` is Playwright-only) |
 
-**Test-base profile:** meaningful — RSpec configured; 22 spec files across models, requests, and services; CI already runs `bin/rspec`. Gap: no browser-driven system specs (interview Q4).
+**Test-base profile:** meaningful — RSpec configured across models, requests, services, and system specs; CI runs `bin/rspec` (includes Cuprite). Playwright Node suite is **not** the project default.
 
 **Stack grounding tools (current session):**
-- Docs: Context7 (`/rspec/rspec-rails`) — request specs preferred over controller specs; system specs for browser e2e; checked: 2026-08-01
-- Search: Exa available — not used (docs MCP sufficient); checked: 2026-08-01
-- Runtime/browser: none (no Playwright MCP); checked: 2026-08-01
+- Docs: Context7 (`/rspec/rspec-rails`, `/rubycdp/cuprite`) — request specs for HTTP; system specs for browser e2e; checked: 2026-09-09
+- Search: Exa available — not used for routine stack checks; checked: 2026-09-09
+- Runtime/browser: local Chrome/Chromium + Cuprite; GHA Chrome install step; checked: 2026-09-09
 - Provider/platform: Railway MCP — deploy/status only, not a test gate; checked: 2026-08-01
 
 ## 5. Quality Gates
@@ -103,7 +103,7 @@ phase lands; before that, the gate is `planned`.
 |------|-------|-----------|---------|
 | RuboCop + Brakeman + bundler-audit + importmap audit | local `bin/ci` + GHA | required (already wired) | lint / security drift |
 | unit + request + service specs | local + CI (`bin/rspec`) | required (already wired) | logic regressions |
-| system specs on session-form critical path | local + CI | required after §3 Phase 4 (specs land in Phase 1) | FE param shape vs controller digest; silent player drop |
+| system specs on session-form critical path | local + CI (`bin/rspec`, includes `spec/system/`) | required | FE param shape vs controller digest; silent player drop |
 | RuboCop `afterFileEdit` (safe `-a`) + Lefthook pre-commit (staged RuboCop + Zeitwerk) | local Cursor hooks + git pre-commit | local course/dev gate (not a CI substitute) | style drift on edit; staged lint / Zeitwerk before commit |
 | full auth e2e / Wikidata browser flows | — | deliberately out | see §7 |
 | post-edit AI hook / multimodal visual review | — | not planned | cost × signal not justified for MVP |
@@ -138,12 +138,53 @@ the relevant rollout phase ships; before that, the sub-section reads
 
 ### 6.3 Adding a system (browser) test
 
-- TBD — see §3 Phase 1 for session-form player-fidelity pattern; Phase 4 for CI runner wiring.
-- Goal pattern: drive add/remove player rows in the real form; assert persisted participants match UI — not hand-built param hashes alone.
+Driver: **Capybara + Cuprite** (`spec/support/capybara.rb`). Specs live under
+`spec/system/`, must `require 'rails_helper'`, and declare `type: :system`
+explicitly (file location does not infer type).
+
+1. Prefer label/button/text finders (`click_button`, `fill_in`, `select`,
+   `choose`, `have_content` / `have_button` / `have_field`). Never `sleep` —
+   wait with Capybara matchers.
+2. When markup has no usable label (repeated player rows), use
+   **row-scoped** attribute finders inside `within` — see the seed. That is
+   the sanctioned exception, not a blanket CSS free-for-all.
+3. Auth: `sign_in_as` (signed `session_id` cookie via Cuprite) — do not fill
+   the login form for setup (`spec/support/authentication_helpers.rb`).
+4. Unique data (timestamps / hex) so re-runs do not collide; assert the
+   business/DB outcome that fails if the risk materializes.
+5. Budget: typically **one system example per named risk** — see
+   `/10x-e2e-capybara` and `spec/AGENTS.md`.
+
+Canonical seed: `spec/system/game_sessions/player_fidelity_spec.rb`
+(Risks #1–#2).
+
+- **Run locally:** `bin/rspec spec/system/` (needs Chrome/Chromium).
+- **CI:** same path under GHA `test` job; failure artifacts under
+  `tmp/screenshots` + `tmp/ferrum-stderr.log`.
 
 ### 6.4 Adding a test for session create/update player persistence
 
-- TBD — see §3 Phase 1 (Risks #1–#2): prove every submitted registered + guest player survives save.
+Covers Risks #1–#2. Prefer a **system** example that drives Stimulus
+add-row (friend + guest), then asserts the **participant set** (identity via
+`user` or `guest_name`, plus `score` and `status`) — not flash alone and not
+`participants.count`.
+
+HTTP half: keep request create examples honest with the same set assertion
+(see multi-player example in `spec/requests/game_sessions_spec.rb`). Do not
+treat a hand-built params hash as proof of what Stimulus posts — that is the
+system seed's job.
+
+Canonical examples:
+
+- System: `spec/system/game_sessions/player_fidelity_spec.rb`
+- Request oracle (set, not count): `spec/requests/game_sessions_spec.rb`
+  (multi-player create)
+- Service unit pattern: `spec/services/unit/game_sessions/create_spec.rb`
+
+Remaining request-spec oracles that only mirror Stimulus param shape stay an
+optional follow-up (§3 Phase 1 still `partial` for that reason).
+
+- **Run locally:** `bin/rspec spec/system/game_sessions/player_fidelity_spec.rb`
 
 ### 6.5 Adding a test for confirm/reject or notification ownership
 
@@ -190,6 +231,11 @@ asserting 404 without “resource unchanged.”
 - **§3 Phase 2 (`confirm-path-ownership`, 2026-08-02):** Request oracles for
   Risks #3–#4. Friendship IDOR examples were aligned in the same change to
   the shared “404 + target unchanged” contract (not deferred to a follow-up).
+- **§3 Phase 1 + 4 (`capybara-e2e-prep`, 2026-09-09):** Cuprite system-spec
+  floor, fidelity seed for Risks #1–#2, CI Chrome + failure artifacts, and
+  `/10x-e2e-capybara`. Phase 4 closed. Phase 1 is **partial**: system half and
+  the multi-player request set oracle are in; broader request-oracle tightening
+  remains optional.
 
 ## 7. What We Deliberately Don't Test
 
@@ -202,9 +248,9 @@ contributors should respect these unless the underlying assumption changes.
 
 ## 8. Freshness Ledger
 
-- Strategy (§1–§5) last reviewed: 2026-08-04
-- Stack versions last verified: 2026-08-01
-- AI-native tool references last verified: 2026-08-01
+- Strategy (§1–§5) last reviewed: 2026-09-09
+- Stack versions last verified: 2026-09-09
+- AI-native tool references last verified: 2026-09-09
 
 Refresh (`/10x-test-plan --refresh`) when:
 

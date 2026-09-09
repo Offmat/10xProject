@@ -431,25 +431,25 @@ No data migration. Developers need Chrome/Chromium locally for system specs. Fir
 
 #### Automated
 
-- [x] 4.1 Skill package with SKILL.md and five remapped references exists
-- [x] 4.2 Course 10x-e2e tree untouched
-- [x] 4.3 zeitwerk:check still passes
+- [x] 4.1 Skill package with SKILL.md and five remapped references exists — b31f2bc
+- [x] 4.2 Course 10x-e2e tree untouched — b31f2bc
+- [x] 4.3 zeitwerk:check still passes — b31f2bc
 
 #### Manual
 
-- [x] 4.4 Skill gate/seed path match Cuprite and Phase 2 file
-- [x] 4.5 Repo pointer prefers 10x-e2e-capybara for this app
+- [x] 4.4 Skill gate/seed path match Cuprite and Phase 2 file — b31f2bc
+- [x] 4.5 Repo pointer prefers 10x-e2e-capybara for this app — b31f2bc
 
 ### Phase 5: Foundation sync
 
 #### Automated
 
-- [ ] 5.1 test-plan.md stack/cookbook/phase status updated
-- [ ] 5.2 interactive-forms.md points at system-spec floor
-- [ ] 5.3 spec/AGENTS.md documents system conventions
-- [ ] 5.6 Root AGENTS.md states the local Chrome prerequisite
+- [x] 5.1 test-plan.md stack/cookbook/phase status updated
+- [x] 5.2 interactive-forms.md points at system-spec floor
+- [x] 5.3 spec/AGENTS.md documents system conventions
+- [x] 5.6 Root AGENTS.md states the local Chrome prerequisite
 
 #### Manual
 
-- [ ] 5.4 test-plan Phase 1/4 status is honest vs remaining request-oracle work
-- [ ] 5.5 Docs do not present Playwright Node suite as project default
+- [x] 5.4 test-plan Phase 1/4 status is honest vs remaining request-oracle work
+- [x] 5.5 Docs do not present Playwright Node suite as project default

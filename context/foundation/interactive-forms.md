@@ -236,7 +236,7 @@ These need judgement; encoding them as hard rules trains agents to ignore the ru
 4. Whether to enable Turbo morphing
 5. Embed data vs fetch (payload size / staleness / privacy)
 6. Outlets vs events for a specific pair
-7. Whether this change needs Capybara / system tests
+7. Whether this change needs Capybara / system tests — judgement remains, but the project now has a concrete floor to extend: Cuprite system specs + fidelity seed for session-form player risks (`spec/system/game_sessions/player_fidelity_spec.rb`; see `context/foundation/test-plan.md` §6.3–6.4). Prefer `/10x-e2e-capybara` when adding browser coverage.
 8. Whether to jsdom-unit-test a controller
 9. Exposing a `connected` value for test sync
 10. When to extract a plain module
@@ -251,3 +251,4 @@ These need judgement; encoding them as hard rules trains agents to ignore the ru
 - Cursor rule (prohibitions): `.cursor/rules/hotwire-interactive-forms.mdc`
 - Full evidence archive: `context/archive/2026-07-25-rails-interactive-forms-guide/research.md`
 - Stack context: @context/foundation/tech-stack.md
+- System-spec floor (Capybara + Cuprite): `context/foundation/test-plan.md` §6.3–6.4; seed `spec/system/game_sessions/player_fidelity_spec.rb`; agent skill `/10x-e2e-capybara`
