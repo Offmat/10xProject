@@ -389,29 +389,29 @@ No data migration. Developers need Chrome/Chromium locally for system specs. Fir
 
 #### Automated
 
-- [x] 1.1 Bundle resolves capybara and cuprite
-- [x] 1.2 System smoke or prelude green under bin/rspec with Cuprite
-- [x] 1.3 Request specs still pass
-- [x] 1.4 RuboCop clean on touched Ruby files
-- [x] 1.6 Smoke example asserts authenticated chrome, not just a green run
+- [x] 1.1 Bundle resolves capybara and cuprite — 6474819
+- [x] 1.2 System smoke or prelude green under bin/rspec with Cuprite — 6474819
+- [x] 1.3 Request specs still pass — 6474819
+- [x] 1.4 RuboCop clean on touched Ruby files — 6474819
+- [x] 1.6 Smoke example asserts authenticated chrome, not just a green run — 6474819
 
 #### Manual
 
-- [x] 1.5 Headed cookie sign-in reaches authenticated page without login UI
+- [x] 1.5 Headed cookie sign-in reaches authenticated page without login UI — 6474819
 
 ### Phase 2: Seed fidelity system spec
 
 #### Automated
 
-- [ ] 2.1 Seed system spec green under bin/rspec spec/system
-- [ ] 2.2 Deliberate-break confirms red then revert (not committed)
-- [ ] 2.3 Non-system suite still green
-- [ ] 2.6 Multi-player request example asserts participant set, not count
+- [x] 2.1 Seed system spec green under bin/rspec spec/system
+- [x] 2.2 Deliberate-break confirms red then revert (not committed)
+- [x] 2.3 Non-system suite still green
+- [x] 2.6 Multi-player request example asserts participant set, not count
 
 #### Manual
 
-- [ ] 2.4 Seed assertion would fail if a submitted player were dropped
-- [ ] 2.5 Optional headed Stimulus add-row validation
+- [x] 2.4 Seed assertion would fail if a submitted player were dropped
+- [x] 2.5 Optional headed Stimulus add-row validation
 
 ### Phase 3: CI browser floor
 

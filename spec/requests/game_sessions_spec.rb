@@ -85,7 +85,18 @@ RSpec.describe 'GameSessions', type: :request do
 
       game_session = GameSession.last
       expect(game_session.creator).to eq(alice)
-      expect(game_session.game_session_participants.count).to eq(3)
+
+      participants = game_session.game_session_participants
+      expect(participants.size).to eq(3)
+
+      logger_p = participants.find_by!(user: alice)
+      expect(logger_p).to have_attributes(score: 42, status: 'confirmed')
+
+      friend_p = participants.find_by!(user: bob)
+      expect(friend_p).to have_attributes(score: 30, status: 'pending')
+
+      guest_p = participants.find_by!(guest_name: 'Dave')
+      expect(guest_p).to have_attributes(score: 20, status: 'confirmed')
     end
 
     it 'creates a solo session (logger only)' do
