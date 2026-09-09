@@ -417,28 +417,28 @@ No data migration. Developers need Chrome/Chromium locally for system specs. Fir
 
 #### Automated
 
-- [x] 3.1 CI workflow includes browser availability for Cuprite
-- [x] 3.2 CI=true bin/rspec spec/system green locally
-- [x] 3.3 System specs are required (not allow_failure)
-- [x] 3.5 Lefthook/zeitwerk unchanged and still pass on commit
-- [x] 3.6 Failure artifact upload (tmp/screenshots + Ferrum stderr) wired with if: failure()
+- [x] 3.1 CI workflow includes browser availability for Cuprite — a780768
+- [x] 3.2 CI=true bin/rspec spec/system green locally — a780768
+- [x] 3.3 System specs are required (not allow_failure) — a780768
+- [x] 3.5 Lefthook/zeitwerk unchanged and still pass on commit — a780768
+- [x] 3.6 Failure artifact upload (tmp/screenshots + Ferrum stderr) wired with if: failure() — a780768
 
 #### Manual
 
-- [x] 3.4 GHA test job runs seed green after push
+- [x] 3.4 GHA test job runs seed green after push — a780768
 
 ### Phase 4: Skill 10x-e2e-capybara
 
 #### Automated
 
-- [ ] 4.1 Skill package with SKILL.md and five remapped references exists
-- [ ] 4.2 Course 10x-e2e tree untouched
-- [ ] 4.3 zeitwerk:check still passes
+- [x] 4.1 Skill package with SKILL.md and five remapped references exists
+- [x] 4.2 Course 10x-e2e tree untouched
+- [x] 4.3 zeitwerk:check still passes
 
 #### Manual
 
-- [ ] 4.4 Skill gate/seed path match Cuprite and Phase 2 file
-- [ ] 4.5 Repo pointer prefers 10x-e2e-capybara for this app
+- [x] 4.4 Skill gate/seed path match Cuprite and Phase 2 file
+- [x] 4.5 Repo pointer prefers 10x-e2e-capybara for this app
 
 ### Phase 5: Foundation sync
 

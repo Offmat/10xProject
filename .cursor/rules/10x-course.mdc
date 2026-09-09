@@ -7,6 +7,10 @@ for the workflow — risk → seed test + rules → generate → review against 
 anti-patterns → re-prompt → verify. The skill's `references/` carry the full
 rules, anti-patterns, seed pattern, and prompt-template.
 
+For all-aBoard in this repository, prefer `/10x-e2e-capybara` for Rails system
+specs. `/10x-e2e` remains the unmodified course Playwright skill for lesson and
+other-project contexts; its Playwright hard rules below still apply there.
+
 A few hard rules that hold even before you invoke the skill:
 
 - **Locators:** `getByRole` / `getByLabel` / `getByText` first; `getByTestId`
