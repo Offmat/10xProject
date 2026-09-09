@@ -444,12 +444,12 @@ No data migration. Developers need Chrome/Chromium locally for system specs. Fir
 
 #### Automated
 
-- [x] 5.1 test-plan.md stack/cookbook/phase status updated
-- [x] 5.2 interactive-forms.md points at system-spec floor
-- [x] 5.3 spec/AGENTS.md documents system conventions
-- [x] 5.6 Root AGENTS.md states the local Chrome prerequisite
+- [x] 5.1 test-plan.md stack/cookbook/phase status updated — 9588d90
+- [x] 5.2 interactive-forms.md points at system-spec floor — 9588d90
+- [x] 5.3 spec/AGENTS.md documents system conventions — 9588d90
+- [x] 5.6 Root AGENTS.md states the local Chrome prerequisite — 9588d90
 
 #### Manual
 
-- [x] 5.4 test-plan Phase 1/4 status is honest vs remaining request-oracle work
-- [x] 5.5 Docs do not present Playwright Node suite as project default
+- [x] 5.4 test-plan Phase 1/4 status is honest vs remaining request-oracle work — 9588d90
+- [x] 5.5 Docs do not present Playwright Node suite as project default — 9588d90
