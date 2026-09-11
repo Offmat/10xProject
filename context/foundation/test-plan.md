@@ -65,7 +65,7 @@ orchestrator updates Status as artifacts appear on disk.
 
 | # | Phase name | Goal (one line) | Risks covered | Test types | Status | Change folder |
 |---|---|---|---|---|---|---|
-| 1 | Session-form player fidelity | Prove multi-player submit persists all players via real form POST | #1, #2 | system (+ tighten request oracles) | partial — system seed + multi-player request set oracle shipped; other request-oracle tightening still optional | `capybara-e2e-prep` |
+| 1 | Session-form player fidelity | Prove multi-player submit persists all players via real form POST | #1, #2 | system (+ tighten request oracles) | done | `capybara-e2e-prep` |
 | 2 | Confirm path & ownership | Defend confirm/reject semantics and IDOR on session/notification actions | #3, #4 | request + service integration | done | `confirm-path-ownership` |
 | 3 | Edit re-notify coverage | Cover edit notify matrix (selective vs bulk); #6 only if cheap on create path | #5 | request + service integration | not started | — |
 | 4 | System-spec CI floor | Wire Capybara/system runner into CI; fill cookbook §6 for system specs | cross-cutting | gates | done | `capybara-e2e-prep` |
@@ -169,22 +169,20 @@ add-row (friend + guest), then asserts the **participant set** (identity via
 `user` or `guest_name`, plus `score` and `status`) — not flash alone and not
 `participants.count`.
 
-HTTP half: keep request create examples honest with the same set assertion
-(see multi-player example in `spec/requests/game_sessions_spec.rb`). Do not
-treat a hand-built params hash as proof of what Stimulus posts — that is the
-system seed's job.
+HTTP half: keep request create **and** update examples honest with the same
+set assertion (multi-player create; add-on-update; omit-from-submit drop). Use
+the form-shaped `players` hash (string indices). Do not treat a hand-built
+params hash as proof of what Stimulus posts — that is the system seed's job.
 
 Canonical examples:
 
 - System: `spec/system/game_sessions/player_fidelity_spec.rb`
-- Request oracle (set, not count): `spec/requests/game_sessions_spec.rb`
-  (multi-player create)
+- Request oracles (set, not count): `spec/requests/game_sessions_spec.rb`
+  (multi-player create; add friend/guest on update; drop omitted co-players)
 - Service unit pattern: `spec/services/unit/game_sessions/create_spec.rb`
 
-Remaining request-spec oracles that only mirror Stimulus param shape stay an
-optional follow-up (§3 Phase 1 still `partial` for that reason).
-
 - **Run locally:** `bin/rspec spec/system/game_sessions/player_fidelity_spec.rb`
+  and `bin/rspec spec/requests/game_sessions_spec.rb`
 
 ### 6.5 Adding a test for confirm/reject or notification ownership
 
@@ -231,11 +229,11 @@ asserting 404 without “resource unchanged.”
 - **§3 Phase 2 (`confirm-path-ownership`, 2026-08-02):** Request oracles for
   Risks #3–#4. Friendship IDOR examples were aligned in the same change to
   the shared “404 + target unchanged” contract (not deferred to a follow-up).
-- **§3 Phase 1 + 4 (`capybara-e2e-prep`, 2026-09-09):** Cuprite system-spec
-  floor, fidelity seed for Risks #1–#2, CI Chrome + failure artifacts, and
-  `/10x-e2e-capybara`. Phase 4 closed. Phase 1 is **partial**: system half and
-  the multi-player request set oracle are in; broader request-oracle tightening
-  remains optional.
+- **§3 Phase 1 + 4 (`capybara-e2e-prep`, 2026-09-09; request follow-up
+  2026-09-09):** Cuprite system-spec floor, fidelity seed for Risks #1–#2, CI
+  Chrome + failure artifacts, and `/10x-e2e-capybara`. Phase 4 closed. Phase 1
+  closed with create + update request set oracles (add-on-update and
+  omit-from-submit drop) alongside the multi-player create example.
 
 ## 7. What We Deliberately Don't Test
 

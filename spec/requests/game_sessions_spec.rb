@@ -108,7 +108,10 @@ RSpec.describe 'GameSessions', type: :request do
       }
 
       expect(response).to redirect_to(game_sessions_path)
-      expect(GameSession.last.game_session_participants.count).to eq(1)
+
+      participants = GameSession.last.game_session_participants
+      expect(participants.size).to eq(1)
+      expect(participants.find_by!(user: alice)).to have_attributes(score: 100, status: 'confirmed')
     end
 
     it 're-renders on invalid game' do
@@ -244,8 +247,69 @@ RSpec.describe 'GameSessions', type: :request do
       }
 
       expect(response).to redirect_to(game_session_path(session))
-      expect(guest.reload).to have_attributes(guest_name: 'Carol', score: 12)
-      expect(session.game_session_participants.find_by(user: alice).score).to eq(42)
+
+      participants = session.reload.game_session_participants
+      expect(participants.size).to eq(2)
+      expect(participants.find_by!(user: alice)).to have_attributes(score: 42, status: 'confirmed')
+      expect(participants.find_by!(guest_name: 'Carol')).to have_attributes(
+        id: guest.id, score: 12, status: 'confirmed'
+      )
+    end
+
+    # Form-shaped players hash (string indices) — same shape Stimulus nested rows POST.
+    # Asserts the participant set, not count alone (test-plan.md risks #1 / #2 HTTP half).
+    it 'persists friend and guest players added on update' do
+      patch game_session_path(session), params: {
+        game_session: {
+          game_id: game.id,
+          creator_score: 42,
+          players: {
+            '0' => { type: 'friend', user_id: bob.id, score: 30 },
+            '1' => { type: 'guest', guest_name: 'Dave', score: 20 }
+          }
+        }
+      }
+
+      expect(response).to redirect_to(game_session_path(session))
+
+      participants = session.reload.game_session_participants
+      expect(participants.size).to eq(3)
+
+      expect(participants.find_by!(user: alice)).to have_attributes(score: 42, status: 'confirmed')
+      expect(participants.find_by!(user: bob)).to have_attributes(score: 30, status: 'pending')
+      expect(participants.find_by!(guest_name: 'Dave')).to have_attributes(score: 20, status: 'confirmed')
+    end
+
+    it 'drops co-players omitted from the submitted player set' do
+      friend_p = create(:game_session_participant, game_session: session,
+                                                  user: bob, score: 30)
+      guest_p = create(:game_session_participant, :guest, :confirmed,
+                       game_session: session, guest_name: 'Carol', score: 12)
+
+      patch game_session_path(session), params: {
+        game_session: {
+          game_id: game.id,
+          creator_score: 42,
+          players: {
+            '0' => {
+              id: guest_p.id,
+              type: 'guest',
+              guest_name: 'Carol',
+              score: 15
+            }
+          }
+        }
+      }
+
+      expect(response).to redirect_to(game_session_path(session))
+
+      participants = session.reload.game_session_participants
+      expect(participants.size).to eq(2)
+      expect(participants.find_by(id: friend_p.id)).to be_nil
+      expect(participants.find_by!(user: alice)).to have_attributes(score: 42, status: 'confirmed')
+      expect(participants.find_by!(guest_name: 'Carol')).to have_attributes(
+        id: guest_p.id, score: 15, status: 'confirmed'
+      )
     end
 
     it 'returns 404 for non-creator and leaves the session unchanged' do
