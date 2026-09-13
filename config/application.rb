@@ -38,5 +38,8 @@ module AllAboard
 
     # Don't generate system test files.
     config.generators.system_tests = nil
+
+    # Avoid Rails 8.1.3.1+ :vips boot require until we use variants + libvips.
+    config.active_storage.variant_processor = :disabled
   end
 end
