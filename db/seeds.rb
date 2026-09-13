@@ -38,6 +38,8 @@ carol = User.find_by!(email: 'carol@example.com')
 seed_users = [alice, bob, alex, carol]
 seed_user_ids = seed_users.map(&:id)
 
+alice.created_game_sessions.destroy_all
+
 Friendship.where(requester_id: seed_user_ids, addressee_id: seed_user_ids).destroy_all
 
 Friendship.create!(requester: alice, addressee: bob, status: :accepted)
@@ -45,3 +47,60 @@ Friendship.create!(requester: alice, addressee: alex, status: :accepted)
 Friendship.create!(requester: carol, addressee: alice, status: :pending)
 
 puts 'Seeded friendships: Alice↔Bob (accepted), Alice↔Alex (accepted), Carol→Alice (pending)'
+
+games = Game.order(:id).limit(5).to_a
+raise 'Need at least 5 games before seeding sessions' if games.size < 5
+
+seed_session = lambda do |game:, creator_score:, players: []|
+  result = GameSessions::Create.call(
+    creator: alice,
+    game_id: game.id,
+    creator_score:,
+    players:
+  )
+  raise "Failed to seed game session (#{result.status})" unless result.status == :created
+
+  result.game_session
+end
+
+seed_session.call(game: games[0], creator_score: 42, players: [])
+seed_session.call(
+  game: games[1],
+  creator_score: 30,
+  players: [
+    { type: 'guest', guest_name: 'Dana', score: 22 },
+    { type: 'guest', guest_name: 'Sam', score: 18 }
+  ]
+)
+seed_session.call(
+  game: games[2],
+  creator_score: 15,
+  players: [
+    { type: 'friend', user_id: bob.id, score: 20 }
+  ]
+)
+alex_pending_session = seed_session.call(
+  game: games[3],
+  creator_score: 12,
+  players: [
+    { type: 'friend', user_id: alex.id, score: 25 }
+  ]
+)
+seed_session.call(
+  game: games[4],
+  creator_score: 10,
+  players: [
+    { type: 'friend', user_id: bob.id, score: 18 },
+    { type: 'guest', guest_name: 'Dana', score: 14 }
+  ]
+)
+
+GameSessionParticipant
+  .joins(:game_session)
+  .where(game_sessions: { creator_id: alice.id })
+  .where.not(user_id: [nil, alice.id])
+  .where.not(game_session_id: alex_pending_session.id)
+  .find_each(&:confirm!)
+
+puts "Seeded #{alice.created_game_sessions.count} Alice game sessions " \
+     '(solo, guests, Bob, Alex pending, Bob+guest); friend tags confirmed except Alex pending'

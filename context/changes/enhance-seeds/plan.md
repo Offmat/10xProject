@@ -195,23 +195,23 @@ No schema migrations. Local DBs that already have ad-hoc Alice sessions will los
 
 #### Automated
 
-- [x] 1.1 `bin/rails db:seed` exits 0
-- [x] 1.2 Console/query check: four users by email; three friendships with the statuses above
+- [x] 1.1 `bin/rails db:seed` exits 0 — ba32a71
+- [x] 1.2 Console/query check: four users by email; three friendships with the statuses above — ba32a71
 
 #### Manual
 
-- [x] 1.3 Sign in as Alice — see Bob and Alex as friends; see Carol’s incoming pending request
-- [x] 1.4 Sign in as Carol — see outgoing pending request to Alice
+- [x] 1.3 Sign in as Alice — see Bob and Alex as friends; see Carol’s incoming pending request — ba32a71
+- [x] 1.4 Sign in as Carol — see outgoing pending request to Alice — ba32a71
 
 ### Phase 2: Alice game sessions
 
 #### Automated
 
-- [ ] 2.1 `bin/rails db:seed` exits 0 when run twice in a row (deterministic wipe/recreate; no duplicate Alice sessions beyond the inventory)
-- [ ] 2.2 Query check: Alice `created_game_sessions` count matches inventory; one pending friend participant remains; others confirmed
+- [x] 2.1 `bin/rails db:seed` exits 0 when run twice in a row (deterministic wipe/recreate; no duplicate Alice sessions beyond the inventory)
+- [x] 2.2 Query check: Alice `created_game_sessions` count matches inventory; one pending friend participant remains; others confirmed
 
 #### Manual
 
-- [ ] 2.3 Sign in as Alice — session list shows solo, guest, and multi-player variety
-- [ ] 2.4 Sign in as the friend on a confirmed session — session is visible
-- [ ] 2.5 Sign in as the friend on the pending session — notification / confirm affordance is present
+- [x] 2.3 Sign in as Alice — session list shows solo, guest, and multi-player variety
+- [x] 2.4 Sign in as the friend on a confirmed session — session is visible
+- [x] 2.5 Sign in as the friend on the pending session — notification / confirm affordance is present
