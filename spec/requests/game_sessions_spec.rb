@@ -328,6 +328,108 @@ RSpec.describe 'GameSessions', type: :request do
       expect(session.reload.game_id).to eq(original_game_id)
       expect(session.game_session_participants.find_by!(user: alice).score).to eq(original_score)
     end
+
+    # Who/why re-notify oracles (test-plan.md risk #5) — recipient, reason, stale→fresh unread.
+    context 're-notify who/why' do
+      let!(:bob_participant) do
+        create(:game_session_participant, :confirmed, game_session: session, user: bob, score: 20)
+      end
+      let!(:carol_participant) do
+        create(:game_session_participant, :confirmed, game_session: session, user: carol, score: 30)
+      end
+      let!(:old_bob_notification) do
+        create(:notification, recipient: bob, notifiable: bob_participant, read_at: Time.current)
+      end
+
+      before do
+        create(:friendship, :accepted, requester: alice, addressee: carol)
+      end
+
+      it 're-notifies only the score-changed friend on score-only edit' do
+        patch game_session_path(session), params: {
+          game_session: {
+            game_id: game.id,
+            creator_score: '10',
+            players: {
+              '0' => {
+                id: bob_participant.id,
+                type: 'friend',
+                user_id: bob.id,
+                score: '50'
+              },
+              '1' => {
+                id: carol_participant.id,
+                type: 'friend',
+                user_id: carol.id,
+                score: '30'
+              }
+            }
+          }
+        }
+
+        expect(response).to redirect_to(game_session_path(session))
+
+        expect(bob_participant.reload).to be_pending
+        expect(Notification.where(id: old_bob_notification.id)).not_to exist
+        new_bob = Notification.find_by!(recipient: bob, notifiable: bob_participant)
+        expect(new_bob).to have_attributes(reason: 'update', read_at: nil)
+
+        expect(carol_participant.reload).to be_confirmed
+        expect(Notification.where(recipient: carol)).to be_empty
+      end
+
+      it 're-notifies all registered co-players on game change' do
+        new_game = create(:game, name: 'Ticket to Ride')
+        guest = create(:game_session_participant, :guest, :confirmed,
+                       game_session: session, guest_name: 'Dave', score: 12)
+        old_carol_notification = create(:notification, recipient: carol,
+                                                       notifiable: carol_participant,
+                                                       read_at: Time.current)
+
+        patch game_session_path(session), params: {
+          game_session: {
+            game_id: new_game.id,
+            creator_score: '10',
+            players: {
+              '0' => {
+                id: bob_participant.id,
+                type: 'friend',
+                user_id: bob.id,
+                score: '20'
+              },
+              '1' => {
+                id: carol_participant.id,
+                type: 'friend',
+                user_id: carol.id,
+                score: '30'
+              },
+              '2' => {
+                id: guest.id,
+                type: 'guest',
+                guest_name: 'Dave',
+                score: '12'
+              }
+            }
+          }
+        }
+
+        expect(response).to redirect_to(game_session_path(session))
+        expect(session.reload.game_id).to eq(new_game.id)
+
+        expect(bob_participant.reload).to be_pending
+        expect(carol_participant.reload).to be_pending
+        expect(Notification.where(id: old_bob_notification.id)).not_to exist
+        expect(Notification.where(id: old_carol_notification.id)).not_to exist
+
+        new_bob = Notification.find_by!(recipient: bob, notifiable: bob_participant)
+        new_carol = Notification.find_by!(recipient: carol, notifiable: carol_participant)
+        expect(new_bob).to have_attributes(reason: 'update', read_at: nil)
+        expect(new_carol).to have_attributes(reason: 'update', read_at: nil)
+
+        expect(guest.reload).to have_attributes(guest_name: 'Dave', score: 12, status: 'confirmed')
+        expect(Notification.where(notifiable: guest)).to be_empty
+      end
+    end
   end
 
   describe 'authentication' do
