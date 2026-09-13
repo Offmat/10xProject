@@ -195,13 +195,13 @@ No schema migrations. Local DBs that already have ad-hoc Alice sessions will los
 
 #### Automated
 
-- [ ] 1.1 `bin/rails db:seed` exits 0
-- [ ] 1.2 Console/query check: four users by email; three friendships with the statuses above
+- [x] 1.1 `bin/rails db:seed` exits 0
+- [x] 1.2 Console/query check: four users by email; three friendships with the statuses above
 
 #### Manual
 
-- [ ] 1.3 Sign in as Alice — see Bob and Alex as friends; see Carol’s incoming pending request
-- [ ] 1.4 Sign in as Carol — see outgoing pending request to Alice
+- [x] 1.3 Sign in as Alice — see Bob and Alex as friends; see Carol’s incoming pending request
+- [x] 1.4 Sign in as Carol — see outgoing pending request to Alice
 
 ### Phase 2: Alice game sessions
 
