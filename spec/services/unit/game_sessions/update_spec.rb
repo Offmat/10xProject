@@ -234,5 +234,143 @@ RSpec.describe GameSessions::Update, type: :service do
         expect(result.status).to eq(:not_friends)
       end
     end
+
+    context 'with two confirmed friends (selective vs bulk who/why)' do
+      let(:friend_a) { create(:user) }
+      let(:friend_b) { create(:user) }
+      let!(:participant_a) do
+        create(:game_session_participant, :confirmed, game_session: game_session, user: friend_a, score: 20)
+      end
+      let!(:participant_b) do
+        create(:game_session_participant, :confirmed, game_session: game_session, user: friend_b, score: 30)
+      end
+      let!(:old_notification_a) do
+        create(:notification, recipient: friend_a, notifiable: participant_a, read_at: Time.current)
+      end
+      let!(:old_notification_b) do
+        create(:notification, recipient: friend_b, notifiable: participant_b, read_at: Time.current)
+      end
+
+      before do
+        create(:friendship, :accepted, requester: creator, addressee: friend_a)
+        create(:friendship, :accepted, requester: creator, addressee: friend_b)
+      end
+
+      it 're-notifies only the score-changed friend on score-only edit' do
+        result = described_class.call(
+          game_session: game_session,
+          game_id: game.id,
+          creator_score: 10,
+          players: [
+            { id: participant_a.id, type: 'friend', user_id: friend_a.id, score: 50 },
+            { id: participant_b.id, type: 'friend', user_id: friend_b.id, score: 30 }
+          ]
+        )
+
+        expect(result.status).to eq(:updated)
+
+        expect(participant_a.reload).to be_pending
+        expect(Notification.where(id: old_notification_a.id)).not_to exist
+        new_a = Notification.find_by!(recipient: friend_a, notifiable: participant_a)
+        expect(new_a).to have_attributes(reason: 'update', read_at: nil)
+
+        expect(participant_b.reload).to be_confirmed
+        expect(Notification.where(id: old_notification_b.id)).to exist
+        expect(Notification.where(recipient: friend_b).where.not(id: old_notification_b.id)).to be_empty
+      end
+
+      it 're-notifies both friends on game change' do
+        new_game = create(:game)
+
+        result = described_class.call(
+          game_session: game_session,
+          game_id: new_game.id,
+          creator_score: 10,
+          players: [
+            { id: participant_a.id, type: 'friend', user_id: friend_a.id, score: 20 },
+            { id: participant_b.id, type: 'friend', user_id: friend_b.id, score: 30 }
+          ]
+        )
+
+        expect(result.status).to eq(:updated)
+        expect(game_session.reload.game).to eq(new_game)
+
+        expect(participant_a.reload).to be_pending
+        expect(participant_b.reload).to be_pending
+        expect(Notification.where(id: old_notification_a.id)).not_to exist
+        expect(Notification.where(id: old_notification_b.id)).not_to exist
+
+        new_a = Notification.find_by!(recipient: friend_a, notifiable: participant_a)
+        new_b = Notification.find_by!(recipient: friend_b, notifiable: participant_b)
+        expect(new_a).to have_attributes(reason: 'update', read_at: nil)
+        expect(new_b).to have_attributes(reason: 'update', read_at: nil)
+        expect(Notification.where(recipient: friend_a).count).to eq(1)
+        expect(Notification.where(recipient: friend_b).count).to eq(1)
+      end
+    end
+
+    context 'when a rejected friend is re-notified' do
+      let(:friend_a) { create(:user) }
+      let(:friend_b) { create(:user) }
+      let!(:participant_a) do
+        create(:game_session_participant, :rejected, game_session: game_session, user: friend_a, score: 20)
+      end
+      let!(:participant_b) do
+        create(:game_session_participant, :confirmed, game_session: game_session, user: friend_b, score: 30)
+      end
+      let!(:old_notification_a) do
+        create(:notification, recipient: friend_a, notifiable: participant_a, read_at: Time.current)
+      end
+
+      before do
+        create(:friendship, :accepted, requester: creator, addressee: friend_a)
+        create(:friendship, :accepted, requester: creator, addressee: friend_b)
+      end
+
+      it 'uses update_after_rejection on selective score edit' do
+        described_class.call(
+          game_session: game_session,
+          game_id: game.id,
+          creator_score: 10,
+          players: [
+            { id: participant_a.id, type: 'friend', user_id: friend_a.id, score: 55 },
+            { id: participant_b.id, type: 'friend', user_id: friend_b.id, score: 30 }
+          ]
+        )
+
+        expect(participant_a.reload).to be_pending
+        expect(Notification.where(id: old_notification_a.id)).not_to exist
+        new_a = Notification.find_by!(recipient: friend_a, notifiable: participant_a)
+        expect(new_a).to have_attributes(reason: 'update_after_rejection', read_at: nil)
+
+        expect(participant_b.reload).to be_confirmed
+        expect(Notification.where(recipient: friend_b)).to be_empty
+      end
+
+      it 'uses update_after_rejection on bulk game change' do
+        new_game = create(:game)
+        old_b = create(:notification, recipient: friend_b, notifiable: participant_b, read_at: Time.current)
+
+        described_class.call(
+          game_session: game_session,
+          game_id: new_game.id,
+          creator_score: 10,
+          players: [
+            { id: participant_a.id, type: 'friend', user_id: friend_a.id, score: 20 },
+            { id: participant_b.id, type: 'friend', user_id: friend_b.id, score: 30 }
+          ]
+        )
+
+        expect(participant_a.reload).to be_pending
+        expect(participant_b.reload).to be_pending
+        expect(Notification.where(id: old_notification_a.id)).not_to exist
+        expect(Notification.where(id: old_b.id)).not_to exist
+
+        new_a = Notification.find_by!(recipient: friend_a, notifiable: participant_a)
+        new_b = Notification.find_by!(recipient: friend_b, notifiable: participant_b)
+        expect(new_a).to have_attributes(reason: 'update_after_rejection', read_at: nil)
+        expect(new_b).to have_attributes(reason: 'update', read_at: nil)
+      end
+    end
   end
 end

@@ -148,6 +148,32 @@ RSpec.describe GameSessions::Create, type: :service do
       end
     end
 
+    context 'when a tagged player has only a pending friendship' do
+      let(:pending_friend) { create(:user) }
+
+      before do
+        create(:friendship, requester: creator, addressee: pending_friend)
+      end
+
+      it 'returns :not_friends and creates no session' do
+        result = nil
+
+        expect {
+          result = described_class.call(
+            creator: creator,
+            game_id: game.id,
+            creator_score: 10,
+            players: [
+              { type: 'friend', user_id: pending_friend.id, score: 20 }
+            ]
+          )
+        }.not_to change(GameSession, :count)
+
+        expect(result.status).to eq(:not_friends)
+        expect(result.game_session).to be_nil
+      end
+    end
+
     context 'when the creator is included in the players array' do
       it 'filters out the creator and does not create a duplicate participant' do
         result = described_class.call(

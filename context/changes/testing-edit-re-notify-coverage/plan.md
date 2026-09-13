@@ -222,8 +222,8 @@ None.
 
 #### Automated
 
-- [ ] 1.1 Unit matrix + #6 examples pass: `bin/rspec spec/services/unit/game_sessions/update_spec.rb spec/services/unit/game_sessions/create_spec.rb`
-- [ ] 1.2 RuboCop clean on those files: `bin/rubocop spec/services/unit/game_sessions/update_spec.rb spec/services/unit/game_sessions/create_spec.rb`
+- [x] 1.1 Unit matrix + #6 examples pass: `bin/rspec spec/services/unit/game_sessions/update_spec.rb spec/services/unit/game_sessions/create_spec.rb`
+- [x] 1.2 RuboCop clean on those files: `bin/rubocop spec/services/unit/game_sessions/update_spec.rb spec/services/unit/game_sessions/create_spec.rb`
 
 ### Phase 2: Request re-notify oracles
 
