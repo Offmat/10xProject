@@ -48,6 +48,10 @@ RSpec.describe 'GameSessions lifecycle', type: :service do
       expect(friend_participant.reload).to be_pending
       expect(friend_participant.score).to eq(50)
 
+      # Post-edit re-notify (who/why) — fresh unread with update reason
+      re_notify = Notification.unread.for_user(friend).find_by!(notifiable: friend_participant)
+      expect(re_notify).to have_attributes(recipient: friend, reason: 'update', read_at: nil)
+
       # Step 4: Friend re-confirms
       friend_participant.confirm!
       expect(friend_participant.reload).to be_confirmed

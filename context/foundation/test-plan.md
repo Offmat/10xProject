@@ -67,7 +67,7 @@ orchestrator updates Status as artifacts appear on disk.
 |---|---|---|---|---|---|---|
 | 1 | Session-form player fidelity | Prove multi-player submit persists all players via real form POST | #1, #2 | system (+ tighten request oracles) | done | `capybara-e2e-prep` |
 | 2 | Confirm path & ownership | Defend confirm/reject semantics and IDOR on session/notification actions | #3, #4 | request + service integration | done | `confirm-path-ownership` |
-| 3 | Edit re-notify coverage | Cover edit notify matrix (selective vs bulk); #6 only if cheap on create path | #5 | request + service integration | planned | `testing-edit-re-notify-coverage` |
+| 3 | Edit re-notify coverage | Cover edit notify matrix (selective vs bulk); #6 only if cheap on create path | #5 | request + service integration | done | `testing-edit-re-notify-coverage` |
 | 4 | System-spec CI floor | Wire Capybara/system runner into CI; fill cookbook §6 for system specs | cross-cutting | gates | done | `capybara-e2e-prep` |
 
 ## 4. Stack
@@ -130,11 +130,52 @@ the relevant rollout phase ships; before that, the sub-section reads
 - Prefer request specs for HTTP surfaces (`spec/requests/`); use
   `spec/services/integration/` for multi-model lifecycles without asserting
   the full browser path.
-- Confirm/reject + IDOR oracles: follow §6.5. Edit re-notify matrix: TBD —
-  see §3 Phase 3.
+- Confirm/reject + IDOR oracles: follow §6.5.
 - Auth in request specs: `sign_in_as` / `sign_out` from
   `spec/support/authentication_helpers.rb`.
 - **Run locally:** `bin/rspec`.
+
+#### Edit re-notify matrix (Risk #5)
+
+Covers selective vs bulk fan-out after `GameSessions::Update`. Prefer
+**request** PATCH oracles (HTTP → controller → `Update`) plus a tightened
+**unit** matrix; keep integration lifecycle asserts light (unread + reason
+after score edit — not a second full matrix).
+
+1. Setup ≥2 confirmed registered co-players (accepted friendships). Optional:
+   a known pre-edit notification (often `read_at` set) on the friend(s) you
+   expect to re-notify.
+2. **Submit-to-survive:** every peer (and any guest) that must remain must
+   appear in `players`. Omit ⇒ destroy, not “untouched.” Untouched means
+   submitted unchanged.
+3. Score-only edit: change one friend’s score, keep the other’s. Assert the
+   changed friend is `pending`, old notification id gone, new unread with
+   `reason: 'update'` (or `'update_after_rejection'` if they started
+   rejected). Assert the peer stays `confirmed` with no new notification.
+4. Game change: new `game_id` → all registered non-logger co-players pending
+   + fresh unread with correct `reason`. Guests submitted in the set stay
+   `confirmed` without notifications.
+5. Request params: form-shaped `players` hash (string indices), same as
+   Stimulus POST. Do not stop at global `Notification.count`.
+
+Canonical examples:
+
+- Unit matrix (multi-friend + rejection reasons + opportunistic Risk #6
+  pending-friendship create): `spec/services/unit/game_sessions/update_spec.rb`,
+  `spec/services/unit/game_sessions/create_spec.rb`
+- Request who/why: `spec/requests/game_sessions_spec.rb` (`re-notify who/why`
+  under `PATCH /game_sessions/:id`)
+- Integration lifecycle touch: `spec/services/integration/game_sessions_spec.rb`
+  (`create → confirm → edit → re-confirm`)
+
+Anti-patterns: assert notify count without who/why; omit a peer from
+`players` and expect them “untouched”; weaken oracles to match buggy
+fan-out; open a dedicated Risk #6 phase (pending friendship stays
+opportunistic on create).
+
+- **Run locally:** `bin/rspec spec/services/unit/game_sessions/update_spec.rb
+  spec/requests/game_sessions_spec.rb
+  spec/services/integration/game_sessions_spec.rb`
 
 ### 6.3 Adding a system (browser) test
 
@@ -226,6 +267,11 @@ asserting 404 without “resource unchanged.”
 
 ### 6.6 Per-rollout-phase notes
 
+- **§3 Phase 3 (`testing-edit-re-notify-coverage`, 2026-09-13):** Who/why
+  oracles for Risk #5 (unit multi-friend selective/bulk +
+  `update_after_rejection`; request PATCH selective/bulk; light integration
+  post-edit unread). Opportunistic Risk #6 pending-friendship create unit
+  example. Cookbook §6.2 edit re-notify pattern filled.
 - **§3 Phase 2 (`confirm-path-ownership`, 2026-08-02):** Request oracles for
   Risks #3–#4. Friendship IDOR examples were aligned in the same change to
   the shared “404 + target unchanged” contract (not deferred to a follow-up).

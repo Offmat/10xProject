@@ -229,18 +229,18 @@ None.
 
 #### Automated
 
-- [x] 2.1 Request re-notify examples pass: `bin/rspec spec/requests/game_sessions_spec.rb`
-- [x] 2.2 RuboCop clean: `bin/rubocop spec/requests/game_sessions_spec.rb`
+- [x] 2.1 Request re-notify examples pass: `bin/rspec spec/requests/game_sessions_spec.rb` — d443829
+- [x] 2.2 RuboCop clean: `bin/rubocop spec/requests/game_sessions_spec.rb` — d443829
 
 ### Phase 3: Integration touch + cookbook
 
 #### Automated
 
-- [ ] 3.1 Integration + request + unit touched paths still green: `bin/rspec spec/services/integration/game_sessions_spec.rb spec/services/unit/game_sessions/update_spec.rb spec/services/unit/game_sessions/create_spec.rb spec/requests/game_sessions_spec.rb`
-- [ ] 3.2 Cookbook no longer TBD for edit re-notify in §6.2: inspect `context/foundation/test-plan.md`
-- [ ] 3.3 §3 Phase 3 row Status is `done` with Change folder `testing-edit-re-notify-coverage`
+- [x] 3.1 Integration + request + unit touched paths still green: `bin/rspec spec/services/integration/game_sessions_spec.rb spec/services/unit/game_sessions/update_spec.rb spec/services/unit/game_sessions/create_spec.rb spec/requests/game_sessions_spec.rb`
+- [x] 3.2 Cookbook no longer TBD for edit re-notify in §6.2: inspect `context/foundation/test-plan.md`
+- [x] 3.3 §3 Phase 3 row Status is `done` with Change folder `testing-edit-re-notify-coverage`
 
 #### Manual
 
-- [ ] 3.4 Skim §6.2: a new contributor could add a selective vs bulk who/why example without reading this plan
-- [ ] 3.5 Confirm §3 Phase 3 row reflects completion
+- [x] 3.4 Skim §6.2: a new contributor could add a selective vs bulk who/why example without reading this plan
+- [x] 3.5 Confirm §3 Phase 3 row reflects completion
