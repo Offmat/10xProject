@@ -154,8 +154,7 @@ The app reaches Postgres over Railway's private network (`postgres.railway.inter
 For Rails console or manual migration checks against production:
 
 ```bash
-railway service link web
-railway ssh
+railway ssh --service web
 ```
 
 Then inside the container:
@@ -164,6 +163,15 @@ Then inside the container:
 bin/rails console
 bin/rails db:migrate:status
 ```
+
+In the production console, `#inspect` on models filters attributes listed in `config.filter_parameters` (e.g. `email`, `password_digest` show as `[FILTERED]`). Development clears this via `config/environments/development.rb`; production does not. For the current console session only:
+
+```ruby
+ActiveRecord::Base.filter_attributes = []
+User.last  # full attributes visible
+```
+
+Or read a field without changing filters: `User.last.email`.
 
 **Do not** run production DB tasks with `railway run` from your laptop — local `railway run` injects production env vars but cannot reach the internal Postgres hostname.
 
@@ -175,8 +183,8 @@ Migrations normally run automatically on deploy via `preDeployCommand` and `bin/
 |---|---|
 | Run SQL / inspect tables | `railway connect postgres` or dashboard **Data** tab |
 | GUI client | `DATABASE_PUBLIC_URL` from Postgres variables |
-| Rails console | `railway ssh` → `bin/rails console` |
-| Manual migration | `railway ssh` → `bin/rails db:migrate` |
+| Rails console | `railway ssh --service web` → `bin/rails console` |
+| Manual migration | `railway ssh --service web` → `bin/rails db:migrate` |
 
 ### Security
 
