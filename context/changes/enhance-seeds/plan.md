@@ -207,11 +207,11 @@ No schema migrations. Local DBs that already have ad-hoc Alice sessions will los
 
 #### Automated
 
-- [x] 2.1 `bin/rails db:seed` exits 0 when run twice in a row (deterministic wipe/recreate; no duplicate Alice sessions beyond the inventory)
-- [x] 2.2 Query check: Alice `created_game_sessions` count matches inventory; one pending friend participant remains; others confirmed
+- [x] 2.1 `bin/rails db:seed` exits 0 when run twice in a row (deterministic wipe/recreate; no duplicate Alice sessions beyond the inventory) — 9b5f5a6
+- [x] 2.2 Query check: Alice `created_game_sessions` count matches inventory; one pending friend participant remains; others confirmed — 9b5f5a6
 
 #### Manual
 
-- [x] 2.3 Sign in as Alice — session list shows solo, guest, and multi-player variety
-- [x] 2.4 Sign in as the friend on a confirmed session — session is visible
-- [x] 2.5 Sign in as the friend on the pending session — notification / confirm affordance is present
+- [x] 2.3 Sign in as Alice — session list shows solo, guest, and multi-player variety — 9b5f5a6
+- [x] 2.4 Sign in as the friend on a confirmed session — session is visible — 9b5f5a6
+- [x] 2.5 Sign in as the friend on the pending session — notification / confirm affordance is present — 9b5f5a6
