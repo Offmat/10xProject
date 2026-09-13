@@ -1,7 +1,7 @@
 ---
 change_id: sentry-configuration
 title: Configure Sentry error monitoring for Rails on Railway
-status: plan_reviewed
+status: implementing
 created: 2026-09-13
 updated: 2026-09-13
 archived_at: null

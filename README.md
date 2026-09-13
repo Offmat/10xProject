@@ -91,6 +91,42 @@ Deployed on [Railway](https://railway.com) (project **all-aboard**, services **P
 
 Full infrastructure notes: [context/foundation/infrastructure.md](context/foundation/infrastructure.md)
 
+## Sentry error monitoring (production)
+
+Production unhandled exceptions are reported to [Sentry](https://sentry.io/) (server-side Ruby/Rails SDK only). Development and test send nothing — no DSN in local `.env`, and the initializer only boots when `Rails.env.production?` and `SENTRY_DSN` are both set. Live logs remain complementary: `railway logs --follow`.
+
+### Setup
+
+1. Create a free Developer org/project at [sentry.io](https://sentry.io/) — platform **Ruby** / **Rails**.
+2. Copy the project **Client DSN** (keep it private; never commit it).
+3. Set it on the Railway **web** service:
+
+```bash
+printf '%s' 'https://YOUR_PUBLIC_KEY@o0.ingest.sentry.io/0' | railway variable set SENTRY_DSN --stdin --service web
+```
+
+Replace the placeholder with your real DSN. Redeploy or restart so the running process picks it up after the SDK lands.
+
+In the Sentry project, confirm **spike protection** is on and set a per-key **rate limit** (Settings → Client Keys) so a crash loop cannot drain the free-plan quota.
+
+### Verification
+
+After deploy with `SENTRY_DSN` set:
+
+```bash
+railway ssh --service web
+bin/rails console
+```
+
+```ruby
+Sentry.initialized?  # => true
+Sentry.capture_exception(RuntimeError.new('sentry verify'))
+```
+
+Confirm the issue appears in the Sentry project. Docs: [Sentry Rails](https://docs.sentry.io/platforms/ruby/guides/rails/).
+
+Optional agent triage via [Sentry MCP](https://github.com/getsentry/sentry-mcp) exists but is **not** wired by this repo.
+
 ## Production database (Railway)
 
 The Railway project is **all-aboard** with two services: **Postgres** and **web**. Production uses four PostgreSQL databases on the same Postgres service:

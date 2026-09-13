@@ -248,10 +248,10 @@ No database migration. Redeploy required after setting `SENTRY_DSN` and merging 
 
 #### Manual
 
-- [ ] 1.1 Sentry project exists; DSN visible in project settings
-- [ ] 1.2 SENTRY_DSN is set on the Railway web service (value masked in UI)
-- [ ] 1.3 README documents the steps without embedding the real DSN
-- [ ] 1.5 Spike protection on and per-key rate limit set in Sentry project
+- [x] 1.1 Sentry project exists; DSN visible in project settings
+- [x] 1.2 SENTRY_DSN is set on the Railway web service (value masked in UI)
+- [x] 1.3 README documents the steps without embedding the real DSN
+- [x] 1.5 Spike protection on and per-key rate limit set in Sentry project
 
 ### Phase 2: Gems and production initializer
 
