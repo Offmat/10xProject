@@ -41,3 +41,7 @@ Agent-oriented file map (F-01 scaffold): @app/AGENTS.md. Request-spec helpers: @
 - **daisyUI:** npm dependency (`daisyui` in `package.json`); configured via `@plugin "daisyui"` in the Tailwind input file. Theme: `abyss` (default).
 - **Dev workflow:** `bin/dev` runs Foreman with `Procfile.dev` (web + `tailwindcss:watch`). Run `npm install` after clone (`bin/setup` handles this).
 - **CI/production:** GitHub Actions and `bin/setup` install npm deps and run `bin/rails tailwindcss:build` before specs; Docker build runs `npm ci` before `assets:precompile`.
+
+## Observability
+
+- **Production errors:** Sentry via `sentry-ruby` / `sentry-rails` and Railway `SENTRY_DSN` (server-side only; no browser SDK).

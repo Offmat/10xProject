@@ -3,7 +3,7 @@ project: all-aBoard
 version: 1
 status: draft
 created: 2026-05-31
-updated: 2026-09-09
+updated: 2026-09-13
 prd_version: 1
 main_goal: speed
 top_blocker: time
@@ -63,7 +63,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Data:** partial — PostgreSQL configured (`config/database.yml`); `db/schema.rb` version 0, no tables; no migrations under `db/migrate/`
 - **Auth:** absent — per `tech-stack.md` email/password in scope; no User model or auth gems in code
 - **Deploy / infra:** partial — `Dockerfile`, `railway.toml`, GitHub Actions quality gates (`.github/workflows/ci.yml`); deploy narrative in `context/foundation/infrastructure.md`
-- **Observability:** partial — Rails default logging + `/up` healthcheck; no error-tracking gem in `Gemfile`
+- **Observability:** partial — Rails default logging + `/up` healthcheck; production errors → Sentry (`sentry-ruby` / `sentry-rails`) via `SENTRY_DSN`
 
 ## Foundations
 

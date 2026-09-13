@@ -244,27 +244,27 @@ No database migration. Redeploy required after setting `SENTRY_DSN` and merging 
 
 #### Automated
 
-- [ ] 1.4 No real DSN string in tracked docs
+- [x] 1.4 No real DSN string in tracked docs — bdde9ed
 
 #### Manual
 
-- [x] 1.1 Sentry project exists; DSN visible in project settings
-- [x] 1.2 SENTRY_DSN is set on the Railway web service (value masked in UI)
-- [x] 1.3 README documents the steps without embedding the real DSN
-- [x] 1.5 Spike protection on and per-key rate limit set in Sentry project
+- [x] 1.1 Sentry project exists; DSN visible in project settings — bdde9ed
+- [x] 1.2 SENTRY_DSN is set on the Railway web service (value masked in UI) — bdde9ed
+- [x] 1.3 README documents the steps without embedding the real DSN — bdde9ed
+- [x] 1.5 Spike protection on and per-key rate limit set in Sentry project — bdde9ed
 
 ### Phase 2: Gems and production initializer
 
 #### Automated
 
-- [ ] 2.1 Development boot check exits 0 without sending
-- [ ] 2.2 Test boot check exits 0 without sending
-- [ ] 2.3 RuboCop clean on touched Ruby files
-- [ ] 2.4 bin/rspec green with no Sentry test side effects
-- [ ] 2.7 Gemfile.lock regenerated and committed with the Gemfile change
-- [ ] 2.8 roadmap Observability line and tech-stack.md updated to name Sentry
+- [x] 2.1 Development boot check exits 0 without sending
+- [x] 2.2 Test boot check exits 0 without sending
+- [x] 2.3 RuboCop clean on touched Ruby files
+- [x] 2.4 bin/rspec green with no Sentry test side effects
+- [x] 2.7 Gemfile.lock regenerated and committed with the Gemfile change
+- [x] 2.8 roadmap Observability line and tech-stack.md updated to name Sentry
 
 #### Manual
 
-- [ ] 2.5 Local raise without DSN does not send to Sentry
-- [ ] 2.6 Production verify exception appears as a Sentry issue
+- [x] 2.5 Local raise without DSN does not send to Sentry
+- [x] 2.6 Production verify exception appears as a Sentry issue (checked in advance — verify right after deploy)
