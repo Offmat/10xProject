@@ -1,0 +1,98 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+# Headless Ferrum screenshots of main pages as seeded Alice.
+# Prerequisites: Postgres up, `bin/rails db:seed`, Rails on BASE_URL (default :3000).
+# Usage: unset BUNDLE_PATH; bin/capture-cert-screenshots
+# Output: tmp/certification-screenshots/ (cleared by bin/setup — copy out if you need them)
+
+require 'bundler/setup'
+require 'fileutils'
+require 'ferrum'
+
+ROOT = File.expand_path('..', __dir__)
+BASE = ENV.fetch('BASE_URL', 'http://127.0.0.1:3000')
+OUT = File.join(ROOT, 'tmp', 'certification-screenshots')
+EMAIL = 'alice@example.com'
+PASSWORD = 'Qwertyuiop'
+
+FileUtils.mkdir_p(OUT)
+
+browser = Ferrum::Browser.new(
+  headless: true,
+  window_size: [1400, 900],
+  process_timeout: 60,
+  browser_options: { 'no-sandbox' => nil }
+)
+
+def shot(browser, name)
+  path = File.join(OUT, "#{name}.png")
+  browser.screenshot(path: path, full: true)
+  puts "saved #{path}"
+end
+
+def wait_for(browser, text, timeout: 10)
+  deadline = Time.now + timeout
+  loop do
+    return if browser.body.include?(text)
+    raise "Timed out waiting for #{text.inspect} at #{browser.current_url}" if Time.now > deadline
+
+    sleep 0.2
+  end
+end
+
+begin
+  browser.go_to("#{BASE}/")
+  wait_for(browser, 'all-aBoard')
+  shot(browser, '01-home-logged-out')
+
+  browser.go_to("#{BASE}/session/new")
+  wait_for(browser, 'Sign in')
+  shot(browser, '02-sign-in')
+
+  browser.go_to("#{BASE}/users/new")
+  wait_for(browser, 'Sign up')
+  shot(browser, '03-sign-up')
+
+  browser.go_to("#{BASE}/session/new")
+  wait_for(browser, 'Sign in')
+  browser.at_css('#email').focus.type(EMAIL)
+  browser.at_css('#password').focus.type(PASSWORD)
+  browser.at_css('input[type=submit], button[type=submit]').click
+  wait_for(browser, EMAIL)
+
+  browser.go_to("#{BASE}/")
+  wait_for(browser, EMAIL)
+  shot(browser, '04-home-alice')
+
+  browser.go_to("#{BASE}/game_sessions")
+  wait_for(browser, 'My Sessions')
+  shot(browser, '05-sessions-index')
+
+  show_link = browser.css('a').find { |a| a.attribute('href')&.match?(%r{/game_sessions/\d+$}) }
+  if show_link
+    href = show_link.attribute('href')
+    href = "#{BASE}#{href}" unless href.start_with?('http')
+    browser.go_to(href)
+    wait_for(browser, 'Players')
+    shot(browser, '06-session-show')
+  else
+    warn 'No session show link found — skipping 06-session-show'
+  end
+
+  browser.go_to("#{BASE}/game_sessions/new")
+  wait_for(browser, 'Log a Session')
+  shot(browser, '07-session-new')
+
+  browser.go_to("#{BASE}/friendships")
+  wait_for(browser, 'Friends')
+  shot(browser, '08-friends')
+
+  browser.go_to("#{BASE}/notifications")
+  wait_for(browser, 'Notifications')
+  shot(browser, '09-notifications')
+
+  puts "Done. Screenshots in #{OUT}"
+ensure
+  browser.quit
+end

@@ -8,7 +8,7 @@ all-aBoard is a Rails 8.1 app (Ruby 3.4, PostgreSQL, Hotwire via importmap) for 
 - Do not commit `/.env*`, `vendor/bundle`, or `config/*.key`.
 - Install gems through @bin/setup (`bundle` path `vendor/bundle`); prefer `bin/` wrappers over ad-hoc commands.
 - If `bundle` resolves to a sandbox/temp path or hangs on lock: `unset BUNDLE_PATH` (and clear a stale `vendor/bundle/**/bundler.lock`) so `.bundle/config` (`vendor/bundle`) wins, then retry.
-- PostgreSQL must be running before `bin/setup` or `db:*` (setup checks `pg_isready` when available).
+- PostgreSQL must be running before `bin/setup` or `db:*` (setup checks `pg_isready` when available). Cursor's command sandbox often cannot reach the local Postgres Unix socket (`Operation not permitted` / `pg_isready` "no response" even when Homebrew Postgres is up) — use unrestricted/`all` permissions for DB and server commands.
 
 ## Project structure
 
@@ -16,7 +16,7 @@ all-aBoard is a Rails 8.1 app (Ruby 3.4, PostgreSQL, Hotwire via importmap) for 
 - `config/` — app configuration; DB names `all_aboard_*` in @config/database.yml.
 - `context/foundation/` — PRD, tech stack, infrastructure, lessons; edit in place per @context/foundation/README.md.
 - `context/changes/` — in-flight change folders; finish with `/10x-archive`, not by editing `archive/` directly.
-- `bin/` — `setup`, `ci`, `dev`, `rspec`, `rubocop`, `brakeman`, `bundler-audit`, `rails`.
+- `bin/` — `setup`, `ci`, `dev`, `rspec`, `rubocop`, `brakeman`, `bundler-audit`, `rails`, `capture-cert-screenshots`.
 - Bootstrap audit: @context/changes/bootstrap-verification/verification.md.
 
 ## Build, test, and development
@@ -31,6 +31,7 @@ all-aBoard is a Rails 8.1 app (Ruby 3.4, PostgreSQL, Hotwire via importmap) for 
 - Lint: `bin/rubocop` (Omakase: @.rubocop.yml).
 - Tests: **RSpec** under `spec/` — `bin/rspec` or `bundle exec rspec` (see @spec/AGENTS.md). Prepare DB: `bin/rails db:test:prepare`. `rails/test_unit` remains disabled in @config/application.rb; do not use `bin/rails test`.
 - System specs need Chrome/Chromium locally (Cuprite); same spirit as the `pg_isready` Postgres check before DB work.
+- UI / certification screenshots: headless Ferrum only (headed Chrome is unsupported here — see `spec/support/capybara.rb`). Seed DB, start `bin/rails server` yourself (do not ask the user), run `bin/capture-cert-screenshots`, then stop the server. PNGs land in `tmp/certification-screenshots/` (wiped by `bin/setup` — copy out if needed).
 
 ## Coding style
 
