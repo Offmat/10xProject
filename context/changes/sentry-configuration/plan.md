@@ -257,14 +257,14 @@ No database migration. Redeploy required after setting `SENTRY_DSN` and merging 
 
 #### Automated
 
-- [x] 2.1 Development boot check exits 0 without sending
-- [x] 2.2 Test boot check exits 0 without sending
-- [x] 2.3 RuboCop clean on touched Ruby files
-- [x] 2.4 bin/rspec green with no Sentry test side effects
-- [x] 2.7 Gemfile.lock regenerated and committed with the Gemfile change
-- [x] 2.8 roadmap Observability line and tech-stack.md updated to name Sentry
+- [x] 2.1 Development boot check exits 0 without sending — 8078a31
+- [x] 2.2 Test boot check exits 0 without sending — 8078a31
+- [x] 2.3 RuboCop clean on touched Ruby files — 8078a31
+- [x] 2.4 bin/rspec green with no Sentry test side effects — 8078a31
+- [x] 2.7 Gemfile.lock regenerated and committed with the Gemfile change — 8078a31
+- [x] 2.8 roadmap Observability line and tech-stack.md updated to name Sentry — 8078a31
 
 #### Manual
 
-- [x] 2.5 Local raise without DSN does not send to Sentry
-- [x] 2.6 Production verify exception appears as a Sentry issue (checked in advance — verify right after deploy)
+- [x] 2.5 Local raise without DSN does not send to Sentry — 8078a31
+- [x] 2.6 Production verify exception appears as a Sentry issue (checked in advance — verify right after deploy) — 8078a31
